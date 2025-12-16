@@ -1,0 +1,14 @@
+# Crystal Agent - Required Libraries
+
+# UI Framework
+streamlit>=1.30.0
+
+# AI Model
+google-generativeai>=0.3.0
+
+# Database
+notion-client>=2.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0

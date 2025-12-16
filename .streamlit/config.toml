@@ -1,0 +1,17 @@
+# Streamlit 設定ファイル
+# スマホでの表示を最適化
+
+[theme]
+primaryColor = "#667eea"
+backgroundColor = "#667eea"
+secondaryBackgroundColor = "#764ba2"
+textColor = "#ffffff"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true

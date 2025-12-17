@@ -1,15 +1,16 @@
 """
-Crystal Agent - メインアプリ
+Crystal Agent - メインアプリ（モジュール版）
 あなた専用のマルチモーダルAIエージェント
 """
 
 import streamlit as st
-import os
 from datetime import datetime
-from dotenv import load_dotenv
 
-# 環境変数を読み込み
-load_dotenv()
+# モジュールをインポート
+from config.settings import Settings
+from utils.ai_brain import AIBrain
+from utils.notion_handler import NotionHandler
+from utils.text_analyzer import TextAnalyzer
 
 # ページ設定
 st.set_page_config(
@@ -112,48 +113,79 @@ if "messages" not in st.session_state:
 
 if "api_ready" not in st.session_state:
     # APIキーのチェック
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    notion_key = os.getenv("NOTION_API_KEY")
     st.session_state.api_ready = (
-        gemini_key and gemini_key != "your_gemini_api_key_here" and
-        notion_key and notion_key != "your_notion_api_key_here"
+        Settings.GEMINI_API_KEY and Settings.GEMINI_API_KEY != "your_gemini_api_key_here" and
+        Settings.NOTION_API_KEY and Settings.NOTION_API_KEY != "your_notion_api_key_here"
     )
 
-def init_apis():
-    """APIを初期化"""
+def init_modules():
+    """モジュールを初期化"""
     if not st.session_state.api_ready:
         return False
 
     try:
-        import google.generativeai as genai
-        from notion_client import Client
+        # AI Brain初期化
+        if "ai_brain" not in st.session_state:
+            st.session_state.ai_brain = AIBrain(Settings.GEMINI_API_KEY, Settings.AI_MODEL)
 
-        # Gemini設定
-        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-        st.session_state.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        # Notion Handler初期化
+        if "notion_handler" not in st.session_state and Settings.USER_PROFILE_DB_ID and Settings.LIFE_LOG_DB_ID:
+            st.session_state.notion_handler = NotionHandler(
+                Settings.NOTION_API_KEY,
+                Settings.USER_PROFILE_DB_ID,
+                Settings.LIFE_LOG_DB_ID
+            )
 
-        # Notion設定
-        st.session_state.notion = Client(auth=os.getenv("NOTION_API_KEY"))
+        # Text Analyzer初期化
+        if "text_analyzer" not in st.session_state:
+            st.session_state.text_analyzer = TextAnalyzer()
 
         return True
     except Exception as e:
-        st.error(f"API初期化エラー: {e}")
+        st.error(f"モジュール初期化エラー: {e}")
         return False
 
 def get_ai_response(user_message):
-    """AI応答を取得（モックまたは実際のAPI）"""
+    """AI応答を取得"""
 
-    if st.session_state.api_ready and "gemini_model" in st.session_state:
-        try:
-            # 実際のGemini APIを使用
-            response = st.session_state.gemini_model.generate_content(
-                f"あなたは親切なAIアシスタント「Crystal Agent」です。ユーザーのメッセージに日本語で応答してください。\n\nユーザー: {user_message}"
-            )
-            return response.text
-        except Exception as e:
-            return f"エラーが発生しました: {e}"
+    # テキスト分析
+    if "text_analyzer" in st.session_state:
+        analysis = st.session_state.text_analyzer.analyze(user_message)
+        detected_type = analysis.get('type', '日記')
+        detected_emotion = analysis.get('emotion', '普通')
+        detected_amount = analysis.get('amount')
     else:
-        # モックレスポンス（開発用）
+        detected_type = '日記'
+        detected_emotion = '普通'
+        detected_amount = None
+
+    # AI応答生成
+    if st.session_state.api_ready and "ai_brain" in st.session_state:
+        try:
+            # コンテキスト構築
+            context = {}
+            if "notion_handler" in st.session_state:
+                profile = st.session_state.notion_handler.get_user_profile()
+                if profile:
+                    context['profile'] = profile
+
+            # AI応答取得
+            response = st.session_state.ai_brain.generate_response(user_message, context)
+
+            # Notionに保存
+            if "notion_handler" in st.session_state:
+                st.session_state.notion_handler.add_life_log(
+                    content=user_message,
+                    type_=detected_type,
+                    amount=detected_amount,
+                    emotion=detected_emotion
+                )
+
+            return response, detected_type, detected_emotion
+        except Exception as e:
+            return f"エラーが発生しました: {e}", detected_type, detected_emotion
+    else:
+        # モックレスポンス（デモモード）
         mock_responses = {
             "こんにちは": "こんにちは！Crystal Agentです。今日も一日頑張りましょう！",
             "日記": "素晴らしいですね！今日の出来事を教えてください。",
@@ -164,24 +196,15 @@ def get_ai_response(user_message):
 
         for key, response in mock_responses.items():
             if key in user_message:
-                return response
+                return response, detected_type, detected_emotion
 
-        return f"「{user_message}」について考えています...現在はデモモードで動作中です。実際のAI応答を使うには、.envファイルにAPIキーを設定してください。"
-
-def save_to_notion(message_type, content):
-    """Notionに保存（将来実装）"""
-    if st.session_state.api_ready and "notion" in st.session_state:
-        try:
-            # ここでNotionに保存する処理を実装
-            pass
-        except Exception as e:
-            st.error(f"Notion保存エラー: {e}")
+        return f"「{user_message}」について考えています...（デモモード：{detected_type}として分類）", detected_type, detected_emotion
 
 # ヘッダー
-st.markdown("""
+st.markdown(f"""
 <div class="header">
-    <h1>🔮 Crystal Agent</h1>
-    <p>あなた専用のマルチモーダルAIエージェント</p>
+    <h1>🔮 {Settings.APP_NAME}</h1>
+    <p>あなた専用のマルチモーダルAIエージェント v{Settings.APP_VERSION}</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -192,8 +215,8 @@ with st.sidebar:
     # API状態
     if st.session_state.api_ready:
         st.success("✅ API接続済み")
-        if st.button("🔄 API再初期化"):
-            init_apis()
+        if st.button("🔄 モジュール再初期化"):
+            init_modules()
     else:
         st.warning("⚠️ デモモード")
         st.info("実際のAI機能を使うには、`.env`ファイルにAPIキーを設定してください")
@@ -269,9 +292,12 @@ with chat_container:
             </div>
             """, unsafe_allow_html=True)
         else:
+            type_badge = f"<span style='background:#667eea;color:white;padding:2px 8px;border-radius:10px;font-size:12px;margin-left:5px;'>{message.get('type', '日記')}</span>"
+            emotion_emoji = {'良好': '😊', '普通': '😐', '疲労': '😫', '悩み': '😟'}.get(message.get('emotion', '普通'), '😐')
+
             st.markdown(f"""
             <div class="agent-message">
-                <strong>🔮 Crystal Agent</strong><br>
+                <strong>🔮 Crystal Agent</strong> {type_badge} {emotion_emoji}<br>
                 {message["content"]}
             </div>
             """, unsafe_allow_html=True)
@@ -310,17 +336,16 @@ if submit_button and message_input:
 
     # AI応答を取得
     with st.spinner("考え中..."):
-        ai_response = get_ai_response(message_input)
+        ai_response, detected_type, detected_emotion = get_ai_response(message_input)
 
     # AI応答を追加
     st.session_state.messages.append({
         "role": "agent",
         "content": ai_response,
+        "type": detected_type,
+        "emotion": detected_emotion,
         "timestamp": datetime.now()
     })
-
-    # Notionに保存（将来実装）
-    # save_to_notion("chat", message_input)
 
     # ページをリロード
     st.rerun()
@@ -338,12 +363,12 @@ if len(st.session_state.messages) == 0:
 
 # フッター
 st.markdown("---")
-st.markdown("""
+st.markdown(f"""
 <div style="text-align: center; color: white; padding: 20px;">
-    Made with ❤️ by Crystal Agent Team | Powered by Gemini & Notion
+    Made with ❤️ by Crystal Agent Team | Powered by Gemini & Notion | v{Settings.APP_VERSION}
 </div>
 """, unsafe_allow_html=True)
 
-# APIの初期化（初回のみ）
-if st.session_state.api_ready and "gemini_model" not in st.session_state:
-    init_apis()
+# モジュールの初期化（初回のみ）
+if st.session_state.api_ready and "ai_brain" not in st.session_state:
+    init_modules()

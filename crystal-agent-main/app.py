@@ -112,10 +112,19 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "api_ready" not in st.session_state:
-    # APIキーのチェック
+    # APIキーのチェック（GeminiだけあればOK）
     st.session_state.api_ready = (
-        Settings.GEMINI_API_KEY and Settings.GEMINI_API_KEY != "your_gemini_api_key_here" and
-        Settings.NOTION_API_KEY and Settings.NOTION_API_KEY != "your_notion_api_key_here"
+        Settings.GEMINI_API_KEY and
+        Settings.GEMINI_API_KEY != "your_gemini_api_key_here" and
+        len(Settings.GEMINI_API_KEY) > 20
+    )
+
+if "notion_ready" not in st.session_state:
+    # Notion APIのチェック（オプション）
+    st.session_state.notion_ready = (
+        Settings.NOTION_API_KEY and
+        Settings.NOTION_API_KEY != "your_notion_api_key_here" and
+        len(Settings.NOTION_API_KEY) > 20
     )
 
 def init_modules():
@@ -214,23 +223,34 @@ with st.sidebar:
 
     # API状態
     if st.session_state.api_ready:
-        st.success("✅ API接続済み")
-        if st.button("🔄 モジュール再初期化"):
-            init_modules()
+        st.success("✅ Gemini AI 接続済み")
     else:
         st.warning("⚠️ デモモード")
-        st.info("実際のAI機能を使うには、`.env`ファイルにAPIキーを設定してください")
+        st.info("実際のAI機能を使うには、`.env`ファイルにGemini APIキーを設定してください")
 
+    # Notion状態
+    if st.session_state.notion_ready:
+        if "notion_handler" in st.session_state and st.session_state.notion_handler.is_connected:
+            st.success("✅ Notion 接続済み")
+        else:
+            st.warning("⚠️ Notion 接続失敗")
+            st.caption("データはローカルのみに保存されます")
+    else:
+        st.info("💡 Notion未設定（オプション）")
+
+    if st.button("🔄 再接続"):
+        init_modules()
+        st.rerun()
+
+    if not st.session_state.api_ready:
         if st.button("📖 セットアップ方法"):
             st.markdown("""
             ### セットアップ手順
 
             1. `.env.example`を`.env`にコピー
             2. Gemini APIキーを取得
-            3. Notion APIキーを取得
-            4. `.env`ファイルに貼り付け
-            5. `python test_api.py`で確認
-            6. アプリを再起動
+            3. `.env`ファイルに貼り付け
+            4. アプリを再起動
 
             詳しくは`README.md`を参照
             """)

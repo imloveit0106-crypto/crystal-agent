@@ -1,11 +1,11 @@
 # Streamlit 設定ファイル
-# スマホでの表示を最適化
+# シンプルで洗練された白黒デザイン
 
 [theme]
-primaryColor = "#667eea"
-backgroundColor = "#667eea"
-secondaryBackgroundColor = "#764ba2"
-textColor = "#ffffff"
+primaryColor = "#000000"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F5F5"
+textColor = "#000000"
 font = "sans serif"
 
 [browser]

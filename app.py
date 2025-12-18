@@ -148,31 +148,94 @@ def get_notion_stats():
         st.error(f"データ取得エラー: {e}")
         return {"total": 0, "types": {}, "recent": []}
 
-# カスタムCSS
+# カスタムCSS - シンプルで洗練された白黒デザイン
 st.markdown("""
 <style>
+    /* フォント設定 */
+    * {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* タイトル - 大きくて目立つ */
+    h1 {
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem !important;
+    }
+
+    /* サブタイトル */
+    h2, h3 {
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* 本文 */
+    p, div, span {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+    }
+
+    /* チャットメッセージ */
     .stChatMessage {
-        border-radius: 15px;
-        padding: 10px;
+        border: 1px solid #E5E5E5;
+        border-radius: 12px;
+        padding: 1rem;
+        background: #FFFFFF;
     }
-    .stTextInput input {
-        border-radius: 20px;
-    }
+
+    /* メトリックカード - 白黒でミニマル */
     .metric-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
-        border-radius: 15px;
-        color: white;
+        background: #000000;
+        border: 2px solid #000000;
+        padding: 1.5rem;
+        border-radius: 8px;
+        color: #FFFFFF;
         text-align: center;
-        margin: 10px 0;
+        margin: 0.5rem 0;
+        transition: all 0.2s ease;
     }
+
+    .metric-card:hover {
+        background: #FFFFFF;
+        color: #000000;
+    }
+
     .metric-number {
-        font-size: 36px;
-        font-weight: bold;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
     }
+
     .metric-label {
-        font-size: 14px;
-        opacity: 0.9;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.25rem;
+    }
+
+    /* サイドバー */
+    [data-testid="stSidebar"] {
+        background-color: #FAFAFA;
+        border-right: 1px solid #E5E5E5;
+    }
+
+    /* ボタン */
+    .stButton button {
+        border: 2px solid #000000;
+        background: #FFFFFF;
+        color: #000000;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .stButton button:hover {
+        background: #000000;
+        color: #FFFFFF;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -224,13 +287,16 @@ with st.sidebar:
             fig = px.pie(
                 values=list(stats['types'].values()),
                 names=list(stats['types'].keys()),
-                color_discrete_sequence=px.colors.sequential.Purples_r
+                color_discrete_sequence=['#000000', '#404040', '#808080', '#BFBFBF', '#E0E0E0']
             )
             fig.update_layout(
                 height=250,
                 margin=dict(l=0, r=0, t=30, b=0),
                 showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=-0.2)
+                legend=dict(orientation="h", yanchor="bottom", y=-0.2),
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#000000', size=12)
             )
             st.plotly_chart(fig, use_container_width=True)
 
@@ -241,15 +307,22 @@ with st.sidebar:
             fig.add_trace(go.Scatter(
                 y=stats['amounts'][-10:],  # 最新10件
                 mode='lines+markers',
-                line=dict(color='#667eea', width=3),
-                marker=dict(size=8)
+                line=dict(color='#000000', width=2),
+                marker=dict(size=6, color='#000000'),
+                fill='tozeroy',
+                fillcolor='rgba(0,0,0,0.05)'
             ))
             fig.update_layout(
                 height=200,
                 margin=dict(l=0, r=0, t=10, b=0),
                 showlegend=False,
                 xaxis_title="記録",
-                yaxis_title="金額(円)"
+                yaxis_title="金額(円)",
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#000000', size=12),
+                xaxis=dict(showgrid=True, gridcolor='#E5E5E5'),
+                yaxis=dict(showgrid=True, gridcolor='#E5E5E5')
             )
             st.plotly_chart(fig, use_container_width=True)
 

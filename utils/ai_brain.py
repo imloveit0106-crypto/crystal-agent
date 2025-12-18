@@ -3,7 +3,7 @@ import google.generativeai as genai
 from typing import Dict, Optional
 
 class AIBrain:
-    def __init__(self, api_key: str, model_name: str = 'gemini-1.5-flash'):
+    def __init__(self, api_key: str, model_name: str = 'gemini-pro'):
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(model_name)
 

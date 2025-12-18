@@ -39,7 +39,7 @@ class CrystalAgent:
 
             # Gemini設定
             genai.configure(api_key=gemini_key)
-            self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+            self.gemini_model = genai.GenerativeModel('gemini-pro')
 
             # Notion設定
             self.notion = Client(auth=notion_key)

@@ -291,13 +291,19 @@ for msg in st.session_state.messages:
         st.write(msg["content"])
 
 # クイックメッセージの処理
-default_input = ""
+quick_msg = None
 if "quick_message" in st.session_state:
-    default_input = st.session_state.quick_message
+    quick_msg = st.session_state.quick_message
     del st.session_state.quick_message
 
 # チャット入力
-if prompt := st.chat_input("メッセージを入力...", value=default_input):
+prompt = st.chat_input("メッセージを入力...")
+
+# クイックメッセージまたは通常入力の処理
+if quick_msg:
+    prompt = quick_msg
+
+if prompt:
     # ユーザーメッセージを追加
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):

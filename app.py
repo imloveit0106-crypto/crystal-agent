@@ -308,6 +308,24 @@ st.markdown("""
     .stSpinner > div {
         border-top-color: #000000 !important;
     }
+
+    /* チャットアイコンの修正 - Material Icons を正しく表示 */
+    .stChatMessage [data-testid="chatAvatarIcon-user"] span,
+    .stChatMessage [data-testid="chatAvatarIcon-assistant"] span,
+    span[data-testid*="stMarkdownContainer"] span[class*="material"],
+    [class*="material-icons"] {
+        font-family: 'Material Icons', 'Material Symbols Outlined' !important;
+        -webkit-font-feature-settings: 'liga' !important;
+        font-feature-settings: 'liga' !important;
+        text-rendering: optimizeLegibility !important;
+        -webkit-font-smoothing: antialiased !important;
+    }
+
+    /* アイコンのサイズ調整 */
+    .stChatMessage [data-testid="chatAvatarIcon-user"] span,
+    .stChatMessage [data-testid="chatAvatarIcon-assistant"] span {
+        font-size: 1.5rem !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 

@@ -4,7 +4,8 @@
 
 Python + Gemini + Notion で作る、パーソナライズされたAI秘書
 
-![Status](https://img.shields.io/badge/Status-Prototype-yellow)
+![Status](https://img.shields.io/badge/Status-Complete-success)
+![Version](https://img.shields.io/badge/Version-0.3.0-blue)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
@@ -16,13 +17,15 @@ Crystal Agent は、あなたの日々の行動・思考・目標を記録し、
 Gemini AI と Notion データベースを連携させることで、
 パーソナライズされたアドバイスを提供するAIエージェントです。
 
-### ✨ 主な機能
+### ✨ 主な機能（v0.3.0）
 
-- 💬 **自然な会話インターフェース**: LINE風のモダンなチャットUI
+- 💬 **自然な会話インターフェース**: モダンなチャットUI
 - 📝 **自動分類ログ**: 日記・支出・タスク・悩みを自動判定
-- 🧠 **パーソナライズAI**: あなたの過去データから最適な助言
-- 📊 **データ可視化**: 統計情報・進捗管理
-- 🔄 **Notion連携**: データは全てNotionに自動保存
+- 💰 **金額自動抽出**: 「1000円使った」→ 自動で金額を記録
+- 📊 **リアルタイム統計**: 30日間の総ログ数・総支出を表示
+- 📈 **データ可視化**: 円グラフ・折れ線グラフで支出トレンド表示
+- ⚡ **クイック入力**: ワンクリックで支出・日記・タスクを入力
+- 🔄 **Notion自動保存**: すべてのログをNotionに自動保存
 
 ### 🎯 こんな方におすすめ
 

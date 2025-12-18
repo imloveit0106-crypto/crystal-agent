@@ -1,12 +1,12 @@
 # Streamlit 設定ファイル
-# シンプルで洗練された白黒デザイン
+# 高級感のあるクリーム色 × Times New Roman テーマ
 
 [theme]
 primaryColor = "#000000"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F5F5F5"
+backgroundColor = "#FFFEF5"
+secondaryBackgroundColor = "#FFF9E6"
 textColor = "#000000"
-font = "sans serif"
+font = "serif"
 
 [browser]
 gatherUsageStats = false

@@ -148,94 +148,165 @@ def get_notion_stats():
         st.error(f"データ取得エラー: {e}")
         return {"total": 0, "types": {}, "recent": []}
 
-# カスタムCSS - シンプルで洗練された白黒デザイン
+# カスタムCSS - 高級感のあるクリーム色 × Times New Roman テーマ
 st.markdown("""
 <style>
-    /* フォント設定 */
+    /* フォント設定 - Times New Roman で統一 */
     * {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-family: 'Times New Roman', Times, serif !important;
     }
 
-    /* タイトル - 大きくて目立つ */
+    /* アプリ全体の背景色 - クリーム色 */
+    .stApp {
+        background-color: #FFFEF5 !important;
+    }
+
+    /* メインコンテンツエリア */
+    .main .block-container {
+        background-color: #FFFEF5 !important;
+    }
+
+    /* 文字色 - 真っ黒 */
+    * {
+        color: #000000 !important;
+    }
+
+    /* タイトル - 大きくスタイリッシュに */
     h1 {
-        font-size: 2.5rem !important;
+        font-size: 3.5rem !important;
         font-weight: 700 !important;
-        letter-spacing: -0.02em;
-        margin-bottom: 1rem !important;
+        letter-spacing: 0.05em !important;
+        margin-bottom: 1.5rem !important;
+        text-align: center !important;
     }
 
     /* サブタイトル */
     h2, h3 {
-        font-size: 1.25rem !important;
+        font-size: 1.5rem !important;
         font-weight: 600 !important;
-        margin-top: 1.5rem !important;
-        margin-bottom: 0.75rem !important;
+        margin-top: 2rem !important;
+        margin-bottom: 1rem !important;
+        letter-spacing: 0.03em !important;
     }
 
     /* 本文 */
     p, div, span {
-        font-size: 1rem !important;
-        line-height: 1.6 !important;
+        font-size: 1.1rem !important;
+        line-height: 1.8 !important;
     }
 
-    /* チャットメッセージ */
+    /* チャットメッセージ - 枠線削除 */
     .stChatMessage {
-        border: 1px solid #E5E5E5;
-        border-radius: 12px;
-        padding: 1rem;
-        background: #FFFFFF;
+        border: none !important;
+        border-radius: 16px !important;
+        padding: 1.2rem !important;
+        margin-bottom: 1rem !important;
     }
 
-    /* メトリックカード - 白黒でミニマル */
+    /* ユーザーメッセージ - 薄い青色 */
+    .stChatMessage[data-testid="user-message"] {
+        background-color: #E3F2FD !important;
+        border-radius: 16px !important;
+    }
+
+    /* AIメッセージ - 白 + 影 */
+    .stChatMessage[data-testid="assistant-message"] {
+        background-color: #FFFFFF !important;
+        border-radius: 16px !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* メトリックカード - クリーム色に調和 */
     .metric-card {
-        background: #000000;
-        border: 2px solid #000000;
-        padding: 1.5rem;
-        border-radius: 8px;
-        color: #FFFFFF;
-        text-align: center;
-        margin: 0.5rem 0;
-        transition: all 0.2s ease;
+        background: #000000 !important;
+        border: 2px solid #000000 !important;
+        padding: 2rem !important;
+        border-radius: 12px !important;
+        color: #FFFEF5 !important;
+        text-align: center !important;
+        margin: 0.75rem 0 !important;
+        transition: all 0.3s ease !important;
     }
 
     .metric-card:hover {
-        background: #FFFFFF;
-        color: #000000;
+        background: #FFFEF5 !important;
+        color: #000000 !important;
     }
 
     .metric-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        letter-spacing: -0.03em;
+        font-size: 3rem !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
     }
 
     .metric-label {
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-top: 0.25rem;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+        margin-top: 0.5rem !important;
     }
 
-    /* サイドバー */
+    /* サイドバー - クリーム色の薄いバージョン */
     [data-testid="stSidebar"] {
-        background-color: #FAFAFA;
-        border-right: 1px solid #E5E5E5;
+        background-color: #FFF9E6 !important;
+        border-right: 2px solid #E8E4D5 !important;
     }
 
-    /* ボタン */
+    [data-testid="stSidebar"] * {
+        color: #000000 !important;
+    }
+
+    /* ボタン - エレガントなスタイル */
     .stButton button {
-        border: 2px solid #000000;
-        background: #FFFFFF;
-        color: #000000;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: all 0.2s ease;
+        border: 2px solid #000000 !important;
+        background: #FFFEF5 !important;
+        color: #000000 !important;
+        font-weight: 600 !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1.5rem !important;
+        transition: all 0.3s ease !important;
+        font-size: 1.1rem !important;
     }
 
     .stButton button:hover {
-        background: #000000;
-        color: #FFFFFF;
+        background: #000000 !important;
+        color: #FFFEF5 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* 入力欄 */
+    .stTextInput input, .stChatInput input {
+        border: 2px solid #E8E4D5 !important;
+        border-radius: 12px !important;
+        background-color: #FFFFFF !important;
+        padding: 0.75rem !important;
+        font-size: 1.1rem !important;
+    }
+
+    .stTextInput input:focus, .stChatInput input:focus {
+        border-color: #000000 !important;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* グラフエリア */
+    .js-plotly-plot {
+        background-color: #FFFFFF !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* 区切り線 */
+    hr {
+        border-color: #E8E4D5 !important;
+        margin: 2rem 0 !important;
+    }
+
+    /* スピナー */
+    .stSpinner > div {
+        border-top-color: #000000 !important;
     }
 </style>
 """, unsafe_allow_html=True)

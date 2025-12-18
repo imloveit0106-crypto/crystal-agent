@@ -46,21 +46,52 @@ class AIBrain:
             return "ごめんね、ちょっと考え中にエラーが起きちゃった...💦 もう一度試してみてくれる？"
 
     def _build_prompt(self, user_input: str, context: Optional[Dict] = None) -> str:
-        """プロンプトを構築"""
+        """プロンプトを構築（コンテキスト強化版）"""
         prompt_parts = [self.SYSTEM_PROMPT]
 
         # コンテキスト情報を追加
         if context:
+            # ユーザープロフィール
             if 'profile' in context and context['profile']:
                 profile_str = "\n".join([f"- {k}: {v}" for k, v in context['profile'].items()])
                 prompt_parts.append(f"\n【ユーザーの基本情報】\n{profile_str}\n")
 
+            # 最近の記録（直近5件）
             if 'recent_logs' in context and context['recent_logs']:
                 logs_str = "\n".join([f"- {log}" for log in context['recent_logs'][:5]])
-                prompt_parts.append(f"\n【最近の記録】\n{logs_str}\n")
+                prompt_parts.append(f"\n【最近の記録（直近5件）】\n{logs_str}\n")
+
+            # 類似する過去ログ
+            if 'similar_logs' in context and context['similar_logs']:
+                similar_str = "\n".join([f"- {log}" for log in context['similar_logs'][:3]])
+                prompt_parts.append(f"\n【関連する過去の記録】\n{similar_str}\n")
+
+            # 行動パターン
+            if 'patterns' in context and context['patterns']:
+                patterns = context['patterns']
+                pattern_info = []
+
+                if 'top_words' in patterns and patterns['top_words']:
+                    pattern_info.append(f"よく使う言葉: {', '.join(patterns['top_words'][:5])}")
+
+                if 'emotion_distribution' in patterns:
+                    emotions = patterns['emotion_distribution']
+                    dominant_emotion = max(emotions, key=emotions.get) if emotions else None
+                    if dominant_emotion:
+                        pattern_info.append(f"最近の気分: {dominant_emotion}が多い")
+
+                if pattern_info:
+                    prompt_parts.append(f"\n【ユーザーの傾向】\n" + "\n".join([f"- {info}" for info in pattern_info]) + "\n")
+
+            # 支出分析
+            if 'spending_insights' in context and context['spending_insights']:
+                spending = context['spending_insights']
+                if spending.get('frequent_items'):
+                    items_str = ', '.join(spending['frequent_items'][:3])
+                    prompt_parts.append(f"\n【支出傾向】\nよく買うもの: {items_str}\n")
 
         # ユーザー入力を追加
         prompt_parts.append(f"\n【ユーザーの入力】\n{user_input}\n")
-        prompt_parts.append("\n【応答】\n上記を踏まえて、親しみやすく簡潔に応答してください（2-3文程度、絵文字も使ってOK）。")
+        prompt_parts.append("\n【応答】\n上記のすべての情報を踏まえて、ユーザーの状況や過去の記録を活かしたパーソナライズされた応答をしてください。親しみやすく簡潔に（2-3文程度、絵文字も使ってOK）。")
 
         return "\n".join(prompt_parts)

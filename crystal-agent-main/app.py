@@ -11,6 +11,8 @@ from config.settings import Settings
 from utils.ai_brain import AIBrain
 from utils.notion_handler import NotionHandler
 from utils.text_analyzer import TextAnalyzer
+from utils.local_storage import LocalStorage
+from utils.context_engine import ContextEngine
 
 # ページ設定
 st.set_page_config(
@@ -137,13 +139,22 @@ def init_modules():
         if "ai_brain" not in st.session_state:
             st.session_state.ai_brain = AIBrain(Settings.GEMINI_API_KEY, Settings.AI_MODEL)
 
-        # Notion Handler初期化
-        if "notion_handler" not in st.session_state and Settings.USER_PROFILE_DB_ID and Settings.LIFE_LOG_DB_ID:
-            st.session_state.notion_handler = NotionHandler(
-                Settings.NOTION_API_KEY,
-                Settings.USER_PROFILE_DB_ID,
-                Settings.LIFE_LOG_DB_ID
-            )
+        # Local Storage初期化（常に使用）
+        if "local_storage" not in st.session_state:
+            st.session_state.local_storage = LocalStorage()
+
+        # Context Engine初期化（常に使用）
+        if "context_engine" not in st.session_state:
+            st.session_state.context_engine = ContextEngine(st.session_state.local_storage)
+
+        # Notion Handler初期化（オプション）
+        if "notion_handler" not in st.session_state and st.session_state.notion_ready:
+            if Settings.USER_PROFILE_DB_ID and Settings.LIFE_LOG_DB_ID:
+                st.session_state.notion_handler = NotionHandler(
+                    Settings.NOTION_API_KEY,
+                    Settings.USER_PROFILE_DB_ID,
+                    Settings.LIFE_LOG_DB_ID
+                )
 
         # Text Analyzer初期化
         if "text_analyzer" not in st.session_state:
@@ -155,7 +166,7 @@ def init_modules():
         return False
 
 def get_ai_response(user_message):
-    """AI応答を取得"""
+    """AI応答を取得（コンテキスト検索＋パーソナライズ強化版）"""
 
     # テキスト分析
     if "text_analyzer" in st.session_state:
@@ -171,24 +182,56 @@ def get_ai_response(user_message):
     # AI応答生成
     if st.session_state.api_ready and "ai_brain" in st.session_state:
         try:
-            # コンテキスト構築
+            # 【強化】コンテキストエンジンを活用
             context = {}
-            if "notion_handler" in st.session_state:
+
+            # LocalStorageまたはNotionからプロフィール取得
+            if "local_storage" in st.session_state:
+                profile = st.session_state.local_storage.get_user_profile()
+                if profile:
+                    context['profile'] = profile
+            elif "notion_handler" in st.session_state:
                 profile = st.session_state.notion_handler.get_user_profile()
                 if profile:
                     context['profile'] = profile
 
+            # 【新機能】コンテキスト検索エンジンからコンテキスト取得
+            if "context_engine" in st.session_state:
+                ai_context = st.session_state.context_engine.get_context_for_ai(user_message, context.get('profile'))
+                context.update(ai_context)
+
+                # 行動パターン分析を追加
+                patterns = st.session_state.context_engine.analyze_patterns()
+                if patterns:
+                    context['patterns'] = patterns
+
+                # 支出分析を追加（支出タイプの場合）
+                if detected_type == '支出':
+                    spending_insights = st.session_state.context_engine.get_spending_insights()
+                    if spending_insights:
+                        context['spending_insights'] = spending_insights
+
             # AI応答取得
             response = st.session_state.ai_brain.generate_response(user_message, context)
 
-            # Notionに保存
-            if "notion_handler" in st.session_state:
-                st.session_state.notion_handler.add_life_log(
+            # データ保存（LocalStorage に必ず保存）
+            if "local_storage" in st.session_state:
+                st.session_state.local_storage.add_life_log(
                     content=user_message,
                     type_=detected_type,
                     amount=detected_amount,
                     emotion=detected_emotion
                 )
+
+            # Notionにも保存（接続されている場合のみ）
+            if "notion_handler" in st.session_state:
+                if st.session_state.notion_handler.is_connected:
+                    st.session_state.notion_handler.add_life_log(
+                        content=user_message,
+                        type_=detected_type,
+                        amount=detected_amount,
+                        emotion=detected_emotion
+                    )
 
             return response, detected_type, detected_emotion
         except Exception as e:
@@ -257,27 +300,45 @@ with st.sidebar:
 
     st.markdown("---")
 
-    # 統計情報（モックデータ）
-    st.markdown("""
-    <div class="stat-card">
-        <div class="stat-number">28</div>
-        <div class="stat-label">記録した日数</div>
-    </div>
-    """, unsafe_allow_html=True)
+    # 統計情報（実データ）
+    if "local_storage" in st.session_state:
+        stats = st.session_state.local_storage.get_stats()
 
-    st.markdown("""
-    <div class="stat-card">
-        <div class="stat-number">156</div>
-        <div class="stat-label">総ログ数</div>
-    </div>
-    """, unsafe_allow_html=True)
+        # 総ログ数
+        total_logs = stats.get('total_logs', 0)
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">{total_logs}</div>
+            <div class="stat-label">総ログ数</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="stat-card">
-        <div class="stat-number">12</div>
-        <div class="stat-label">完了タスク</div>
-    </div>
-    """, unsafe_allow_html=True)
+        # タイプ別カウント
+        by_type = stats.get('by_type', {})
+        task_count = by_type.get('タスク', 0)
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">{task_count}</div>
+            <div class="stat-label">タスク記録</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 支出合計
+        total_amount = int(stats.get('total_amount', 0))
+        st.markdown(f"""
+        <div class="stat-card">
+            <div class="stat-number">¥{total_amount:,}</div>
+            <div class="stat-label">総支出</div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # フォールバック（初期状態）
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">総ログ数</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown("---")
 

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Agent - Apple Quality</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        apple: {
+                            blue: '#007AFF',
+                            darkblue: '#0051D5',
+                            lightblue: '#E8F0FE',
+                            gray: '#F5F5F7',
+                            darkgray: '#1D1D1F',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Apple Quality Custom Styles */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .chat-message {
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .frosted-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Scrollbar - Apple Style */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-white font-sans">
+
+    <!-- Main Container -->
+    <div class="h-screen flex flex-col max-w-4xl mx-auto">
+
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🔮</span>
+                <h1 class="text-2xl font-bold text-apple-darkgray tracking-tight">Crystal Agent</h1>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="notionStatus" class="text-sm text-gray-500">
+                    <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                    Notion: 接続中...
+                </span>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div id="statsBar" class="bg-apple-gray px-6 py-4 border-b border-gray-200">
+            <div class="grid grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-apple-darkgray" id="statTotal">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wide">総記録</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-apple-darkgray" id="statAmount">¥0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wide">総支出</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-apple-darkgray" id="statTypes">0</div>
+                    <div class="text-xs text-gray-500 uppercase tracking-wide">タイプ数</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto px-6 py-8 space-y-4">
+            <!-- Initial Message -->
+            <div class="chat-message flex gap-3">
+                <div class="w-10 h-10 rounded-full bg-apple-blue flex items-center justify-center text-white text-xl flex-shrink-0">
+                    🤖
+                </div>
+                <div class="flex-1">
+                    <div class="bg-white frosted-glass rounded-3xl px-6 py-4 shadow-lg border border-gray-100">
+                        <p class="text-apple-darkgray leading-relaxed">
+                            こんにちは！今日はどんなことがありましたか？
+                        </p>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 px-2">Crystal Agent</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden px-6 py-2">
+            <div class="flex items-center gap-2 text-gray-500">
+                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-sm">考え中...</span>
+            </div>
+        </div>
+
+        <!-- Input Bar - Fixed Bottom -->
+        <div class="bg-white border-t border-gray-100 px-6 py-4">
+            <form id="chatForm" class="flex gap-3">
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="メッセージを入力..."
+                    class="flex-1 px-6 py-3 bg-apple-gray border border-gray-200 rounded-full text-apple-darkgray placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-apple-blue/20 focus:border-apple-blue transition-all"
+                    autocomplete="off"
+                />
+                <button
+                    type="submit"
+                    class="px-8 py-3 bg-apple-blue hover:bg-apple-darkblue text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+                >
+                    送信
+                </button>
+            </form>
+            <div class="flex gap-2 mt-3">
+                <button onclick="quickInput('今日のランチに1000円使った')" class="text-xs px-4 py-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
+                    💰 支出を記録
+                </button>
+                <button onclick="quickInput('今日は良い天気だった')" class="text-xs px-4 py-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
+                    📔 日記を書く
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadStats();
+            await checkConnection();
+        });
+
+        // 接続チェック
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+
+                const notionStatus = document.getElementById('notionStatus');
+                if (data.notion === 'connected') {
+                    notionStatus.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>Notion: 接続OK';
+                } else {
+                    notionStatus.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>Notion: 未接続';
+                }
+            } catch (error) {
+                console.error('Connection check failed:', error);
+                document.getElementById('notionStatus').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1"></span>サーバー未接続';
+            }
+        }
+
+        // 統計データ読み込み
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                const stats = await response.json();
+
+                document.getElementById('statTotal').textContent = stats.total;
+
+                const totalAmount = stats.amounts.reduce((sum, amt) => sum + amt, 0);
+                document.getElementById('statAmount').textContent = `¥${totalAmount.toLocaleString()}`;
+
+                document.getElementById('statTypes').textContent = Object.keys(stats.types).length;
+
+                console.log('📊 統計データ取得:', stats);
+            } catch (error) {
+                console.error('Stats load failed:', error);
+            }
+        }
+
+        // フォーム送信
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // ユーザーメッセージを表示
+            addMessage(message, 'user');
+
+            // 入力欄をクリア
+            input.value = '';
+
+            // ローディング表示
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+
+            try {
+                // APIリクエスト
+                const response = await fetch(`${API_BASE_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        use_rag: true  // RAG機能を有効化
+                    })
+                });
+
+                const data = await response.json();
+
+                console.log('💬 チャット応答:', data);
+                console.log('🔍 RAG使用:', data.rag_used ? 'はい' : 'いいえ');
+
+                // AIメッセージを表示
+                addMessage(data.response, 'assistant', {
+                    type: data.detected_type,
+                    amount: data.detected_amount,
+                    saved: data.saved_to_notion
+                });
+
+                // 統計を更新
+                await loadStats();
+
+            } catch (error) {
+                console.error('Chat error:', error);
+                addMessage('申し訳ございません。エラーが発生しました。', 'assistant');
+            } finally {
+                document.getElementById('loadingIndicator').classList.add('hidden');
+            }
+        });
+
+        // メッセージ追加
+        function addMessage(text, role, meta = {}) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message flex gap-3';
+
+            if (role === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="flex-1"></div>
+                    <div class="flex-1">
+                        <div class="bg-gradient-to-br from-apple-lightblue to-blue-50 rounded-3xl px-6 py-4 shadow-md">
+                            <p class="text-apple-darkgray leading-relaxed">${escapeHtml(text)}</p>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2 px-2 text-right">You</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-apple-lightblue flex items-center justify-center text-2xl flex-shrink-0">
+                        👤
+                    </div>
+                `;
+            } else {
+                const metaInfo = meta.saved ? `
+                    <div class="flex gap-2 mt-2 text-xs text-gray-500">
+                        <span class="px-2 py-1 bg-green-50 text-green-600 rounded-full">✓ ${meta.type}</span>
+                        ${meta.amount ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-full">¥${meta.amount}</span>` : ''}
+                    </div>
+                ` : '';
+
+                messageDiv.innerHTML = `
+                    <div class="w-10 h-10 rounded-full bg-apple-blue flex items-center justify-center text-white text-xl flex-shrink-0">
+                        🤖
+                    </div>
+                    <div class="flex-1">
+                        <div class="bg-white frosted-glass rounded-3xl px-6 py-4 shadow-lg border border-gray-100">
+                            <p class="text-apple-darkgray leading-relaxed">${escapeHtml(text)}</p>
+                            ${metaInfo}
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2 px-2">Crystal Agent</p>
+                    </div>
+                `;
+            }
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // クイック入力
+        function quickInput(text) {
+            document.getElementById('messageInput').value = text;
+            document.getElementById('messageInput').focus();
+        }
+
+        // HTML エスケープ
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+
+</body>
+</html>

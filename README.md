@@ -42,10 +42,15 @@ Gemini AI と Notion データベースを連携させることで、
 | 役割 | 技術 | 理由 |
 |------|------|------|
 | **言語** | Python 3.10+ | シンプルで初心者にも優しい |
-| **UI** | Streamlit | コード数行で美しいUIが作れる |
-| **AI** | Google Gemini 1.5 Flash | 高性能で無料枠が大きい |
+| **Backend** | FastAPI | 高速・モダンなWeb API フレームワーク |
+| **Frontend** | HTML + Tailwind CSS | Apple Quality デザインを実現 |
+| **AI** | Google Gemini Pro | 高性能で安定したモデル |
 | **DB** | Notion API | 柔軟で拡張性が高い |
 | **環境管理** | python-dotenv | APIキーを安全に管理 |
+
+### アーキテクチャ
+- **Backend**: FastAPI でRESTful API を提供（RAG機能搭載）
+- **Frontend**: Vanilla JavaScript + Tailwind CSS（ビルド不要）
 
 ---
 
@@ -77,11 +82,30 @@ cp .env.example .env
 # 5. API接続テスト
 python test_api.py
 
-# 6. アプリを起動！
-streamlit run app.py
+# 6. アプリを起動！（ワンコマンド）
+python run.py
 ```
 
-ブラウザで `http://localhost:8501` を開く → **完了！** 🎉
+**これだけ！** バックエンドサーバーが起動し、ブラウザが自動的に開きます 🎉
+
+### 📱 手動で起動する場合
+
+```bash
+# Terminal 1: バックエンド起動
+uvicorn backend.main:app --reload --port 8000
+
+# Terminal 2: フロントエンド起動（ブラウザで開く）
+open frontend/index.html  # macOS
+xdg-open frontend/index.html  # Linux
+start frontend/index.html  # Windows
+```
+
+### 🎯 run.py の機能
+
+- ✅ バックエンド（FastAPI）を自動起動
+- ✅ ブラウザで自動的にフロントエンドを開く
+- ✅ Ctrl+C で両方を確実に停止
+- ✅ エラーチェック機能搭載
 
 ---
 

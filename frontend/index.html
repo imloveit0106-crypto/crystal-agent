@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal Agent - Apple Quality</title>
+    <title>Crystal Agent - AI Chat Assistant</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,13 +17,17 @@
                         apple: {
                             blue: '#007AFF',
                             darkblue: '#0051D5',
-                            lightblue: '#E8F0FE',
+                            lightblue: '#E3F2FD',
                             gray: '#F5F5F7',
                             darkgray: '#1D1D1F',
                         }
                     },
                     fontFamily: {
                         sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'apple': '0 4px 16px rgba(0, 0, 0, 0.08)',
+                        'apple-lg': '0 8px 32px rgba(0, 0, 0, 0.12)',
                     }
                 }
             }
@@ -37,29 +41,59 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        .chat-message {
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
         }
 
-        @keyframes slideUp {
+        /* メッセージアニメーション */
+        .message-enter {
+            animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes messageSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(20px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-        .frosted-glass {
+        /* タイピングインジケーター */
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6B7280;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+        }
+
+        /* Frosted Glass Effect */
+        .glass {
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background-color: rgba(255, 255, 255, 0.95);
         }
 
         /* Scrollbar - Apple Style */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         ::-webkit-scrollbar-track {
@@ -67,108 +101,169 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* メッセージ吹き出しのテール */
+        .message-tail-user::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid #007AFF;
+            border-bottom: 8px solid transparent;
+        }
+
+        .message-tail-ai::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border-right: 8px solid white;
+            border-bottom: 8px solid transparent;
+        }
+
+        /* 送信ボタンのパルス効果 */
+        @keyframes pulse-blue {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 122, 255, 0);
+            }
+        }
+
+        .btn-send:hover {
+            animation: pulse-blue 2s infinite;
         }
     </style>
 </head>
-<body class="bg-white font-sans">
+<body class="font-sans">
 
-    <!-- Main Container -->
-    <div class="h-screen flex flex-col max-w-4xl mx-auto">
+    <!-- Main Container - Glassmorphism Card -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl h-[90vh] glass rounded-3xl shadow-apple-lg overflow-hidden flex flex-col">
 
-        <!-- Header -->
-        <header class="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="text-3xl">🔮</span>
-                <h1 class="text-2xl font-bold text-apple-darkgray tracking-tight">Crystal Agent</h1>
-            </div>
-            <div class="flex items-center gap-2">
-                <span id="notionStatus" class="text-sm text-gray-500">
-                    <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                    Notion: 接続中...
-                </span>
-            </div>
-        </header>
-
-        <!-- Stats Bar -->
-        <div id="statsBar" class="bg-apple-gray px-6 py-4 border-b border-gray-200">
-            <div class="grid grid-cols-3 gap-4">
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-apple-darkgray" id="statTotal">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wide">総記録</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-apple-darkgray" id="statAmount">¥0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wide">総支出</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold text-apple-darkgray" id="statTypes">0</div>
-                    <div class="text-xs text-gray-500 uppercase tracking-wide">タイプ数</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chat Messages -->
-        <div id="chatMessages" class="flex-1 overflow-y-auto px-6 py-8 space-y-4">
-            <!-- Initial Message -->
-            <div class="chat-message flex gap-3">
-                <div class="w-10 h-10 rounded-full bg-apple-blue flex items-center justify-center text-white text-xl flex-shrink-0">
-                    🤖
-                </div>
-                <div class="flex-1">
-                    <div class="bg-white frosted-glass rounded-3xl px-6 py-4 shadow-lg border border-gray-100">
-                        <p class="text-apple-darkgray leading-relaxed">
-                            こんにちは！今日はどんなことがありましたか？
-                        </p>
+            <!-- Header - Elegant & Minimal -->
+            <header class="bg-gradient-to-r from-white/90 to-white/80 backdrop-blur-md border-b border-white/20 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <span class="text-2xl">🔮</span>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold bg-gradient-to-r from-apple-blue to-purple-600 bg-clip-text text-transparent">
+                                Crystal Agent
+                            </h1>
+                            <p class="text-sm text-gray-500 font-medium">Your AI Assistant</p>
+                        </div>
                     </div>
-                    <p class="text-xs text-gray-400 mt-2 px-2">Crystal Agent</p>
+                    <div class="flex items-center gap-3">
+                        <div id="statusIndicator" class="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-semibold text-green-700">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Bar - Clean & Modern -->
+            <div class="bg-gradient-to-r from-gray-50 to-white px-8 py-4 border-b border-gray-100">
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent" id="statTotal">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Records</div>
+                    </div>
+                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent" id="statAmount">¥0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Expenses</div>
+                    </div>
+                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
+                        <div class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-400 bg-clip-text text-transparent" id="statTypes">0</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Categories</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Loading Indicator -->
-        <div id="loadingIndicator" class="hidden px-6 py-2">
-            <div class="flex items-center gap-2 text-gray-500">
-                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span class="text-sm">考え中...</span>
+            <!-- Chat Messages - iMessage Style -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50">
+                <!-- Welcome Message -->
+                <div class="flex gap-3 items-end message-enter">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                        <span class="text-xl">🤖</span>
+                    </div>
+                    <div class="flex flex-col max-w-md">
+                        <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
+                            <p class="text-gray-800 leading-relaxed">
+                                こんにちは！今日はどんなことがありましたか？✨
+                            </p>
+                        </div>
+                        <span class="text-xs text-gray-400 mt-2 ml-2">Crystal Agent • たった今</span>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Input Bar - Fixed Bottom -->
-        <div class="bg-white border-t border-gray-100 px-6 py-4">
-            <form id="chatForm" class="flex gap-3">
-                <input
-                    type="text"
-                    id="messageInput"
-                    placeholder="メッセージを入力..."
-                    class="flex-1 px-6 py-3 bg-apple-gray border border-gray-200 rounded-full text-apple-darkgray placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-apple-blue/20 focus:border-apple-blue transition-all"
-                    autocomplete="off"
-                />
-                <button
-                    type="submit"
-                    class="px-8 py-3 bg-apple-blue hover:bg-apple-darkblue text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
-                >
-                    送信
-                </button>
-            </form>
-            <div class="flex gap-2 mt-3">
-                <button onclick="quickInput('今日のランチに1000円使った')" class="text-xs px-4 py-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
-                    💰 支出を記録
-                </button>
-                <button onclick="quickInput('今日は良い天気だった')" class="text-xs px-4 py-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
-                    📔 日記を書く
-                </button>
+            <!-- Typing Indicator (hidden by default) -->
+            <div id="typingIndicator" class="hidden px-8 pb-2">
+                <div class="flex gap-3 items-end">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                        <span class="text-xl">🤖</span>
+                    </div>
+                    <div class="bg-white rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
+            <!-- Input Area - Fixed Bottom -->
+            <div class="bg-white border-t border-gray-100 px-8 py-6">
+                <form id="chatForm" class="flex gap-3 items-center">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="メッセージを入力..."
+                        class="flex-1 px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-full text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-base"
+                        autocomplete="off"
+                    />
+                    <button
+                        type="submit"
+                        class="btn-send px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                        送信
+                    </button>
+                </form>
+
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button onclick="quickInput('今日のランチに1000円使った')" class="px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 text-sm font-semibold rounded-full border border-green-200 transition-all hover:scale-105">
+                        💰 支出を記録
+                    </button>
+                    <button onclick="quickInput('今日は良い天気だった')" class="px-4 py-2 bg-gradient-to-r from-blue-50 to-sky-50 hover:from-blue-100 hover:to-sky-100 text-blue-700 text-sm font-semibold rounded-full border border-blue-200 transition-all hover:scale-105">
+                        📔 日記を書く
+                    </button>
+                    <button onclick="quickInput('明日までに資料を完成させる')" class="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 text-purple-700 text-sm font-semibold rounded-full border border-purple-200 transition-all hover:scale-105">
+                        ✅ タスクを追加
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -187,15 +282,28 @@
                 const response = await fetch(`${API_BASE_URL}/`);
                 const data = await response.json();
 
-                const notionStatus = document.getElementById('notionStatus');
-                if (data.notion === 'connected') {
-                    notionStatus.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>Notion: 接続OK';
+                const statusIndicator = document.getElementById('statusIndicator');
+                if (data.notion === 'connected' && data.gemini === 'connected') {
+                    statusIndicator.innerHTML = `
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-xs font-semibold text-green-700">Online</span>
+                    `;
+                    statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full';
                 } else {
-                    notionStatus.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>Notion: 未接続';
+                    statusIndicator.innerHTML = `
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <span class="text-xs font-semibold text-yellow-700">Limited</span>
+                    `;
+                    statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-full';
                 }
             } catch (error) {
                 console.error('Connection check failed:', error);
-                document.getElementById('notionStatus').innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1"></span>サーバー未接続';
+                const statusIndicator = document.getElementById('statusIndicator');
+                statusIndicator.innerHTML = `
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span class="text-xs font-semibold text-red-700">Offline</span>
+                `;
+                statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-red-50 rounded-full';
             }
         }
 
@@ -205,17 +313,36 @@
                 const response = await fetch(`${API_BASE_URL}/stats`);
                 const stats = await response.json();
 
-                document.getElementById('statTotal').textContent = stats.total;
+                // アニメーション付きで数値を更新
+                animateNumber('statTotal', stats.total);
 
                 const totalAmount = stats.amounts.reduce((sum, amt) => sum + amt, 0);
-                document.getElementById('statAmount').textContent = `¥${totalAmount.toLocaleString()}`;
+                animateNumber('statAmount', totalAmount, '¥');
 
-                document.getElementById('statTypes').textContent = Object.keys(stats.types).length;
+                animateNumber('statTypes', Object.keys(stats.types).length);
 
                 console.log('📊 統計データ取得:', stats);
             } catch (error) {
                 console.error('Stats load failed:', error);
             }
+        }
+
+        // 数値アニメーション
+        function animateNumber(elementId, targetValue, prefix = '') {
+            const element = document.getElementById(elementId);
+            const duration = 1000;
+            const steps = 30;
+            const stepValue = targetValue / steps;
+            let currentValue = 0;
+
+            const timer = setInterval(() => {
+                currentValue += stepValue;
+                if (currentValue >= targetValue) {
+                    currentValue = targetValue;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(currentValue).toLocaleString();
+            }, duration / steps);
         }
 
         // フォーム送信
@@ -233,8 +360,8 @@
             // 入力欄をクリア
             input.value = '';
 
-            // ローディング表示
-            document.getElementById('loadingIndicator').classList.remove('hidden');
+            // タイピングインジケーターを表示
+            showTypingIndicator();
 
             try {
                 // APIリクエスト
@@ -245,7 +372,7 @@
                     },
                     body: JSON.stringify({
                         message: message,
-                        use_rag: true  // RAG機能を有効化
+                        use_rag: true
                     })
                 });
 
@@ -253,6 +380,9 @@
 
                 console.log('💬 チャット応答:', data);
                 console.log('🔍 RAG使用:', data.rag_used ? 'はい' : 'いいえ');
+
+                // タイピングインジケーターを非表示
+                hideTypingIndicator();
 
                 // AIメッセージを表示
                 addMessage(data.response, 'assistant', {
@@ -266,55 +396,79 @@
 
             } catch (error) {
                 console.error('Chat error:', error);
-                addMessage('申し訳ございません。エラーが発生しました。', 'assistant');
-            } finally {
-                document.getElementById('loadingIndicator').classList.add('hidden');
+                hideTypingIndicator();
+                addMessage('申し訳ございません。接続エラーが発生しました。', 'assistant');
             }
         });
+
+        // タイピングインジケーター表示
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').classList.remove('hidden');
+            scrollToBottom();
+        }
+
+        // タイピングインジケーター非表示
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').classList.add('hidden');
+        }
 
         // メッセージ追加
         function addMessage(text, role, meta = {}) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'chat-message flex gap-3';
+            messageDiv.className = 'message-enter';
+
+            const now = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
 
             if (role === 'user') {
                 messageDiv.innerHTML = `
-                    <div class="flex-1"></div>
-                    <div class="flex-1">
-                        <div class="bg-gradient-to-br from-apple-lightblue to-blue-50 rounded-3xl px-6 py-4 shadow-md">
-                            <p class="text-apple-darkgray leading-relaxed">${escapeHtml(text)}</p>
+                    <div class="flex gap-3 items-end justify-end">
+                        <div class="flex flex-col items-end max-w-md">
+                            <div class="relative bg-gradient-to-r from-blue-500 to-blue-600 message-tail-user rounded-3xl rounded-br-md px-6 py-4 shadow-lg">
+                                <p class="text-white leading-relaxed">${escapeHtml(text)}</p>
+                            </div>
+                            <span class="text-xs text-gray-400 mt-2 mr-2">あなた • ${now}</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2 px-2 text-right">You</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-full bg-apple-lightblue flex items-center justify-center text-2xl flex-shrink-0">
-                        👤
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-lg flex-shrink-0">
+                            <span class="text-xl">👤</span>
+                        </div>
                     </div>
                 `;
             } else {
                 const metaInfo = meta.saved ? `
-                    <div class="flex gap-2 mt-2 text-xs text-gray-500">
-                        <span class="px-2 py-1 bg-green-50 text-green-600 rounded-full">✓ ${meta.type}</span>
-                        ${meta.amount ? `<span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-full">¥${meta.amount}</span>` : ''}
+                    <div class="flex gap-2 mt-3">
+                        <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold">✓ ${meta.type}</span>
+                        ${meta.amount ? `<span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">¥${meta.amount.toLocaleString()}</span>` : ''}
                     </div>
                 ` : '';
 
                 messageDiv.innerHTML = `
-                    <div class="w-10 h-10 rounded-full bg-apple-blue flex items-center justify-center text-white text-xl flex-shrink-0">
-                        🤖
-                    </div>
-                    <div class="flex-1">
-                        <div class="bg-white frosted-glass rounded-3xl px-6 py-4 shadow-lg border border-gray-100">
-                            <p class="text-apple-darkgray leading-relaxed">${escapeHtml(text)}</p>
-                            ${metaInfo}
+                    <div class="flex gap-3 items-end">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                            <span class="text-xl">🤖</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2 px-2">Crystal Agent</p>
+                        <div class="flex flex-col max-w-md">
+                            <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
+                                <p class="text-gray-800 leading-relaxed">${escapeHtml(text)}</p>
+                                ${metaInfo}
+                            </div>
+                            <span class="text-xs text-gray-400 mt-2 ml-2">Crystal Agent • ${now}</span>
+                        </div>
                     </div>
                 `;
             }
 
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            scrollToBottom();
+        }
+
+        // 下までスクロール
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
         }
 
         // クイック入力

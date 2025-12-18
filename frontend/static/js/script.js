@@ -136,7 +136,7 @@ async function sendChatMessage(message) {
 // ============================================
 
 /**
- * フォーム送信ハンドラー
+ * フォーム送信ハンドラー - エラーハンドリング強化版
  */
 async function handleFormSubmit(e) {
     e.preventDefault();
@@ -144,16 +144,20 @@ async function handleFormSubmit(e) {
     const input = document.getElementById('messageInput');
     const message = input.value.trim();
 
-    if (!message) return;
+    // 空送信時のエラーハンドリング - 震えるアニメーション
+    if (!message) {
+        shakeInput(input);
+        return;
+    }
 
-    // ユーザーメッセージを表示
+    // ユーザーメッセージを表示（強化版アニメーション）
     addMessage(message, 'user');
 
     // 入力欄をクリア
     input.value = '';
 
-    // タイピングインジケーターを表示
-    showTypingIndicator();
+    // タイピングインジケーターを表示（強化版）
+    showTypingIndicatorEnhanced();
 
     try {
         // APIリクエスト
@@ -162,14 +166,14 @@ async function handleFormSubmit(e) {
         // タイピングインジケーターを非表示
         hideTypingIndicator();
 
-        // AIメッセージを表示
+        // AIメッセージを表示（強化版アニメーション）
         addMessage(data.response, 'assistant', {
             type: data.detected_type,
             amount: data.detected_amount,
             saved: data.saved_to_notion
         });
 
-        // 統計を更新
+        // 統計を更新（スムーズアニメーション）
         await loadStats();
 
     } catch (error) {
@@ -179,12 +183,14 @@ async function handleFormSubmit(e) {
 }
 
 /**
- * メッセージを追加
+ * メッセージを追加 - Apple Quality強化版
  */
 function addMessage(text, role, meta = {}) {
     const messagesContainer = document.getElementById('chatMessages');
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message-enter';
+
+    // 強化版アニメーションを適用
+    messageDiv.className = 'message-enter-advanced';
 
     const now = new Date().toLocaleTimeString('ja-JP', {
         hour: '2-digit',
@@ -195,10 +201,10 @@ function addMessage(text, role, meta = {}) {
         messageDiv.innerHTML = `
             <div class="flex gap-3 items-end justify-end">
                 <div class="flex flex-col items-end max-w-md">
-                    <div class="relative bg-gradient-to-r from-blue-500 to-blue-600 message-tail-user rounded-3xl rounded-br-md px-6 py-4 shadow-lg" style="border-left-color: #3b82f6;">
-                        <p class="text-white leading-relaxed">${escapeHtml(text)}</p>
+                    <div class="relative bg-gradient-to-r from-blue-500 to-blue-600 message-tail-user rounded-3xl rounded-br-md px-6 py-4 shadow-lg hover-lift" style="border-left-color: #3b82f6;">
+                        <p class="text-white message-text">${escapeHtml(text)}</p>
                     </div>
-                    <span class="text-xs text-gray-400 mt-2 mr-2">あなた • ${now}</span>
+                    <span class="text-caption text-gray-400 mt-2 mr-2">あなた • ${now}</span>
                 </div>
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-lg flex-shrink-0">
                     <span class="text-xl">👤</span>
@@ -208,8 +214,8 @@ function addMessage(text, role, meta = {}) {
     } else {
         const metaInfo = meta.saved ? `
             <div class="flex gap-2 mt-3">
-                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full font-semibold">✓ ${meta.type}</span>
-                ${meta.amount ? `<span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-semibold">¥${meta.amount.toLocaleString()}</span>` : ''}
+                <span class="px-3 py-1 bg-green-100 text-green-700 text-caption rounded-full font-semibold hover-lift">✓ ${meta.type}</span>
+                ${meta.amount ? `<span class="px-3 py-1 bg-blue-100 text-blue-700 text-caption rounded-full font-semibold hover-lift">¥${meta.amount.toLocaleString()}</span>` : ''}
             </div>
         ` : '';
 
@@ -219,18 +225,18 @@ function addMessage(text, role, meta = {}) {
                     <span class="text-xl">🤖</span>
                 </div>
                 <div class="flex flex-col max-w-md">
-                    <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
-                        <p class="text-gray-800 leading-relaxed">${escapeHtml(text)}</p>
+                    <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple hover-lift">
+                        <p class="text-gray-800 message-text">${escapeHtml(text)}</p>
                         ${metaInfo}
                     </div>
-                    <span class="text-xs text-gray-400 mt-2 ml-2">Crystal Agent • ${now}</span>
+                    <span class="text-caption text-gray-400 mt-2 ml-2">Crystal Agent • ${now}</span>
                 </div>
             </div>
         `;
     }
 
     messagesContainer.appendChild(messageDiv);
-    scrollToBottom();
+    scrollToBottomSmooth();
 }
 
 /**
@@ -249,13 +255,24 @@ function hideTypingIndicator() {
 }
 
 /**
- * 下までスクロール
+ * 下までスクロール - 基本版
  */
 function scrollToBottom() {
+    scrollToBottomSmooth();
+}
+
+/**
+ * 下までスクロール - 洗練されたスムーズスクロール
+ */
+function scrollToBottomSmooth() {
     const messagesContainer = document.getElementById('chatMessages');
-    messagesContainer.scrollTo({
-        top: messagesContainer.scrollHeight,
-        behavior: 'smooth'
+
+    // より自然なスクロール体験
+    requestAnimationFrame(() => {
+        messagesContainer.scrollTo({
+            top: messagesContainer.scrollHeight,
+            behavior: 'smooth'
+        });
     });
 }
 
@@ -286,6 +303,51 @@ function animateNumber(elementId, targetValue, prefix = '') {
 }
 
 // ============================================
+// Error Handling & Special Effects
+// ============================================
+
+/**
+ * 入力欄を震わせる（空送信時）
+ */
+function shakeInput(inputElement) {
+    // エラー状態を追加
+    inputElement.classList.add('shake', 'input-error');
+
+    // プレースホルダーを一時的に変更してフィードバック
+    const originalPlaceholder = inputElement.placeholder;
+    inputElement.placeholder = 'メッセージを入力してください';
+
+    // アニメーション完了後にクラスを削除
+    setTimeout(() => {
+        inputElement.classList.remove('shake', 'input-error');
+        inputElement.placeholder = originalPlaceholder;
+    }, 500);
+
+    // フォーカスを当てて再入力を促す
+    inputElement.focus();
+}
+
+/**
+ * 強化版タイピングインジケーター表示
+ */
+function showTypingIndicatorEnhanced() {
+    const indicator = document.getElementById('typingIndicator');
+
+    // 既存のドットを強化版に置き換え
+    const typingContainer = indicator.querySelector('.typing-indicator');
+    if (typingContainer) {
+        typingContainer.innerHTML = `
+            <div class="typing-dot-enhanced"></div>
+            <div class="typing-dot-enhanced"></div>
+            <div class="typing-dot-enhanced"></div>
+        `;
+    }
+
+    indicator.classList.remove('hidden');
+    scrollToBottomSmooth();
+}
+
+// ============================================
 // Utility Functions
 // ============================================
 
@@ -296,6 +358,12 @@ function quickInput(text) {
     const input = document.getElementById('messageInput');
     input.value = text;
     input.focus();
+
+    // 微細なフィードバック：入力欄を一瞬ハイライト
+    input.classList.add('focus-ring');
+    setTimeout(() => {
+        input.classList.remove('focus-ring');
+    }, 200);
 }
 
 /**

@@ -1,0 +1,276 @@
+/* ============================================
+   Crystal Agent - Custom Styles
+   Apple Quality Design System
+   ============================================ */
+
+/* Base Styles */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+/* メッセージスライドイン - ポンッと出る演出 */
+.message-enter {
+    animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes messageSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    60% {
+        transform: translateY(-5px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* タイピングインジケーター */
+.typing-indicator {
+    display: inline-flex;
+    gap: 4px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #6B7280;
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingBounce {
+    0%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-8px);
+    }
+}
+
+/* 送信ボタンのパルス効果 */
+@keyframes pulse-blue {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(0, 122, 255, 0);
+    }
+}
+
+.btn-send:hover {
+    animation: pulse-blue 2s infinite;
+}
+
+/* 統計数値のカウントアップ - シマー効果 */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.stat-number {
+    background: linear-gradient(
+        90deg,
+        currentColor 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        currentColor 100%
+    );
+    background-size: 1000px 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shimmer 3s infinite;
+}
+
+/* ============================================
+   Glassmorphism Effects
+   ============================================ */
+
+.glass {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.glass-light {
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* ============================================
+   Custom Scrollbar - Apple Style
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   Message Bubble Tails - iMessage Style
+   ============================================ */
+
+/* ユーザーメッセージのテール（右） */
+.message-tail-user::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -8px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid;
+    border-left-color: inherit;
+    border-bottom: 8px solid transparent;
+}
+
+/* AIメッセージのテール（左） */
+.message-tail-ai::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-right: 8px solid white;
+    border-bottom: 8px solid transparent;
+}
+
+/* ============================================
+   Special Effects
+   ============================================ */
+
+/* ホバー時の浮遊効果 */
+.hover-float {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-float:hover {
+    transform: translateY(-4px);
+}
+
+/* グロー効果 */
+.glow {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.glow:hover {
+    box-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
+}
+
+/* フェードイン */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* ============================================
+   Loading States
+   ============================================ */
+
+.loading-shimmer {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* ============================================
+   Status Indicators
+   ============================================ */
+
+.status-pulse {
+    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ============================================
+   Responsive Enhancements
+   ============================================ */
+
+@media (max-width: 768px) {
+    .message-enter {
+        animation: messageSlideInMobile 0.3s ease-out;
+    }
+
+    @keyframes messageSlideInMobile {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .glass {
+        background: white;
+        backdrop-filter: none;
+    }
+}

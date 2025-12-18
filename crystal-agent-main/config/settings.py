@@ -5,7 +5,7 @@ load_dotenv()
 
 class Settings:
     APP_NAME = "Crystal Agent"
-    APP_VERSION = "0.1.0"
+    APP_VERSION = "0.2.0"
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     NOTION_API_KEY = os.getenv("NOTION_API_KEY", "")
     USER_PROFILE_DB_ID = os.getenv("NOTION_USER_PROFILE_DB_ID", "")

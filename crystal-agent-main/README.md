@@ -4,9 +4,24 @@
 
 Python + Gemini + Notion で作る、パーソナライズされたAI秘書
 
-![Status](https://img.shields.io/badge/Status-Prototype-yellow)
+![Status](https://img.shields.io/badge/Status-Beta-green)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+## 📢 最新情報（2025-12-18）
+
+### ✨ v0.2.0 リリース！
+
+Crystal Agentが大幅にパワーアップしました！
+
+**新機能:**
+- 🤖 **AIプロンプト強化** - 親しみやすい友達のような口調で応答
+- 🔍 **テキスト分析改善** - キーワードを3倍以上に拡充
+- 💰 **金額抽出機能** - 複数パターンに対応（円、¥、数字のみ）
+- 🛡️ **エラーハンドリング強化** - Notion未接続でも正常動作
+- 📊 **接続状態表示** - Gemini/Notionの状態を個別表示
+
+**重要:** Gemini APIだけで動作するようになりました！Notionはオプションです。
 
 ---
 
@@ -213,11 +228,13 @@ crystal-agent/
 - ✅ モックデータで動作確認
 - ✅ GitHub セットアップ
 
-### Phase 2: 基本機能（進行中 🚧）
-- ⏳ Gemini API 接続
-- ⏳ Notion API 接続
-- ⏳ 自動分類機能
-- ⏳ データ保存機能
+### Phase 2: 基本機能 ✅
+- ✅ Gemini API 接続
+- ✅ 自動分類機能（支出・タスク・悩み・日記）
+- ✅ 感情分析機能
+- ✅ AIプロンプト強化（Crystal Agentの性格付け）
+- ✅ エラーハンドリング強化
+- 🔧 Notion API 接続（オプション・設定中）
 
 ### Phase 3: 高度な機能（予定 📅）
 - ⏳ コンテキスト検索

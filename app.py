@@ -148,168 +148,196 @@ def get_notion_stats():
         st.error(f"データ取得エラー: {e}")
         return {"total": 0, "types": {}, "recent": []}
 
-# カスタムCSS - 高級感のあるクリーム色 × Times New Roman テーマ
+# カスタムCSS - Apple Quality: 究極のミニマリズムと洗練
 st.markdown("""
 <style>
-    /* フォント設定 - Times New Roman で統一 */
+    /* フォント設定 - Apple San Francisco UI */
     * {
-        font-family: 'Times New Roman', Times, serif !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif !important;
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
     }
 
-    /* アプリ全体の背景色 - クリーム色 */
+    /* アプリ全体の背景 - Pure White */
     .stApp {
-        background-color: #FFFEF5 !important;
+        background-color: #FFFFFF !important;
     }
 
     /* メインコンテンツエリア */
     .main .block-container {
-        background-color: #FFFEF5 !important;
+        background-color: #FFFFFF !important;
+        padding: 3rem 2rem !important;
+        max-width: 1200px !important;
     }
 
-    /* 文字色 - 真っ黒 */
+    /* 文字色 - Deep Black */
     * {
-        color: #000000 !important;
+        color: #1D1D1F !important;
     }
 
-    /* タイトル - 大きくスタイリッシュに */
+    /* タイトル - Apple Style Typography */
     h1 {
         font-size: 3.5rem !important;
         font-weight: 700 !important;
-        letter-spacing: 0.05em !important;
-        margin-bottom: 1.5rem !important;
+        letter-spacing: -0.03em !important;
+        margin-bottom: 2rem !important;
         text-align: center !important;
+        line-height: 1.1 !important;
     }
 
     /* サブタイトル */
     h2, h3 {
-        font-size: 1.5rem !important;
+        font-size: 1.75rem !important;
         font-weight: 600 !important;
-        margin-top: 2rem !important;
-        margin-bottom: 1rem !important;
-        letter-spacing: 0.03em !important;
-    }
-
-    /* 本文 */
-    p, div, span {
-        font-size: 1.1rem !important;
-        line-height: 1.8 !important;
-    }
-
-    /* チャットメッセージ - 枠線削除 */
-    .stChatMessage {
-        border: none !important;
-        border-radius: 16px !important;
-        padding: 1.2rem !important;
-        margin-bottom: 1rem !important;
-    }
-
-    /* ユーザーメッセージ - 薄い青色 */
-    .stChatMessage[data-testid="user-message"] {
-        background-color: #E3F2FD !important;
-        border-radius: 16px !important;
-    }
-
-    /* AIメッセージ - 白 + 影 */
-    .stChatMessage[data-testid="assistant-message"] {
-        background-color: #FFFFFF !important;
-        border-radius: 16px !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-    }
-
-    /* メトリックカード - クリーム色に調和 */
-    .metric-card {
-        background: #000000 !important;
-        border: 2px solid #000000 !important;
-        padding: 2rem !important;
-        border-radius: 12px !important;
-        color: #FFFEF5 !important;
-        text-align: center !important;
-        margin: 0.75rem 0 !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .metric-card:hover {
-        background: #FFFEF5 !important;
-        color: #000000 !important;
-    }
-
-    .metric-number {
-        font-size: 3rem !important;
-        font-weight: 700 !important;
+        margin-top: 3rem !important;
+        margin-bottom: 1.5rem !important;
         letter-spacing: -0.02em !important;
     }
 
-    .metric-label {
-        font-size: 1rem !important;
-        font-weight: 500 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.1em !important;
-        margin-top: 0.5rem !important;
+    /* 本文 - 読みやすさ最優先 */
+    p, div, span {
+        font-size: 1.0625rem !important;
+        line-height: 1.6 !important;
+        font-weight: 400 !important;
     }
 
-    /* サイドバー - クリーム色の薄いバージョン */
+    /* チャットメッセージ - 深度のある影 */
+    .stChatMessage {
+        border: none !important;
+        border-radius: 24px !important;
+        padding: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .stChatMessage:hover {
+        transform: translateY(-2px) !important;
+    }
+
+    /* ユーザーメッセージ - Apple Blue Accent */
+    .stChatMessage[data-testid="user-message"] {
+        background: linear-gradient(135deg, #E8F0FE 0%, #F0F4FF 100%) !important;
+        box-shadow: 0 4px 16px rgba(0, 122, 255, 0.08) !important;
+    }
+
+    /* AIメッセージ - Frosted Glass Effect */
+    .stChatMessage[data-testid="assistant-message"] {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    }
+
+    /* メトリックカード - Modern Depth */
+    .metric-card {
+        background: linear-gradient(135deg, #1D1D1F 0%, #2D2D2F 100%) !important;
+        border: none !important;
+        padding: 2.5rem !important;
+        border-radius: 28px !important;
+        color: #FFFFFF !important;
+        text-align: center !important;
+        margin: 1rem 0 !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-4px) scale(1.02) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .metric-number {
+        font-size: 3.5rem !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.04em !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .metric-label {
+        font-size: 0.9375rem !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.08em !important;
+        opacity: 0.8 !important;
+    }
+
+    /* サイドバー - Clean Separation */
     [data-testid="stSidebar"] {
-        background-color: #FFF9E6 !important;
-        border-right: 2px solid #E8E4D5 !important;
+        background: linear-gradient(180deg, #F5F5F7 0%, #FAFAFA 100%) !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+        padding: 2rem 1.5rem !important;
     }
 
     [data-testid="stSidebar"] * {
-        color: #000000 !important;
+        color: #1D1D1F !important;
     }
 
-    /* ボタン - エレガントなスタイル */
+    /* ボタン - Capsule Design */
     .stButton button {
-        border: 2px solid #000000 !important;
-        background: #FFFEF5 !important;
-        color: #000000 !important;
+        border: none !important;
+        background: #007AFF !important;
+        color: #FFFFFF !important;
         font-weight: 600 !important;
-        border-radius: 12px !important;
-        padding: 0.75rem 1.5rem !important;
-        transition: all 0.3s ease !important;
-        font-size: 1.1rem !important;
+        border-radius: 9999px !important;
+        padding: 0.875rem 2rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        font-size: 1.0625rem !important;
+        box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3) !important;
+        letter-spacing: -0.01em !important;
     }
 
     .stButton button:hover {
-        background: #000000 !important;
-        color: #FFFEF5 !important;
+        background: #0051D5 !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4) !important;
     }
 
-    /* 入力欄 */
+    .stButton button:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3) !important;
+    }
+
+    /* 入力欄 - Refined Input */
     .stTextInput input, .stChatInput input {
-        border: 2px solid #E8E4D5 !important;
-        border-radius: 12px !important;
-        background-color: #FFFFFF !important;
-        padding: 0.75rem !important;
-        font-size: 1.1rem !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        border-radius: 20px !important;
+        background-color: #F5F5F7 !important;
+        padding: 1rem 1.5rem !important;
+        font-size: 1.0625rem !important;
+        transition: all 0.3s ease !important;
     }
 
     .stTextInput input:focus, .stChatInput input:focus {
-        border-color: #000000 !important;
-        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* グラフエリア */
-    .js-plotly-plot {
+        border-color: #007AFF !important;
         background-color: #FFFFFF !important;
-        border-radius: 12px !important;
-        padding: 1rem !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1) !important;
+        outline: none !important;
     }
 
-    /* 区切り線 */
+    /* グラフエリア - Card Style */
+    .js-plotly-plot {
+        background: #FAFAFA !important;
+        border-radius: 24px !important;
+        padding: 1.5rem !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* 区切り線 - Subtle Divider */
     hr {
-        border-color: #E8E4D5 !important;
-        margin: 2rem 0 !important;
+        border: none !important;
+        height: 1px !important;
+        background: rgba(0, 0, 0, 0.06) !important;
+        margin: 3rem 0 !important;
     }
 
-    /* スピナー */
+    /* スピナー - Apple Blue */
     .stSpinner > div {
-        border-top-color: #000000 !important;
+        border-top-color: #007AFF !important;
     }
 
-    /* チャットアイコンの修正 - Material Icons を正しく表示 */
+    /* チャットアイコン - Material Icons Fix */
     .stChatMessage [data-testid="chatAvatarIcon-user"] span,
     .stChatMessage [data-testid="chatAvatarIcon-assistant"] span,
     span[data-testid*="stMarkdownContainer"] span[class*="material"],
@@ -321,10 +349,24 @@ st.markdown("""
         -webkit-font-smoothing: antialiased !important;
     }
 
-    /* アイコンのサイズ調整 */
-    .stChatMessage [data-testid="chatAvatarIcon-user"] span,
-    .stChatMessage [data-testid="chatAvatarIcon-assistant"] span {
-        font-size: 1.5rem !important;
+    /* Success/Error Messages - Refined */
+    .stSuccess, .stError, .stWarning {
+        border-radius: 16px !important;
+        border: none !important;
+        padding: 1rem 1.5rem !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Toast Notifications */
+    .stToast {
+        border-radius: 20px !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+    }
+
+    /* Smooth Scrolling */
+    html {
+        scroll-behavior: smooth !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -370,48 +412,74 @@ with st.sidebar:
             </div>
             """, unsafe_allow_html=True)
 
-        # タイプ別グラフ
+        # タイプ別グラフ - Apple Color Palette
         if stats['types']:
             st.subheader("📈 タイプ別内訳")
             fig = px.pie(
                 values=list(stats['types'].values()),
                 names=list(stats['types'].keys()),
-                color_discrete_sequence=['#000000', '#404040', '#808080', '#BFBFBF', '#E0E0E0']
+                color_discrete_sequence=['#007AFF', '#5AC8FA', '#34C759', '#FF9500', '#FF3B30']
             )
             fig.update_layout(
-                height=250,
-                margin=dict(l=0, r=0, t=30, b=0),
+                height=280,
+                margin=dict(l=0, r=0, t=40, b=0),
                 showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=-0.2),
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=-0.3,
+                    xanchor="center",
+                    x=0.5,
+                    font=dict(size=13)
+                ),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#000000', size=12)
+                font=dict(color='#1D1D1F', size=13, family='-apple-system, BlinkMacSystemFont, sans-serif')
+            )
+            fig.update_traces(
+                textposition='inside',
+                textinfo='percent+label',
+                marker=dict(line=dict(color='#FFFFFF', width=3))
             )
             st.plotly_chart(fig, use_container_width=True)
 
-        # 支出トレンド
+        # 支出トレンド - Apple Graph Style
         if len(stats['amounts']) > 1:
             st.subheader("💰 支出トレンド")
             fig = go.Figure()
             fig.add_trace(go.Scatter(
                 y=stats['amounts'][-10:],  # 最新10件
                 mode='lines+markers',
-                line=dict(color='#000000', width=2),
-                marker=dict(size=6, color='#000000'),
+                line=dict(color='#007AFF', width=3, shape='spline'),
+                marker=dict(
+                    size=8,
+                    color='#007AFF',
+                    line=dict(color='#FFFFFF', width=2)
+                ),
                 fill='tozeroy',
-                fillcolor='rgba(0,0,0,0.05)'
+                fillcolor='rgba(0, 122, 255, 0.1)'
             ))
             fig.update_layout(
-                height=200,
-                margin=dict(l=0, r=0, t=10, b=0),
+                height=240,
+                margin=dict(l=20, r=20, t=20, b=40),
                 showlegend=False,
                 xaxis_title="記録",
-                yaxis_title="金額(円)",
+                yaxis_title="金額 (円)",
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#000000', size=12),
-                xaxis=dict(showgrid=True, gridcolor='#E5E5E5'),
-                yaxis=dict(showgrid=True, gridcolor='#E5E5E5')
+                font=dict(color='#1D1D1F', size=13, family='-apple-system, BlinkMacSystemFont, sans-serif'),
+                xaxis=dict(
+                    showgrid=False,
+                    showline=True,
+                    linecolor='rgba(0,0,0,0.1)',
+                    zeroline=False
+                ),
+                yaxis=dict(
+                    showgrid=True,
+                    gridcolor='rgba(0,0,0,0.06)',
+                    showline=False,
+                    zeroline=False
+                )
             )
             st.plotly_chart(fig, use_container_width=True)
 

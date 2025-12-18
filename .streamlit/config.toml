@@ -1,12 +1,12 @@
 # Streamlit 設定ファイル
-# 高級感のあるクリーム色 × Times New Roman テーマ
+# Apple Quality: 究極のミニマリズムと洗練
 
 [theme]
-primaryColor = "#000000"
-backgroundColor = "#FFFEF5"
-secondaryBackgroundColor = "#FFF9E6"
-textColor = "#000000"
-font = "serif"
+primaryColor = "#007AFF"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F5F7"
+textColor = "#1D1D1F"
+font = "sans serif"
 
 [browser]
 gatherUsageStats = false

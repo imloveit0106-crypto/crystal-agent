@@ -8,6 +8,9 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <!-- Tailwind Custom Configuration -->
     <script>
         tailwind.config = {
@@ -52,24 +55,24 @@
             </div>
         </header>
 
+        <!-- Artwork Area (Notion Style) -->
+        <div class="bg-white border-b border-gray-100 py-8">
+            <div class="max-w-3xl mx-auto text-center">
+                <img id="heroArtwork"
+                     src=""
+                     alt="Illustration"
+                     class="mx-auto h-32 opacity-60 grayscale"
+                     style="filter: grayscale(100%);">
+            </div>
+        </div>
+
         <!-- Chat Container -->
         <main class="flex-1 overflow-hidden flex flex-col bg-white">
 
             <!-- Messages Area -->
             <div id="chatContainer" class="flex-1 overflow-y-auto px-4 py-8">
                 <div class="max-w-3xl mx-auto space-y-6">
-
-                    <!-- Welcome Message -->
-                    <div class="text-center py-16">
-                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 mb-3">Welcome</h2>
-                        <p class="text-base leading-relaxed text-gray-600 max-w-xl mx-auto">
-                            あなたの日々の行動や思考を記録し、<br>
-                            AIがサポートします。
-                        </p>
-                    </div>
-
                     <!-- Messages will be inserted here -->
-
                 </div>
             </div>
 
@@ -134,8 +137,9 @@
                     <button
                         onclick="sendMessage()"
                         id="sendButton"
-                        class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base">
-                        送信
+                        class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base flex items-center gap-2">
+                        <span>送信</span>
+                        <i data-lucide="arrow-up" class="w-4 h-4"></i>
                     </button>
                 </div>
 
@@ -146,6 +150,23 @@
 
     <!-- JavaScript -->
     <script src="/static/js/script.js"></script>
+
+    <!-- Initialize Lucide Icons & Artwork -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Random Artwork Selection (Notion Style)
+        const artworks = [
+            'https://i.imgur.com/Pl5KbPL.png',  // 読書しながら箱に座る
+            'https://i.imgur.com/1nxuEnz.png',  // 時計とヘッドフォン
+            'https://i.imgur.com/Pl5KbPL.png',  // 椅子に座ってコーヒー
+            'https://i.imgur.com/wODM5z4.png'   // コーヒーカップと人
+        ];
+
+        const randomArtwork = artworks[Math.floor(Math.random() * artworks.length)];
+        document.getElementById('heroArtwork').src = randomArtwork;
+    </script>
 
 </body>
 </html>

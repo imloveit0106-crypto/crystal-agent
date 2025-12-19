@@ -1,305 +1,67 @@
 /* ============================================
-   Crystal Agent - Custom Styles
-   Apple Vision Pro風 空間UI
-   Tailwind CSS + 最小限のカスタムスタイル
+   Crystal Agent - Minimal CSS
+   Tailwind CSS完全移行により、最小限のスタイルのみ
    ============================================ */
 
-/* Base Styles */
-* {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-}
-
-/* Scrollbar Hidden */
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
-/* Custom Scrollbar for Chat Container */
+/* Custom Scrollbar */
 #chatContainer::-webkit-scrollbar {
     width: 6px;
 }
+
 #chatContainer::-webkit-scrollbar-track {
     background: transparent;
 }
+
 #chatContainer::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
 }
+
 #chatContainer::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* ============================================
-   3-Layer System - 奥行きを持つ空間設計
-   ============================================ */
-
-/* Layer 1: Ambient Layer - 背景の光のオーブ */
-#ambient-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 1;
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-/* 光のオーブ - 宇宙に浮かぶ粒子のような存在 */
-.orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    mix-blend-mode: screen;
-    pointer-events: none;
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }
 
-/* Orb 1: 左上 - 青紫の光 */
-.orb-1 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #667eea 0%, transparent 70%);
-    top: -15%;
-    left: -10%;
-    animation: orbFloat1 20s ease-in-out infinite;
-}
-
-/* Orb 2: 右上 - ピンクの光 */
-.orb-2 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, #f093fb 0%, transparent 70%);
-    top: -20%;
-    right: -15%;
-    animation: orbFloat2 25s ease-in-out infinite;
-}
-
-/* Orb 3: 左下 - 紫の光 */
-.orb-3 {
-    width: 550px;
-    height: 550px;
-    background: radial-gradient(circle, #764ba2 0%, transparent 70%);
-    bottom: -15%;
-    left: -12%;
-    animation: orbFloat3 22s ease-in-out infinite;
-}
-
-/* Orb 4: 右下 - 青の光 */
-.orb-4 {
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, #667eea 0%, transparent 70%);
-    bottom: -10%;
-    right: -8%;
-    animation: orbFloat4 18s ease-in-out infinite;
-}
-
-/* オーブの浮遊アニメーション - ゆっくりとした呼吸のような動き */
-@keyframes orbFloat1 {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    33% {
-        transform: translate(50px, 70px) scale(1.1);
-    }
-    66% {
-        transform: translate(-40px, 50px) scale(0.95);
-    }
-}
-
-@keyframes orbFloat2 {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    25% {
-        transform: translate(-60px, 80px) scale(1.15);
-    }
-    50% {
-        transform: translate(-90px, 40px) scale(0.9);
-    }
-    75% {
-        transform: translate(-30px, 60px) scale(1.05);
-    }
-}
-
-@keyframes orbFloat3 {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    40% {
-        transform: translate(70px, -60px) scale(1.12);
-    }
-    80% {
-        transform: translate(40px, -90px) scale(0.88);
-    }
-}
-
-@keyframes orbFloat4 {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    30% {
-        transform: translate(-50px, -70px) scale(0.92);
-    }
-    60% {
-        transform: translate(60px, -50px) scale(1.18);
-    }
-}
-
-/* Layer 2: HUD Layer - ステータス衛星が浮遊 */
-#hud-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* Floating Satellites - Vision Pro風HUD */
-.satellite {
-    position: absolute;
-    padding: 12px 24px;
-    border-radius: 32px;
-    backdrop-filter: blur(20px) saturate(140%);
-    -webkit-backdrop-filter: blur(20px) saturate(140%);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    pointer-events: auto;
-    cursor: default;
-    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1.0);
-}
-
-.satellite:hover {
-    transform: scale(1.05) translateY(-2px);
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.3),
-        0 0 60px rgba(102, 126, 234, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.satellite-text {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
-}
-
-/* Satellite Positions */
-.satellite-1 {
-    top: 40px;
-    left: 50px;
-    animation: floatSatellite1 6s ease-in-out infinite;
-}
-
-.satellite-2 {
-    top: 50px;
-    right: 60px;
-    animation: floatSatellite2 5.5s ease-in-out infinite;
-}
-
-.satellite-3 {
-    bottom: 70px;
-    left: 60px;
-    animation: floatSatellite3 6.5s ease-in-out infinite;
-}
-
-/* Anti-gravity Animations */
-@keyframes floatSatellite1 {
-    0%, 100% {
-        transform: translate(0, 0);
-        opacity: 0.9;
-    }
-    50% {
-        transform: translate(-10px, -15px);
-        opacity: 1;
-    }
-}
-
-@keyframes floatSatellite2 {
-    0%, 100% {
-        transform: translate(0, 0);
-        opacity: 0.85;
-    }
-    50% {
-        transform: translate(12px, 18px);
-        opacity: 1;
-    }
-}
-
-@keyframes floatSatellite3 {
-    0%, 100% {
-        transform: translate(0, 0);
-        opacity: 0.9;
-    }
-    50% {
-        transform: translate(15px, -12px);
-        opacity: 1;
-    }
-}
-
-/* Layer 3: App Layer */
-#app-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-}
-
-/* ============================================
-   Message Animations - Vision Pro風
-   ============================================ */
-
-/* メッセージの出現アニメーション */
-@keyframes messageAppear {
-    0% {
+/* Message Fade-in Animation */
+@keyframes messageFadeIn {
+    from {
         opacity: 0;
-        transform: translateY(20px) scale(0.95);
-        filter: blur(4px);
+        transform: translateY(10px);
     }
-    100% {
+    to {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
+        transform: translateY(0);
     }
 }
 
-.message-appear {
-    animation: messageAppear 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+.message-fade-in {
+    animation: messageFadeIn 0.3s ease-out;
 }
 
-/* タイピングインジケーター */
+/* Typing Indicator Dots */
 @keyframes typingDot {
     0%, 60%, 100% {
         transform: translateY(0);
         opacity: 0.4;
     }
     30% {
-        transform: translateY(-10px);
+        transform: translateY(-8px);
         opacity: 1;
     }
 }
 
 .typing-dot {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.6);
     display: inline-block;
@@ -319,83 +81,18 @@
     animation-delay: 0.4s;
 }
 
-/* ============================================
-   Crystal Status Card - Vision Pro風
-   ============================================ */
-
-.crystal-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-    padding: 32px;
-    box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.3),
-        0 0 80px rgba(102, 126, 234, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    animation: crystalReveal 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
 }
 
-@keyframes crystalReveal {
-    0% {
-        opacity: 0;
-        transform: scale(0.9) translateY(30px);
-        filter: blur(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: blur(0);
-    }
+/* Text Selection */
+::selection {
+    background: rgba(168, 85, 247, 0.3);
+    color: white;
 }
 
-/* ============================================
-   Responsive Design
-   ============================================ */
-
-@media (max-width: 768px) {
-    .satellite {
-        padding: 8px 16px;
-        border-radius: 24px;
-    }
-
-    .satellite-text {
-        font-size: 10px;
-    }
-
-    .satellite-1 {
-        top: 20px;
-        left: 20px;
-    }
-
-    .satellite-2 {
-        top: 20px;
-        right: 20px;
-    }
-
-    .satellite-3 {
-        bottom: 30px;
-        left: 20px;
-    }
-
-    .orb {
-        filter: blur(60px);
-        opacity: 0.1;
-    }
-}
-
-/* ============================================
-   Print Styles
-   ============================================ */
-
-@media print {
-    #ambient-layer,
-    #hud-layer {
-        display: none;
-    }
-
-    body {
-        background: white;
-    }
+/* Focus Outline Reset */
+*:focus {
+    outline: none;
 }

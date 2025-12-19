@@ -99,8 +99,8 @@ if not GEMINI_API_KEY:
     raise ValueError("⚠️ Gemini APIキーが設定されていません")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
-print("✅ Gemini API接続成功")
+model = genai.GenerativeModel('gemini-1.5-flash')
+print("✅ Gemini API接続成功 (gemini-1.5-flash)")
 
 # システムプロンプト
 SYSTEM_PROMPT = """

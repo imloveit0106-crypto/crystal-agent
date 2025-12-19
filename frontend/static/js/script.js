@@ -25,16 +25,67 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ============================================
 
 function setupEventListeners() {
-    // フォーム送信
-    document.getElementById('chatForm').addEventListener('submit', handleFormSubmit);
+    // Enterキーでの送信
+    const messageInput = document.getElementById('messageInput');
+    if (messageInput) {
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+}
 
-    // Enterキーでの送信（Shift+Enterは改行）
-    document.getElementById('messageInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleFormSubmit(e);
-        }
-    });
+/**
+ * メッセージ送信（グローバル関数）
+ */
+window.sendMessage = async function() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+
+    if (!message) {
+        // 空送信時のエラー表示
+        input.classList.add('ring-2', 'ring-red-500/50');
+        setTimeout(() => {
+            input.classList.remove('ring-2', 'ring-red-500/50');
+        }, 500);
+        return;
+    }
+
+    // ユーザーメッセージを表示
+    addMessage(message, 'user');
+
+    // 入力欄をクリア
+    input.value = '';
+
+    // タイピングインジケーター表示
+    showTypingIndicator();
+
+    try {
+        const data = await sendChatMessage(message);
+        hideTypingIndicator();
+
+        // AIメッセージを表示
+        addMessage(data.response, 'assistant');
+
+        // 統計を更新
+        await loadStats();
+
+    } catch (error) {
+        hideTypingIndicator();
+        addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
+        console.error('❌ Send message error:', error);
+    }
+}
+
+/**
+ * クイック入力（グローバル関数）
+ */
+window.quickInput = function(text) {
+    const input = document.getElementById('messageInput');
+    input.value = text;
+    input.focus();
 }
 
 // ============================================
@@ -46,23 +97,23 @@ function setupEventListeners() {
  */
 async function checkConnection() {
     try {
-        const response = await fetch(`${API_BASE_URL}/`);
+        const response = await fetch(`${API_BASE_URL}/health`);
         const data = await response.json();
 
         const statusIndicator = document.getElementById('statusIndicator');
 
         if (data.notion === 'connected' && data.gemini === 'connected') {
             statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span class="text-xs font-semibold text-green-700">Online</span>
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                <span class="text-xs font-semibold text-white/80 hidden sm:inline">Online</span>
             `;
-            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full';
+            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
         } else {
             statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-xs font-semibold text-yellow-700">Limited</span>
+                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <span class="text-xs font-semibold text-white/80 hidden sm:inline">Limited</span>
             `;
-            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-full';
+            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
         }
 
         console.log('✅ Connection check:', data);
@@ -70,10 +121,10 @@ async function checkConnection() {
         console.error('❌ Connection check failed:', error);
         const statusIndicator = document.getElementById('statusIndicator');
         statusIndicator.innerHTML = `
-            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-            <span class="text-xs font-semibold text-red-700">Offline</span>
+            <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+            <span class="text-xs font-semibold text-white/80 hidden sm:inline">Offline</span>
         `;
-        statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-red-50 rounded-full';
+        statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
     }
 }
 

@@ -104,16 +104,14 @@ async function checkConnection() {
 
         if (data.notion === 'connected' && data.gemini === 'connected') {
             statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-                <span class="text-xs font-semibold text-white/80 hidden sm:inline">Online</span>
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
             `;
-            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
         } else {
             statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                <span class="text-xs font-semibold text-white/80 hidden sm:inline">Limited</span>
+                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <span class="text-xs font-medium text-gray-600 hidden sm:inline">Limited</span>
             `;
-            statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
         }
 
         console.log('✅ Connection check:', data);
@@ -121,10 +119,9 @@ async function checkConnection() {
         console.error('❌ Connection check failed:', error);
         const statusIndicator = document.getElementById('statusIndicator');
         statusIndicator.innerHTML = `
-            <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-            <span class="text-xs font-semibold text-white/80 hidden sm:inline">Offline</span>
+            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span class="text-xs font-medium text-gray-600 hidden sm:inline">Offline</span>
         `;
-        statusIndicator.className = 'flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10';
     }
 }
 
@@ -136,13 +133,16 @@ async function loadStats() {
         const response = await fetch(`${API_BASE_URL}/stats`);
         const stats = await response.json();
 
-        // アニメーション付きで数値を更新
-        animateNumber('statTotal', stats.total);
+        // Update total count
+        updateNumber('totalCount', stats.total);
 
-        const totalAmount = stats.amounts.reduce((sum, amt) => sum + amt, 0);
-        animateNumber('statAmount', totalAmount, '¥');
+        // Update diary count (日記タイプ)
+        const diaryCount = stats.types['日記'] || 0;
+        updateNumber('diaryCount', diaryCount);
 
-        animateNumber('statTypes', Object.keys(stats.types).length);
+        // Update task count (タスクタイプ)
+        const taskCount = stats.types['タスク'] || 0;
+        updateNumber('taskCount', taskCount);
 
         console.log('📊 統計データ取得:', stats);
     } catch (error) {
@@ -254,14 +254,12 @@ async function handleFormSubmit(e) {
 }
 
 /**
- * メッセージを追加 - Apple Quality強化版
+ * メッセージを追加 - White Minimal Design
  */
 function addMessage(text, role, meta = {}) {
-    const messagesContainer = document.getElementById('chatMessages');
+    const container = document.getElementById('chatContainer').querySelector('.max-w-3xl');
     const messageDiv = document.createElement('div');
-
-    // 強化版アニメーションを適用
-    messageDiv.className = 'message-enter-advanced';
+    messageDiv.className = 'message-fade-in';
 
     const now = new Date().toLocaleTimeString('ja-JP', {
         hour: '2-digit',
@@ -270,44 +268,35 @@ function addMessage(text, role, meta = {}) {
 
     if (role === 'user') {
         messageDiv.innerHTML = `
-            <div class="flex gap-3 items-end justify-end">
-                <div class="flex flex-col items-end max-w-md">
-                    <div class="relative bg-gradient-to-r from-blue-500 to-blue-600 message-tail-user rounded-3xl rounded-br-md px-6 py-4 shadow-lg hover-lift" style="border-left-color: #3b82f6;">
-                        <p class="text-white message-text">${escapeHtml(text)}</p>
-                    </div>
-                    <span class="text-caption text-gray-400 mt-2 mr-2">あなた • ${now}</span>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-lg flex-shrink-0">
-                    <span class="text-xl">👤</span>
+            <div class="flex justify-end">
+                <div class="bg-gray-900 text-white rounded-xl px-5 py-3.5 max-w-[75%]">
+                    <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
                 </div>
             </div>
         `;
     } else {
         const metaInfo = meta.saved ? `
-            <div class="flex gap-2 mt-3">
-                <span class="px-3 py-1 bg-green-100 text-green-700 text-caption rounded-full font-semibold hover-lift">✓ ${meta.type}</span>
-                ${meta.amount ? `<span class="px-3 py-1 bg-blue-100 text-blue-700 text-caption rounded-full font-semibold hover-lift">¥${meta.amount.toLocaleString()}</span>` : ''}
+            <div class="flex gap-2 mt-2">
+                <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">✓ ${meta.type}</span>
+                ${meta.amount ? `<span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">¥${meta.amount.toLocaleString()}</span>` : ''}
             </div>
         ` : '';
 
         messageDiv.innerHTML = `
-            <div class="flex gap-3 items-end">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
-                    <span class="text-xl">🤖</span>
-                </div>
-                <div class="flex flex-col max-w-md">
-                    <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple hover-lift">
-                        <p class="text-gray-800 message-text">${escapeHtml(text)}</p>
-                        ${metaInfo}
-                    </div>
-                    <span class="text-caption text-gray-400 mt-2 ml-2">Crystal Agent • ${now}</span>
+            <div class="flex justify-start">
+                <div class="bg-gray-50 text-gray-900 rounded-xl px-5 py-3.5 max-w-[75%]">
+                    <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
+                    ${metaInfo}
                 </div>
             </div>
         `;
     }
 
-    messagesContainer.appendChild(messageDiv);
-    scrollToBottomSmooth();
+    container.appendChild(messageDiv);
+
+    // スクロール
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 /**
@@ -350,6 +339,15 @@ function scrollToBottomSmooth() {
 // ============================================
 // Animation Functions
 // ============================================
+
+/**
+ * 数値を更新（シンプル版）
+ */
+function updateNumber(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    element.textContent = value;
+}
 
 /**
  * 数値アニメーション（カウントアップ）

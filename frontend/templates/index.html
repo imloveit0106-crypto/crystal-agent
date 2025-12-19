@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" class="dark">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,205 +11,141 @@
     <!-- Tailwind Custom Configuration -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'glow': 'glow 3s ease-in-out infinite',
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
                     },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        glow: {
-                            '0%, 100%': { opacity: '0.5' },
-                            '50%': { opacity: '1' },
-                        }
+                    letterSpacing: {
+                        'tighter': '-0.02em',
                     }
                 }
             }
         }
     </script>
 
-    <style>
-        /* Minimal Custom CSS - Animations Only */
-        @keyframes orb-float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(50px, 70px) scale(1.1); }
-            66% { transform: translate(-40px, 50px) scale(0.95); }
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.3;
-            pointer-events: none;
-            animation: orb-float 25s ease-in-out infinite;
-        }
-
-        .orb-1 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
-            top: -15%;
-            left: -10%;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, #ec4899 0%, transparent 70%);
-            top: -20%;
-            right: -10%;
-            animation-delay: -8s;
-        }
-
-        .orb-3 {
-            width: 550px;
-            height: 550px;
-            background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
-            bottom: -15%;
-            left: -12%;
-            animation-delay: -16s;
-        }
-    </style>
+    <!-- Minimal Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
-<body class="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 min-h-screen overflow-hidden font-sans antialiased">
+<body class="bg-white font-sans antialiased text-gray-900">
 
-    <!-- Ambient Orbs Layer -->
-    <div class="fixed inset-0 z-0 overflow-hidden">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
 
-    <!-- Main App Container -->
-    <div class="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6">
-
-        <!-- Glassmorphism Container -->
-        <div class="w-full max-w-5xl h-[95vh] bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl overflow-hidden flex flex-col">
-
-            <!-- Header -->
-            <header class="bg-white/5 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <!-- Icon -->
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
-                        <span class="text-3xl">🔮</span>
-                    </div>
-                    <!-- Title -->
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-100 px-6 py-5 sticky top-0 z-50">
+            <div class="max-w-5xl mx-auto flex items-center justify-between">
+                <!-- Title -->
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🔮</span>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
                             Crystal Agent
                         </h1>
-                        <p class="text-xs sm:text-sm text-white/60 font-medium">AI Personal Assistant</p>
+                        <p class="text-xs text-gray-500 font-medium hidden sm:block">AI Personal Assistant</p>
                     </div>
                 </div>
 
-                <!-- Status Indicator -->
-                <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
-                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
-                    <span class="text-xs font-semibold text-white/80 hidden sm:inline">Online</span>
+                <!-- Status -->
+                <div id="statusIndicator" class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full">
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
                 </div>
-            </header>
+            </div>
+        </header>
 
-            <!-- Chat Container -->
-            <div class="flex-1 overflow-hidden flex flex-col">
+        <!-- Chat Container -->
+        <main class="flex-1 overflow-hidden flex flex-col bg-white">
 
-                <!-- Messages Area -->
-                <div id="chatContainer" class="flex-1 overflow-y-auto px-4 sm:px-8 py-6 space-y-4 scroll-smooth">
+            <!-- Messages Area -->
+            <div id="chatContainer" class="flex-1 overflow-y-auto px-4 py-8">
+                <div class="max-w-3xl mx-auto space-y-6">
 
-                    <!-- Welcome Card -->
-                    <div class="flex justify-center my-12">
-                        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl px-8 py-8 max-w-2xl text-center shadow-2xl">
-                            <div class="text-6xl mb-4 animate-float">🔮</div>
-                            <h2 class="text-3xl font-bold text-white mb-3">Welcome to Crystal Agent</h2>
-                            <p class="text-white/70 text-base leading-relaxed">
-                                あなたの日々の行動や思考を記録し、AIがサポートします。<br>
-                                気軽になんでも話しかけてください。
-                            </p>
-                        </div>
+                    <!-- Welcome Message -->
+                    <div class="text-center py-16">
+                        <div class="text-6xl mb-6">🔮</div>
+                        <h2 class="text-3xl font-bold tracking-tight text-gray-900 mb-3">Welcome</h2>
+                        <p class="text-base leading-relaxed text-gray-600 max-w-xl mx-auto">
+                            あなたの日々の行動や思考を記録し、<br>
+                            AIがサポートします。
+                        </p>
                     </div>
 
-                    <!-- Messages will be inserted here dynamically -->
+                    <!-- Messages will be inserted here -->
 
                 </div>
-
-                <!-- Stats Bar -->
-                <div class="px-4 sm:px-8 py-4 border-t border-white/10 bg-white/5 backdrop-blur-xl">
-                    <div class="grid grid-cols-3 gap-3">
-                        <!-- Total -->
-                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer">
-                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Total</div>
-                            <div id="totalCount" class="text-2xl font-bold text-white">0</div>
-                        </div>
-                        <!-- Diary -->
-                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer">
-                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Diary</div>
-                            <div id="diaryCount" class="text-2xl font-bold text-white">0</div>
-                        </div>
-                        <!-- Tasks -->
-                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer">
-                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Tasks</div>
-                            <div id="taskCount" class="text-2xl font-bold text-white">0</div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
 
-            <!-- Input Footer -->
-            <footer class="bg-white/5 backdrop-blur-xl border-t border-white/10 px-4 sm:px-8 py-4 sm:py-6">
+            <!-- Stats Bar -->
+            <div class="border-t border-gray-100 bg-white px-4 py-4">
+                <div class="max-w-3xl mx-auto">
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Total -->
+                        <div class="text-center py-3">
+                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total</div>
+                            <div id="totalCount" class="text-2xl font-bold text-gray-900">0</div>
+                        </div>
+                        <!-- Diary -->
+                        <div class="text-center py-3">
+                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Diary</div>
+                            <div id="diaryCount" class="text-2xl font-bold text-gray-900">0</div>
+                        </div>
+                        <!-- Tasks -->
+                        <div class="text-center py-3">
+                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Tasks</div>
+                            <div id="taskCount" class="text-2xl font-bold text-gray-900">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer / Input Area -->
+        <footer class="bg-white border-t border-gray-100 px-4 py-6 sticky bottom-0">
+            <div class="max-w-3xl mx-auto">
 
                 <!-- Quick Actions -->
-                <div class="mb-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <div class="mb-4 flex gap-2 overflow-x-auto pb-2">
                     <button onclick="quickInput('今日のランチは800円でした')"
-                            class="bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                        <span>💰</span>
-                        <span class="hidden sm:inline">支出を記録</span>
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg whitespace-nowrap transition-colors duration-200">
+                        💰 支出を記録
                     </button>
                     <button onclick="quickInput('今日やることリスト')"
-                            class="bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                        <span>📝</span>
-                        <span class="hidden sm:inline">タスク追加</span>
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg whitespace-nowrap transition-colors duration-200">
+                        📝 タスク追加
                     </button>
                     <button onclick="quickInput('今日の振り返り')"
-                            class="bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                        <span>✨</span>
-                        <span class="hidden sm:inline">日記を書く</span>
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg whitespace-nowrap transition-colors duration-200">
+                        ✨ 日記を書く
                     </button>
                     <button onclick="quickInput('ステータス')"
-                            class="bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105 flex items-center gap-2">
-                        <span>🔮</span>
-                        <span class="hidden sm:inline">ステータス</span>
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg whitespace-nowrap transition-colors duration-200">
+                        🔮 ステータス
                     </button>
                 </div>
 
-                <!-- Input Box - Capsule Style -->
+                <!-- Input Box -->
                 <div class="flex gap-3">
                     <input
                         type="text"
                         id="messageInput"
                         placeholder="メッセージを入力..."
-                        class="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 rounded-full px-6 py-4 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 text-base"
+                        class="flex-1 bg-gray-100 border-0 text-gray-900 placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-gray-900 transition-shadow duration-200 text-base"
                         onkeypress="if(event.key === 'Enter') sendMessage()"
                     >
                     <button
                         onclick="sendMessage()"
                         id="sendButton"
-                        class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 flex items-center gap-2">
-                        <span class="hidden sm:inline">送信</span>
-                        <span>📨</span>
+                        class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base">
+                        送信
                     </button>
                 </div>
 
-            </footer>
+            </div>
+        </footer>
 
-        </div>
     </div>
 
     <!-- JavaScript -->

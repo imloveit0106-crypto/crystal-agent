@@ -5,10 +5,12 @@ Streamlit app.py からの完全移植 - RAG機能を含む全ロジックを保
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, Dict, List
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import re
@@ -31,6 +33,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 静的ファイルのマウント（CSS, JS用）
+# プロジェクトルートからの相対パスを計算
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = BASE_DIR / "frontend" / "static"
+TEMPLATES_DIR = BASE_DIR / "frontend" / "templates"
+
+# /static パスに静的ファイルをマウント
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # API設定
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -238,7 +249,14 @@ class StatsResponse(BaseModel):
 
 @app.get("/")
 async def root():
-    """ヘルスチェック"""
+    """メインHTMLページを返す"""
+    html_path = TEMPLATES_DIR / "index.html"
+    return FileResponse(html_path)
+
+
+@app.get("/health")
+async def health_check():
+    """ヘルスチェック（API用）"""
     return {
         "status": "ok",
         "app": "Crystal Agent API",

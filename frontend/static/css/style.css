@@ -16,11 +16,11 @@ body {
     /* 有機的に動くMesh Gradient背景 */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     background-size: 400% 400%;
-    animation: meshGradient 15s ease infinite;
+    animation: meshGradient 16s ease-in-out infinite;
     background-attachment: fixed;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-    letter-spacing: -0.01em;
-    line-height: 1.6;
+    letter-spacing: -0.011em; /* -0.165px at 15px */
+    line-height: 1.5333; /* 23px / 15px - 光学的に最適 */
 }
 
 /* Mesh Gradient Animation - 空間が呼吸するような動き */
@@ -133,41 +133,44 @@ body {
 
 .glass {
     /* 強力なすりガラス効果 + 繊細な境界線 */
-    backdrop-filter: blur(40px) saturate(180%) brightness(110%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(110%);
-    background-color: rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(42px) saturate(180%) brightness(108%);
+    -webkit-backdrop-filter: blur(42px) saturate(180%) brightness(108%);
+    background-color: rgba(255, 255, 255, 0.82);
+    border: 0.5px solid rgba(255, 255, 255, 0.35);
     box-shadow:
-        0 8px 32px rgba(31, 38, 135, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+        0 8px 32px rgba(31, 38, 135, 0.12),
+        0 2px 8px rgba(31, 38, 135, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        inset 0 -0.5px 0 rgba(255, 255, 255, 0.25);
 }
 
 .glass-light {
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    background-color: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(24px) saturate(160%) brightness(106%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(106%);
+    background-color: rgba(255, 255, 255, 0.58);
+    border: 0.5px solid rgba(255, 255, 255, 0.22);
     box-shadow:
-        0 4px 16px rgba(31, 38, 135, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        0 4px 16px rgba(31, 38, 135, 0.08),
+        0 1px 4px rgba(31, 38, 135, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 /* チャットエリア専用 - 超強力なガラス効果 */
 .glass-chat {
-    backdrop-filter: blur(60px) saturate(200%) brightness(115%);
-    -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(115%);
+    backdrop-filter: blur(64px) saturate(200%) brightness(112%);
+    -webkit-backdrop-filter: blur(64px) saturate(200%) brightness(112%);
     background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 255, 255, 0.85) 100%
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.82) 100%
     );
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.42);
     box-shadow:
-        0 12px 48px rgba(31, 38, 135, 0.2),
-        0 4px 16px rgba(0, 0, 0, 0.08),
-        inset 0 2px 0 rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.4);
+        0 16px 56px rgba(31, 38, 135, 0.18),
+        0 8px 24px rgba(0, 0, 0, 0.06),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 2px 0 rgba(255, 255, 255, 0.88),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.38);
 }
 
 /* ============================================
@@ -317,8 +320,8 @@ body {
 .message-text {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     font-size: 15px;
-    line-height: 1.47059; /* Apple標準：22px / 15px */
-    letter-spacing: -0.016em; /* -0.24px */
+    line-height: 1.4667; /* 22px / 15px - 視認性最適化 */
+    letter-spacing: -0.015em; /* -0.225px - 光学調整 */
     font-weight: 400;
 }
 
@@ -326,16 +329,17 @@ body {
 .text-title {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    letter-spacing: -0.022em; /* より詰める */
+    line-height: 1.1875; /* 38px / 32px */
 }
 
 /* 小さいテキスト（統計など） */
 .text-caption {
     font-size: 11px;
-    line-height: 1.36364; /* 15px / 11px */
-    letter-spacing: 0.006em; /* 0.066px */
+    line-height: 1.3636; /* 15px / 11px */
+    letter-spacing: 0.007em; /* 0.077px - 微調整 */
     font-weight: 400;
+    color: rgba(0, 0, 0, 0.55); /* コントラスト調整 */
 }
 
 /* ============================================
@@ -373,15 +377,15 @@ body {
 @keyframes messageSlideInAdvanced {
     0% {
         opacity: 0;
-        transform: translateY(30px) scale(0.92);
-        filter: blur(4px);
+        transform: translateY(28px) scale(0.93);
+        filter: blur(5px);
     }
-    60% {
-        transform: translateY(-4px) scale(1.01);
+    58% {
+        transform: translateY(-3px) scale(1.008);
         filter: blur(0px);
     }
-    75% {
-        transform: translateY(2px) scale(0.99);
+    76% {
+        transform: translateY(1.5px) scale(0.995);
     }
     100% {
         opacity: 1;
@@ -391,7 +395,7 @@ body {
 }
 
 .message-enter-advanced {
-    animation: messageSlideInAdvanced 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: messageSlideInAdvanced 0.64s cubic-bezier(0.32, 1.62, 0.58, 1);
 }
 
 /* ============================================
@@ -400,29 +404,31 @@ body {
 
 /* より波打つような動き */
 .typing-dot-enhanced {
-    width: 10px;
-    height: 10px;
+    width: 9px; /* わずかに小さく */
+    height: 9px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    animation: typingBounceEnhanced 1.6s infinite ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(137deg, #667eea, #764ba2);
+    animation: typingBounceEnhanced 1.68s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.12),
+        0 0 12px rgba(102, 126, 234, 0.24);
 }
 
 .typing-dot-enhanced:nth-child(1) {
-    animation-delay: -0.4s;
+    animation-delay: -0.42s;
 }
 
 .typing-dot-enhanced:nth-child(2) {
-    animation-delay: -0.2s;
+    animation-delay: -0.21s;
 }
 
 @keyframes typingBounceEnhanced {
-    0%, 60%, 100% {
+    0%, 62%, 100% {
         transform: translateY(0) scale(1);
-        opacity: 0.7;
+        opacity: 0.68;
     }
-    30% {
-        transform: translateY(-12px) scale(1.1);
+    31% {
+        transform: translateY(-11px) scale(1.08);
         opacity: 1;
     }
 }
@@ -442,12 +448,12 @@ body {
 
 /* ホバー時の浮遊感強化 */
 .hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.32s cubic-bezier(0.34, 0, 0.18, 1);
 }
 
 .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2.5px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* フォーカス時のリング効果 */
@@ -464,35 +470,37 @@ body {
 /* カード本体 - 究極のグラスモーフィズム */
 .crystal-card {
     position: relative;
-    width: 380px;
-    min-height: 240px;
-    padding: 32px;
-    margin: 20px 0;
+    width: 384px; /* 8の倍数 - グリッドに最適 */
+    min-height: 256px; /* 同上 */
+    padding: 28px 32px 32px; /* 上部余白を微調整 */
+    margin: 24px 0; /* 垂直リズム統一 */
 
     /* 究極のすりガラス効果 */
-    backdrop-filter: blur(40px) saturate(180%) brightness(120%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(120%);
+    backdrop-filter: blur(48px) saturate(190%) brightness(118%);
+    -webkit-backdrop-filter: blur(48px) saturate(190%) brightness(118%);
     background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.25) 0%,
-        rgba(255, 255, 255, 0.15) 50%,
-        rgba(255, 255, 255, 0.25) 100%
+        137deg, /* 微妙な角度変更 */
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 255, 255, 0.16) 48%,
+        rgba(255, 255, 255, 0.28) 100%
     );
 
     /* 複数レイヤーの境界線 */
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 24px;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    border-radius: 28px; /* よりソフトな角 */
 
-    /* 複雑な多層シャドウで奥行き */
+    /* 複雑な多層シャドウで奥行き - 段階的に最適化 */
     box-shadow:
-        0 8px 32px rgba(31, 38, 135, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-        0 20px 60px rgba(102, 126, 234, 0.3),
-        0 0 100px rgba(118, 75, 162, 0.2);
+        0 10px 40px rgba(31, 38, 135, 0.22),
+        0 4px 16px rgba(31, 38, 135, 0.12),
+        0 1px 4px rgba(0, 0, 0, 0.08),
+        0 0 0 0.5px rgba(255, 255, 255, 0.55) inset,
+        0 24px 72px rgba(102, 126, 234, 0.28),
+        0 0 120px rgba(118, 75, 162, 0.18);
 
     /* 3D変形の準備 */
     transform-style: preserve-3d;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.42s cubic-bezier(0.22, 1, 0.36, 1); /* より滑らかに */
 
     /* CSS変数でDynamic Lightingを制御 */
     --mouse-x: 50%;
@@ -507,15 +515,15 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 24px;
+    border-radius: 28px; /* カードと同じ */
     background: radial-gradient(
         circle at var(--mouse-x) var(--mouse-y),
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.1) 30%,
-        transparent 60%
+        rgba(255, 255, 255, 0.38) 0%,
+        rgba(255, 255, 255, 0.12) 28%,
+        transparent 58%
     );
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.36s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     pointer-events: none;
 }
 
@@ -525,53 +533,62 @@ body {
 
 /* ホバー時の3Dチルト効果 */
 .crystal-card:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-6px) scale(1.015); /* より微細な変化 */
     box-shadow:
-        0 16px 48px rgba(31, 38, 135, 0.35),
-        0 0 0 1px rgba(255, 255, 255, 0.6) inset,
-        0 30px 80px rgba(102, 126, 234, 0.4),
-        0 0 120px rgba(118, 75, 162, 0.3);
+        0 18px 52px rgba(31, 38, 135, 0.32),
+        0 8px 24px rgba(31, 38, 135, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.12),
+        0 0 0 0.5px rgba(255, 255, 255, 0.62) inset,
+        0 28px 84px rgba(102, 126, 234, 0.36),
+        0 0 140px rgba(118, 75, 162, 0.24);
 }
 
 /* カードヘッダー */
 .crystal-card-header {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 14px; /* より詰めた間隔 */
+    margin-bottom: 26px; /* リズム調整 */
     position: relative;
     z-index: 1;
 }
 
 .crystal-card-icon {
-    width: 56px;
-    height: 56px;
+    width: 52px; /* 4の倍数 */
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-    animation: iconFloat 3s ease-in-out infinite;
+    font-size: 28px; /* アイコンサイズ微調整 */
+    background: linear-gradient(137deg, #667eea, #764ba2);
+    border-radius: 18px; /* カード角とのバランス */
+    box-shadow:
+        0 6px 20px rgba(102, 126, 234, 0.38),
+        0 2px 8px rgba(102, 126, 234, 0.24);
+    animation: iconFloat 3.2s ease-in-out infinite;
 }
 
 @keyframes iconFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-6px); }
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px); /* より微細な動き */
+    }
 }
 
 .crystal-card-name {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 28px;
+    font-size: 26px; /* わずかに小さく */
     font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    letter-spacing: -0.024em; /* より詰める */
+    line-height: 1.15; /* 30px / 26px */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradientShift 3s ease infinite;
+    animation: gradientShift 3.4s ease infinite;
 }
 
 @keyframes gradientShift {
@@ -583,51 +600,56 @@ body {
 .crystal-card-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 14px; /* 統一された間隔 */
+    margin-bottom: 18px; /* リズム調整 */
     position: relative;
     z-index: 1;
 }
 
 .crystal-card-item {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    padding: 11px 14px 13px; /* 光学的バランス */
+    border-radius: 14px; /* カード全体とのハーモニー */
+    border: 0.5px solid rgba(255, 255, 255, 0.24);
+    transition: all 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .crystal-card-item:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.32);
+    transform: translateY(-1.5px); /* より微細な浮遊 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .crystal-card-label {
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px; /* わずかに小さく */
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 4px;
+    letter-spacing: 0.09em; /* より空けて視認性向上 */
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 5px; /* 間隔微調整 */
 }
 
 .crystal-card-value {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 18px;
+    font-size: 17px; /* 1px調整 */
     font-weight: 600;
     color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.01em;
+    text-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.18),
+        0 0 8px rgba(255, 255, 255, 0.12);
 }
 
 /* ゴール（目標）- アクセントカラーで強調 */
 .crystal-card-goal {
     grid-column: 1 / -1;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
-    backdrop-filter: blur(20px);
-    padding: 16px 20px;
-    border-radius: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: linear-gradient(137deg, rgba(102, 126, 234, 0.32), rgba(118, 75, 162, 0.28));
+    backdrop-filter: blur(24px);
+    padding: 18px 22px 20px; /* 光学的中央揃え */
+    border-radius: 18px; /* 統一されたR値 */
+    border: 1px solid rgba(255, 255, 255, 0.35);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -641,69 +663,87 @@ body {
     width: 200%;
     height: 200%;
     background: linear-gradient(
-        45deg,
+        47deg, /* 微妙な角度調整 */
         transparent,
-        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.12),
         transparent
     );
-    animation: goalShine 3s ease infinite;
+    animation: goalShine 3.6s ease-in-out infinite;
 }
 
 @keyframes goalShine {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(47deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(47deg);
+        opacity: 0;
+    }
 }
 
 .crystal-card-goal-label {
-    font-size: 12px;
+    font-size: 11px; /* 統一 */
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 8px;
+    letter-spacing: 0.12em; /* より空ける */
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 10px; /* 間隔調整 */
+    position: relative;
+    z-index: 1;
 }
 
 .crystal-card-goal-value {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 32px;
+    font-size: 30px; /* わずかに小さく */
     font-weight: 800;
-    background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: goldShimmer 2s ease infinite;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+    animation: goldShimmer 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 0 24px rgba(255, 215, 0, 0.48));
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes goldShimmer {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 /* 3D回転しながら出現するアニメーション */
 @keyframes crystalReveal {
     0% {
         opacity: 0;
-        transform: perspective(1000px) rotateY(-90deg) translateY(30px);
-        filter: blur(10px);
+        transform: perspective(1200px) rotateY(-92deg) translateY(32px) scale(0.94);
+        filter: blur(12px);
     }
-    60% {
-        transform: perspective(1000px) rotateY(5deg) translateY(-5px);
+    58% {
+        transform: perspective(1200px) rotateY(4deg) translateY(-4px) scale(1.01);
         filter: blur(0px);
     }
-    80% {
-        transform: perspective(1000px) rotateY(-3deg) translateY(2px);
+    78% {
+        transform: perspective(1200px) rotateY(-2deg) translateY(1px) scale(0.998);
     }
     100% {
         opacity: 1;
-        transform: perspective(1000px) rotateY(0deg) translateY(0px);
+        transform: perspective(1200px) rotateY(0deg) translateY(0px) scale(1);
         filter: blur(0px);
     }
 }
 
 .crystal-card-reveal {
-    animation: crystalReveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    animation: crystalReveal 1.28s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
 /* カードコンテナ（チャット内） */

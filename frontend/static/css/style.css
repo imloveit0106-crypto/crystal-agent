@@ -458,6 +458,263 @@ body {
 }
 
 /* ============================================
+   Crystal Status Card - SF Movie Hologram UI
+   ============================================ */
+
+/* カード本体 - 究極のグラスモーフィズム */
+.crystal-card {
+    position: relative;
+    width: 380px;
+    min-height: 240px;
+    padding: 32px;
+    margin: 20px 0;
+
+    /* 究極のすりガラス効果 */
+    backdrop-filter: blur(40px) saturate(180%) brightness(120%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(120%);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.25) 100%
+    );
+
+    /* 複数レイヤーの境界線 */
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+
+    /* 複雑な多層シャドウで奥行き */
+    box-shadow:
+        0 8px 32px rgba(31, 38, 135, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+        0 20px 60px rgba(102, 126, 234, 0.3),
+        0 0 100px rgba(118, 75, 162, 0.2);
+
+    /* 3D変形の準備 */
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
+    /* CSS変数でDynamic Lightingを制御 */
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+}
+
+/* 光沢エフェクト - マウス位置に追従 */
+.crystal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 24px;
+    background: radial-gradient(
+        circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.crystal-card:hover::before {
+    opacity: 1;
+}
+
+/* ホバー時の3Dチルト効果 */
+.crystal-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+        0 16px 48px rgba(31, 38, 135, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+        0 30px 80px rgba(102, 126, 234, 0.4),
+        0 0 120px rgba(118, 75, 162, 0.3);
+}
+
+/* カードヘッダー */
+.crystal-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.crystal-card-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+
+.crystal-card-name {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* カード情報グリッド */
+.crystal-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.crystal-card-item {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.crystal-card-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.crystal-card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 4px;
+}
+
+.crystal-card-value {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ゴール（目標）- アクセントカラーで強調 */
+.crystal-card-goal {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+    backdrop-filter: blur(20px);
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.crystal-card-goal::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    animation: goalShine 3s ease infinite;
+}
+
+@keyframes goalShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.crystal-card-goal-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 8px;
+}
+
+.crystal-card-goal-value {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 2s ease infinite;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes goldShimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* 3D回転しながら出現するアニメーション */
+@keyframes crystalReveal {
+    0% {
+        opacity: 0;
+        transform: perspective(1000px) rotateY(-90deg) translateY(30px);
+        filter: blur(10px);
+    }
+    60% {
+        transform: perspective(1000px) rotateY(5deg) translateY(-5px);
+        filter: blur(0px);
+    }
+    80% {
+        transform: perspective(1000px) rotateY(-3deg) translateY(2px);
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(1000px) rotateY(0deg) translateY(0px);
+        filter: blur(0px);
+    }
+}
+
+.crystal-card-reveal {
+    animation: crystalReveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* カードコンテナ（チャット内） */
+.crystal-card-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px 0;
+}
+
+/* ============================================
    Print Styles
    ============================================ */
 
@@ -471,5 +728,11 @@ body {
         background: white;
         backdrop-filter: none;
         border: 1px solid #e5e5e5;
+    }
+
+    .crystal-card {
+        background: white;
+        backdrop-filter: none;
+        border: 2px solid #667eea;
     }
 }

@@ -156,11 +156,31 @@ async function handleFormSubmit(e) {
     // 入力欄をクリア
     input.value = '';
 
+    // 特殊コマンド: 「ステータス」でクリスタルカード表示
+    if (message.toLowerCase().includes('ステータス') || message.toLowerCase().includes('status')) {
+        showTypingIndicatorEnhanced();
+
+        try {
+            // クリスタルカード用API呼び出し
+            const statusData = await fetchUserStatus();
+            hideTypingIndicator();
+
+            // クリスタルカードを表示（SF映画風）
+            renderCrystalCard(statusData);
+
+            return; // 通常のチャット処理をスキップ
+        } catch (error) {
+            hideTypingIndicator();
+            addMessage('ステータス情報の取得に失敗しました。', 'assistant');
+            return;
+        }
+    }
+
     // タイピングインジケーターを表示（強化版）
     showTypingIndicatorEnhanced();
 
     try {
-        // APIリクエスト
+        // 通常のAPIリクエスト
         const data = await sendChatMessage(message);
 
         // タイピングインジケーターを非表示
@@ -389,6 +409,104 @@ function formatDateTime(date) {
 }
 
 // ============================================
+// Crystal Status Card - SF Movie Hologram
+// ============================================
+
+/**
+ * ユーザーステータスを取得
+ */
+async function fetchUserStatus() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/status`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('🔮 ステータスデータ取得:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Status fetch error:', error);
+        throw error;
+    }
+}
+
+/**
+ * クリスタルカードをレンダリング（SF映画風ホログラム）
+ */
+function renderCrystalCard(statusData) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const cardContainer = document.createElement('div');
+    cardContainer.className = 'crystal-card-container message-enter-advanced';
+
+    // クリスタルカードHTML生成
+    cardContainer.innerHTML = `
+        <div class="crystal-card crystal-card-reveal" id="crystal-card-${Date.now()}">
+            <!-- ヘッダー -->
+            <div class="crystal-card-header">
+                <div class="crystal-card-icon">🔮</div>
+                <div class="crystal-card-name">${escapeHtml(statusData.name)}</div>
+            </div>
+
+            <!-- 情報グリッド -->
+            <div class="crystal-card-grid">
+                <!-- 年齢 -->
+                <div class="crystal-card-item">
+                    <div class="crystal-card-label">Age</div>
+                    <div class="crystal-card-value">${statusData.age}</div>
+                </div>
+
+                <!-- MBTI -->
+                <div class="crystal-card-item">
+                    <div class="crystal-card-label">MBTI</div>
+                    <div class="crystal-card-value">${escapeHtml(statusData.mbti)}</div>
+                </div>
+
+                <!-- パーソナルカラー -->
+                <div class="crystal-card-item">
+                    <div class="crystal-card-label">Color Type</div>
+                    <div class="crystal-card-value">${escapeHtml(statusData.color)}</div>
+                </div>
+
+                <!-- ゴール（全幅） -->
+                <div class="crystal-card-goal">
+                    <div class="crystal-card-goal-label">🎯 Target Goal</div>
+                    <div class="crystal-card-goal-value">${escapeHtml(statusData.goal)}</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    messagesContainer.appendChild(cardContainer);
+
+    // Dynamic Lighting効果をセットアップ
+    const card = cardContainer.querySelector('.crystal-card');
+    setupCardDynamicLighting(card);
+
+    scrollToBottomSmooth();
+}
+
+/**
+ * Dynamic Lighting - マウス位置に応じた光沢効果
+ */
+function setupCardDynamicLighting(cardElement) {
+    cardElement.addEventListener('mousemove', (e) => {
+        const rect = cardElement.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        // CSS変数を更新して光沢位置を変更
+        cardElement.style.setProperty('--mouse-x', `${x}%`);
+        cardElement.style.setProperty('--mouse-y', `${y}%`);
+    });
+
+    // カードから離れたら中央にリセット
+    cardElement.addEventListener('mouseleave', () => {
+        cardElement.style.setProperty('--mouse-x', '50%');
+        cardElement.style.setProperty('--mouse-y', '50%');
+    });
+}
+
+// ============================================
 // Export for Global Access
 // ============================================
 
@@ -396,3 +514,4 @@ function formatDateTime(date) {
 window.quickInput = quickInput;
 window.loadStats = loadStats;
 window.checkConnection = checkConnection;
+window.fetchUserStatus = fetchUserStatus;

@@ -318,6 +318,21 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/status")
+async def get_user_status():
+    """
+    ユーザー分析ステータスを返却
+    クリスタルカードUI用のエンドポイント
+    """
+    return {
+        "name": "User",
+        "age": 25,
+        "mbti": "ENFP-T",
+        "color": "イエベ秋",
+        "goal": "月収100万円"
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

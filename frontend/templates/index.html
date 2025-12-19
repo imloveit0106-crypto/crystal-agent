@@ -39,31 +39,44 @@
 </head>
 <body class="font-sans">
 
-    <!-- Floating Satellites - HUD Status Chips -->
-    <div class="satellite-container">
-        <!-- Satellite 1: MBTI (左上) -->
+    <!-- ============================================
+         Layer 1: Ambient Layer - Animated Light Orbs
+         奥行きを生む光の背景層
+         ============================================ -->
+    <div id="ambient-layer">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <!-- ============================================
+         Layer 2: HUD Layer - Floating Status Satellites
+         ユーザーステータスが宙に浮く層
+         ============================================ -->
+    <div id="hud-layer">
+        <!-- Satellite: MBTI (左上) -->
         <div class="satellite satellite-1">
-            <span class="satellite-text">ENFP-T</span>
+            <span class="satellite-text">MBTI: ENFP-T</span>
         </div>
 
-        <!-- Satellite 2: Level (右上) -->
+        <!-- Satellite: Status (右上) -->
         <div class="satellite satellite-2">
-            <span class="satellite-text">Lv.25</span>
+            <span class="satellite-text">STATUS: Crystal</span>
         </div>
 
-        <!-- Satellite 3: Target (左下) -->
+        <!-- Satellite: Goal (左下) -->
         <div class="satellite satellite-3">
-            <span class="satellite-text">Target: ¥1M</span>
-        </div>
-
-        <!-- Satellite 4: Color (右下) -->
-        <div class="satellite satellite-4">
-            <span class="satellite-text">イエベ秋</span>
+            <span class="satellite-text">GOAL: ¥1,000,000</span>
         </div>
     </div>
 
-    <!-- Main Container - Glassmorphism Card -->
-    <div class="min-h-screen flex items-center justify-center p-4" style="position: relative; z-index: 10;">
+    <!-- ============================================
+         Layer 3: App Layer - Main Chat Window (最前面)
+         メインのチャットインターフェース
+         ============================================ -->
+    <div id="app-layer">
+        <div class="min-h-screen flex items-center justify-center p-4">
         <div class="w-full max-w-4xl h-[90vh] glass rounded-3xl shadow-apple-lg overflow-hidden flex flex-col">
 
             <!-- Header - Elegant & Minimal -->
@@ -180,7 +193,9 @@
             </div>
 
         </div>
+        </div>
     </div>
+    <!-- End of App Layer -->
 
     <!-- Custom JavaScript -->
     <script src="../static/js/script.js"></script>

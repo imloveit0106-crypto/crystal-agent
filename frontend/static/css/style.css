@@ -755,6 +755,213 @@ body {
 }
 
 /* ============================================
+   Floating Satellites - HUD Status Chips
+   ============================================ */
+
+/* サテライトコンテナ */
+.satellite-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* クリックを通過 */
+    z-index: 1; /* チャットエリアより奥 */
+}
+
+/* 基本サテライトスタイル */
+.satellite {
+    position: absolute;
+    padding: 8px 18px;
+
+    /* 究極のシンプルなPill shape */
+    border-radius: 24px;
+
+    /* 透明度の高いすりガラス */
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background: rgba(255, 255, 255, 0.08);
+
+    /* 繊細な白い境界線 */
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+
+    /* 奥行き感を出す影 */
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.04),
+        0 1px 4px rgba(0, 0, 0, 0.02),
+        inset 0 0.5px 0 rgba(255, 255, 255, 0.12);
+
+    /* クリック可能に */
+    pointer-events: auto;
+    cursor: default;
+
+    /* トランジション */
+    transition: all 0.36s cubic-bezier(0.34, 0, 0.18, 1);
+}
+
+.satellite:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.06),
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+/* サテライトテキスト - 極めて上品 */
+.satellite-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+}
+
+/* 各サテライトの配置 - 計算された位置 */
+
+/* Satellite 1: MBTI (左上) */
+.satellite-1 {
+    top: 32px;
+    left: 40px;
+    animation: floatSatellite1 5.2s ease-in-out infinite;
+}
+
+/* Satellite 2: Level (右上) */
+.satellite-2 {
+    top: 48px;
+    right: 56px;
+    animation: floatSatellite2 4.6s ease-in-out infinite;
+}
+
+/* Satellite 3: Target (左下) */
+.satellite-3 {
+    bottom: 64px;
+    left: 52px;
+    animation: floatSatellite3 5.8s ease-in-out infinite;
+}
+
+/* Satellite 4: Color (右下) */
+.satellite-4 {
+    bottom: 80px;
+    right: 68px;
+    animation: floatSatellite4 4.2s ease-in-out infinite;
+}
+
+/* 無重力モーション（Anti-gravity Animation） */
+/* 各サテライトが異なる周期でゆっくり浮遊 */
+
+@keyframes floatSatellite1 {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.88;
+    }
+    25% {
+        transform: translate(-8px, -12px);
+        opacity: 1;
+    }
+    50% {
+        transform: translate(6px, -8px);
+        opacity: 0.92;
+    }
+    75% {
+        transform: translate(-4px, 10px);
+        opacity: 0.96;
+    }
+}
+
+@keyframes floatSatellite2 {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.92;
+    }
+    30% {
+        transform: translate(10px, 8px);
+        opacity: 0.96;
+    }
+    60% {
+        transform: translate(-6px, 14px);
+        opacity: 1;
+    }
+    90% {
+        transform: translate(8px, -6px);
+        opacity: 0.88;
+    }
+}
+
+@keyframes floatSatellite3 {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.9;
+    }
+    20% {
+        transform: translate(12px, -10px);
+        opacity: 0.94;
+    }
+    55% {
+        transform: translate(-8px, 6px);
+        opacity: 1;
+    }
+    80% {
+        transform: translate(6px, 12px);
+        opacity: 0.86;
+    }
+}
+
+@keyframes floatSatellite4 {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.86;
+    }
+    35% {
+        transform: translate(-10px, 14px);
+        opacity: 1;
+    }
+    65% {
+        transform: translate(8px, -8px);
+        opacity: 0.92;
+    }
+    85% {
+        transform: translate(-6px, -12px);
+        opacity: 0.94;
+    }
+}
+
+/* レスポンシブ - モバイル対応 */
+@media (max-width: 768px) {
+    .satellite {
+        padding: 6px 14px;
+        border-radius: 20px;
+    }
+
+    .satellite-text {
+        font-size: 10px;
+    }
+
+    /* モバイルでは配置を調整 */
+    .satellite-1 {
+        top: 16px;
+        left: 16px;
+    }
+
+    .satellite-2 {
+        top: 16px;
+        right: 16px;
+    }
+
+    .satellite-3 {
+        bottom: 24px;
+        left: 16px;
+    }
+
+    .satellite-4 {
+        bottom: 24px;
+        right: 16px;
+    }
+}
+
+/* ============================================
    Print Styles
    ============================================ */
 
@@ -774,5 +981,10 @@ body {
         background: white;
         backdrop-filter: none;
         border: 2px solid #667eea;
+    }
+
+    /* サテライトを印刷時に非表示 */
+    .satellite-container {
+        display: none;
     }
 }

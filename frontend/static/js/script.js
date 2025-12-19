@@ -53,6 +53,9 @@ window.sendMessage = async function() {
         return;
     }
 
+    // ウェルカムスクリーンを非表示
+    hideWelcomeScreen();
+
     addMessage(message, 'user');
     input.value = '';
     showTypingIndicator();
@@ -80,6 +83,32 @@ window.quickInput = function(text) {
     const input = document.getElementById('messageInput');
     input.value = text;
     input.focus();
+}
+
+/**
+ * サジェストチップから送信
+ */
+window.sendSuggest = async function(message) {
+    // ウェルカムスクリーンを非表示
+    hideWelcomeScreen();
+
+    addMessage(message, 'user');
+    showTypingIndicator();
+
+    try {
+        const data = await sendChatMessage(message);
+        hideTypingIndicator();
+        addMessage(data.response, 'assistant', {
+            type: data.detected_type,
+            amount: data.detected_amount,
+            saved: data.saved_to_notion
+        });
+        await loadStats();
+    } catch (error) {
+        hideTypingIndicator();
+        addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
+        console.error('Send message error:', error);
+    }
 }
 
 // ============================================
@@ -250,6 +279,20 @@ function hideTypingIndicator() {
 // ============================================
 // Utility Functions
 // ============================================
+
+/**
+ * ウェルカムスクリーンを非表示
+ */
+function hideWelcomeScreen() {
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    if (welcomeScreen && !welcomeScreen.classList.contains('hidden')) {
+        welcomeScreen.classList.add('hidden');
+        // アニメーション完了後に完全に削除
+        setTimeout(() => {
+            welcomeScreen.classList.add('gone');
+        }, 500);
+    }
+}
 
 /**
  * 数値を更新

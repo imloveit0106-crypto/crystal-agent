@@ -47,6 +47,21 @@
     animation: messageFadeIn 0.3s ease-out;
 }
 
+/* Welcome Screen Fade-out Animation */
+.welcome-screen {
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.welcome-screen.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+.welcome-screen.gone {
+    display: none;
+}
+
 /* Typing Indicator Dots */
 @keyframes typingDot {
     0%, 60%, 100% {

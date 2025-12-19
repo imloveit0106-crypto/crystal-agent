@@ -55,14 +55,47 @@
             </div>
         </header>
 
-        <!-- Artwork Area (Notion Style) -->
-        <div class="bg-white border-b border-gray-100 py-8">
-            <div class="max-w-3xl mx-auto text-center">
+        <!-- Welcome Screen (Notion Style) -->
+        <div id="welcomeScreen" class="bg-white border-b border-gray-100 py-12 welcome-screen">
+            <div class="max-w-3xl mx-auto text-center px-4">
+                <!-- Artwork -->
                 <img id="heroArtwork"
                      src=""
                      alt="Illustration"
-                     class="mx-auto h-32 opacity-60 grayscale"
+                     class="mx-auto h-32 mb-6 opacity-60 grayscale"
                      style="filter: grayscale(100%);">
+
+                <!-- Title & Description -->
+                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-2">
+                    Crystal Agent
+                </h2>
+                <p class="text-sm text-gray-500 mb-6">
+                    あなたの日々の行動や思考を記録し、AIがサポートします
+                </p>
+
+                <!-- Suggest Chips -->
+                <div class="flex flex-wrap justify-center gap-2">
+                    <button onclick="sendSuggest('家計簿をつけて。今日のランチは800円でした')"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span>家計簿をつける</span>
+                    </button>
+                    <button onclick="sendSuggest('今日の日記を書きたい')"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>日記を書く</span>
+                    </button>
+                    <button onclick="sendSuggest('今日の運勢を教えて')"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        <span>今日の運勢</span>
+                    </button>
+                    <button onclick="sendSuggest('今日のタスクを確認したい')"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                        <i data-lucide="list-todo" class="w-4 h-4"></i>
+                        <span>タスク確認</span>
+                    </button>
+                </div>
             </div>
         </div>
 

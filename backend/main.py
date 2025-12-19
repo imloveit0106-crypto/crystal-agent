@@ -51,13 +51,13 @@ NOTION_DB_ID = os.getenv("NOTION_LIFE_LOG_DB_ID") or os.getenv("NOTION_DATABASE_
 
 # デバッグ: 環境変数の読み込み状況を詳細に表示
 print("\n" + "="*67)
-print("🔍 環境変数読み込み状況")
+print("環境変数読み込み状況")
 print("="*67)
-print(f"GEMINI_API_KEY: {'✅ 設定済み' if GEMINI_API_KEY else '❌ 未設定 (None)'}")
-print(f"NOTION_API_KEY: {'✅ 設定済み' if NOTION_API_KEY else '❌ 未設定 (None)'}")
+print(f"GEMINI_API_KEY: {'設定済み' if GEMINI_API_KEY else '未設定 (None)'}")
+print(f"NOTION_API_KEY: {'設定済み' if NOTION_API_KEY else '未設定 (None)'}")
 if NOTION_API_KEY:
     print(f"  └─ 値の先頭: {NOTION_API_KEY[:20]}...")
-print(f"NOTION_DB_ID: {'✅ 設定済み' if NOTION_DB_ID else '❌ 未設定 (None)'}")
+print(f"NOTION_DB_ID: {'設定済み' if NOTION_DB_ID else '未設定 (None)'}")
 if NOTION_DB_ID:
     print(f"  └─ 値: {NOTION_DB_ID}")
 print("="*67 + "\n")
@@ -68,27 +68,27 @@ notion = None
 
 if NOTION_API_KEY and NOTION_DB_ID:
     try:
-        print("🔄 Notion接続を試行中...")
+        print("Notion接続を試行中...")
         notion = Client(auth=NOTION_API_KEY)
         # データベース接続テスト
         db_info = notion.databases.retrieve(database_id=NOTION_DB_ID)
         is_notion_active = True
-        print("✅ Notion DB接続成功")
+        print("Notion DB接続成功")
         print(f"  └─ データベース名: {db_info.get('title', [{}])[0].get('plain_text', 'N/A')}")
     except Exception as e:
-        print(f"❌ Notion DB接続失敗")
+        print(f"Notion DB接続失敗")
         print(f"  └─ エラータイプ: {type(e).__name__}")
         print(f"  └─ エラー詳細: {str(e)}")
         if "Unauthorized" in str(e) or "API token is invalid" in str(e):
-            print(f"  └─ 💡 ヒント: NOTION_API_KEYが正しいか確認してください")
+            print(f"  └─ ヒント: NOTION_API_KEYが正しいか確認してください")
             print(f"     - Integration Tokenは 'secret_' で始まります")
             print(f"     - データベースにIntegrationを招待しましたか？")
         if "object_not_found" in str(e).lower() or "Could not find" in str(e):
-            print(f"  └─ 💡 ヒント: NOTION_DB_IDが正しいか確認してください")
+            print(f"  └─ ヒント: NOTION_DB_IDが正しいか確認してください")
             print(f"     - データベースURLから32文字のIDを取得")
         is_notion_active = False
 else:
-    print("⚠️ Notion接続スキップ（環境変数が未設定）")
+    print("Notion接続スキップ（環境変数が未設定）")
     if not NOTION_API_KEY:
         print("  └─ NOTION_API_KEYが未設定です")
     if not NOTION_DB_ID:
@@ -96,11 +96,11 @@ else:
 
 # Gemini設定
 if not GEMINI_API_KEY:
-    raise ValueError("⚠️ Gemini APIキーが設定されていません")
+    raise ValueError("Gemini APIキーが設定されていません")
 
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
-print("✅ Gemini API接続成功 (gemini-1.5-flash)")
+print("Gemini API接続成功 (gemini-1.5-flash)")
 
 # システムプロンプト
 SYSTEM_PROMPT = """
@@ -219,11 +219,11 @@ def get_notion_stats() -> Dict:
                     "date": date
                 })
 
-        print(f"📊 Notionから {stats['total']} 件のデータを取得（RAGコンテキスト）")
+        print(f"Notionから {stats['total']} 件のデータを取得（RAGコンテキスト）")
         return stats
 
     except Exception as e:
-        print(f"❌ データ取得エラー: {e}")
+        print(f"データ取得エラー: {e}")
         return {"total": 0, "types": {}, "recent": [], "amounts": []}
 
 
@@ -322,7 +322,7 @@ async def chat(request: ChatRequest):
         if request.use_rag and is_notion_active:
             stats = get_notion_stats()
             rag_context = build_rag_context(stats)
-            print(f"🔍 RAGコンテキスト生成: {len(rag_context)} 文字")
+            print(f"RAGコンテキスト生成: {len(rag_context)} 文字")
 
         # AI応答生成（RAGコンテキスト付き）
         full_prompt = SYSTEM_PROMPT + rag_context + f"\n\nユーザー: {user_message}"
@@ -364,7 +364,7 @@ async def chat(request: ChatRequest):
         )
 
     except Exception as e:
-        print(f"❌ チャットエラー: {e}")
+        print(f"チャットエラー: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

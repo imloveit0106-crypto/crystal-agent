@@ -14,7 +14,7 @@ const API_BASE_URL = 'http://localhost:8000';
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🔮 Crystal Agent initialized');
+    console.log('Crystal Agent initialized');
     await loadStats();
     await checkConnection();
     setupEventListeners();
@@ -75,7 +75,7 @@ window.sendMessage = async function() {
     } catch (error) {
         hideTypingIndicator();
         addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
-        console.error('❌ Send message error:', error);
+        console.error('Send message error:', error);
     }
 }
 
@@ -114,9 +114,9 @@ async function checkConnection() {
             `;
         }
 
-        console.log('✅ Connection check:', data);
+        console.log('Connection check:', data);
     } catch (error) {
-        console.error('❌ Connection check failed:', error);
+        console.error('Connection check failed:', error);
         const statusIndicator = document.getElementById('statusIndicator');
         statusIndicator.innerHTML = `
             <div class="w-2 h-2 bg-red-500 rounded-full"></div>
@@ -144,9 +144,9 @@ async function loadStats() {
         const taskCount = stats.types['タスク'] || 0;
         updateNumber('taskCount', taskCount);
 
-        console.log('📊 統計データ取得:', stats);
+        console.log('統計データ取得:', stats);
     } catch (error) {
-        console.error('❌ Stats load failed:', error);
+        console.error('Stats load failed:', error);
     }
 }
 
@@ -172,12 +172,12 @@ async function sendChatMessage(message) {
 
         const data = await response.json();
 
-        console.log('💬 チャット応答:', data);
-        console.log('🔍 RAG使用:', data.rag_used ? 'はい' : 'いいえ');
+        console.log('チャット応答:', data);
+        console.log('RAG使用:', data.rag_used ? 'はい' : 'いいえ');
 
         return data;
     } catch (error) {
-        console.error('❌ Chat error:', error);
+        console.error('Chat error:', error);
         throw error;
     }
 }
@@ -277,7 +277,7 @@ function addMessage(text, role, meta = {}) {
     } else {
         const metaInfo = meta.saved ? `
             <div class="flex gap-2 mt-2">
-                <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">✓ ${meta.type}</span>
+                <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">${meta.type}</span>
                 ${meta.amount ? `<span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">¥${meta.amount.toLocaleString()}</span>` : ''}
             </div>
         ` : '';
@@ -471,10 +471,10 @@ async function fetchUserStatus() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log('🔮 ステータスデータ取得:', data);
+        console.log('ステータスデータ取得:', data);
         return data;
     } catch (error) {
-        console.error('❌ Status fetch error:', error);
+        console.error('Status fetch error:', error);
         throw error;
     }
 }
@@ -492,7 +492,6 @@ function renderCrystalCard(statusData) {
         <div class="crystal-card crystal-card-reveal" id="crystal-card-${Date.now()}">
             <!-- ヘッダー -->
             <div class="crystal-card-header">
-                <div class="crystal-card-icon">🔮</div>
                 <div class="crystal-card-name">${escapeHtml(statusData.name)}</div>
             </div>
 
@@ -518,7 +517,7 @@ function renderCrystalCard(statusData) {
 
                 <!-- ゴール（全幅） -->
                 <div class="crystal-card-goal">
-                    <div class="crystal-card-goal-label">🎯 Target Goal</div>
+                    <div class="crystal-card-goal-label">Target Goal</div>
                     <div class="crystal-card-goal-value">${escapeHtml(statusData.goal)}</div>
                 </div>
             </div>

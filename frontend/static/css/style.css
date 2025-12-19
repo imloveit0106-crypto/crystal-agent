@@ -1,81 +1,38 @@
 /* ============================================
    Crystal Agent - Custom Styles
-   Apple Human Interface Guidelines準拠
-   Next-Generation OS Level UI/UX
+   Apple Vision Pro風 空間UI
+   Tailwind CSS + 最小限のカスタムスタイル
    ============================================ */
 
-/* ============================================
-   Design System - Physical Constants
-   ============================================ */
-:root {
-    /* Apple Easing - 物理的な慣性運動 */
-    --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1.0);
-    --ease-apple-in: cubic-bezier(0.42, 0, 1, 1);
-    --ease-apple-out: cubic-bezier(0, 0, 0.58, 1);
-    --ease-apple-in-out: cubic-bezier(0.42, 0, 0.58, 1);
-
-    /* Glassmorphism - すりガラス効果 */
-    --glass-surface: rgba(255, 255, 255, 0.65);
-    --glass-surface-light: rgba(255, 255, 255, 0.45);
-    --glass-surface-heavy: rgba(255, 255, 255, 0.85);
-    --glass-blur: blur(20px);
-    --glass-blur-light: blur(12px);
-    --glass-blur-heavy: blur(32px);
-
-    /* Shadows - 浮遊感を生む影 */
-    --shadow-depth: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
-    --shadow-depth-lg: 0 20px 60px -15px rgba(0, 0, 0, 0.15);
-    --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.3);
-
-    /* Z-index System - レイヤー管理 */
-    --z-ambient: 1;
-    --z-hud: 10;
-    --z-app: 100;
-
-    /* Spacing - 8px Grid System */
-    --space-xs: 4px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-
-    /* Animation Durations */
-    --duration-instant: 0.1s;
-    --duration-fast: 0.2s;
-    --duration-normal: 0.32s;
-    --duration-slow: 0.5s;
-}
-
-/* Base Styles - Apple Typography System */
+/* Base Styles */
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'kern' 1;
     text-rendering: optimizeLegibility;
 }
 
-body {
-    /* 有機的に動くMesh Gradient背景 */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    background-size: 400% 400%;
-    animation: meshGradient 16s ease-in-out infinite;
-    background-attachment: fixed;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-    letter-spacing: -0.011em; /* -0.165px at 15px */
-    line-height: 1.5333; /* 23px / 15px - 光学的に最適 */
+/* Scrollbar Hidden */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }
 
-/* Mesh Gradient Animation - 空間が呼吸するような動き */
-@keyframes meshGradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+/* Custom Scrollbar for Chat Container */
+#chatContainer::-webkit-scrollbar {
+    width: 6px;
+}
+#chatContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+#chatContainer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+#chatContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* ============================================
@@ -91,57 +48,57 @@ body {
     height: 100vh;
     overflow: hidden;
     pointer-events: none;
-    z-index: var(--z-ambient);
+    z-index: 1;
 }
 
 /* 光のオーブ - 宇宙に浮かぶ粒子のような存在 */
 .orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.18;
+    filter: blur(80px);
+    opacity: 0.15;
     mix-blend-mode: screen;
     pointer-events: none;
 }
 
 /* Orb 1: 左上 - 青紫の光 */
 .orb-1 {
-    width: 420px;
-    height: 420px;
+    width: 500px;
+    height: 500px;
     background: radial-gradient(circle, #667eea 0%, transparent 70%);
-    top: -10%;
-    left: -8%;
-    animation: orbFloat1 18s ease-in-out infinite;
+    top: -15%;
+    left: -10%;
+    animation: orbFloat1 20s ease-in-out infinite;
 }
 
 /* Orb 2: 右上 - ピンクの光 */
 .orb-2 {
-    width: 520px;
-    height: 520px;
+    width: 600px;
+    height: 600px;
     background: radial-gradient(circle, #f093fb 0%, transparent 70%);
-    top: -15%;
-    right: -12%;
-    animation: orbFloat2 22s ease-in-out infinite;
+    top: -20%;
+    right: -15%;
+    animation: orbFloat2 25s ease-in-out infinite;
 }
 
 /* Orb 3: 左下 - 紫の光 */
 .orb-3 {
-    width: 480px;
-    height: 480px;
+    width: 550px;
+    height: 550px;
     background: radial-gradient(circle, #764ba2 0%, transparent 70%);
-    bottom: -12%;
-    left: -10%;
-    animation: orbFloat3 20s ease-in-out infinite;
+    bottom: -15%;
+    left: -12%;
+    animation: orbFloat3 22s ease-in-out infinite;
 }
 
 /* Orb 4: 右下 - 青の光 */
 .orb-4 {
-    width: 380px;
-    height: 380px;
+    width: 450px;
+    height: 450px;
     background: radial-gradient(circle, #667eea 0%, transparent 70%);
-    bottom: -8%;
-    right: -6%;
-    animation: orbFloat4 16s ease-in-out infinite;
+    bottom: -10%;
+    right: -8%;
+    animation: orbFloat4 18s ease-in-out infinite;
 }
 
 /* オーブの浮遊アニメーション - ゆっくりとした呼吸のような動き */
@@ -150,10 +107,10 @@ body {
         transform: translate(0, 0) scale(1);
     }
     33% {
-        transform: translate(40px, 60px) scale(1.08);
+        transform: translate(50px, 70px) scale(1.1);
     }
     66% {
-        transform: translate(-30px, 40px) scale(0.95);
+        transform: translate(-40px, 50px) scale(0.95);
     }
 }
 
@@ -162,13 +119,13 @@ body {
         transform: translate(0, 0) scale(1);
     }
     25% {
-        transform: translate(-50px, 70px) scale(1.12);
+        transform: translate(-60px, 80px) scale(1.15);
     }
     50% {
-        transform: translate(-80px, 30px) scale(0.92);
+        transform: translate(-90px, 40px) scale(0.9);
     }
     75% {
-        transform: translate(-20px, 50px) scale(1.05);
+        transform: translate(-30px, 60px) scale(1.05);
     }
 }
 
@@ -177,10 +134,10 @@ body {
         transform: translate(0, 0) scale(1);
     }
     40% {
-        transform: translate(60px, -50px) scale(1.1);
+        transform: translate(70px, -60px) scale(1.12);
     }
     80% {
-        transform: translate(30px, -80px) scale(0.88);
+        transform: translate(40px, -90px) scale(0.88);
     }
 }
 
@@ -189,10 +146,10 @@ body {
         transform: translate(0, 0) scale(1);
     }
     30% {
-        transform: translate(-40px, -60px) scale(0.9);
+        transform: translate(-50px, -70px) scale(0.92);
     }
     60% {
-        transform: translate(50px, -40px) scale(1.15);
+        transform: translate(60px, -50px) scale(1.18);
     }
 }
 
@@ -204,948 +161,85 @@ body {
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-    z-index: var(--z-hud);
+    z-index: 10;
 }
 
-/* Layer 3: App Layer - メインのチャットウィンドウ */
-#app-layer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: var(--z-app);
-}
-
-/* ============================================
-   Animations
-   ============================================ */
-
-/* メッセージスライドイン - ポンッと出る演出 */
-.message-enter {
-    animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes messageSlideIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-    60% {
-        transform: translateY(-5px) scale(1.02);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* タイピングインジケーター */
-.typing-indicator {
-    display: inline-flex;
-    gap: 4px;
-}
-
-.typing-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: #6B7280;
-    animation: typingBounce 1.4s infinite ease-in-out;
-}
-
-.typing-dot:nth-child(1) {
-    animation-delay: -0.32s;
-}
-
-.typing-dot:nth-child(2) {
-    animation-delay: -0.16s;
-}
-
-@keyframes typingBounce {
-    0%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-8px);
-    }
-}
-
-/* 送信ボタンのパルス効果 */
-@keyframes pulse-blue {
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
-    }
-    50% {
-        box-shadow: 0 0 0 10px rgba(0, 122, 255, 0);
-    }
-}
-
-.btn-send:hover {
-    animation: pulse-blue 2s infinite;
-}
-
-/* 統計数値のカウントアップ - シマー効果 */
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-    100% {
-        background-position: 1000px 0;
-    }
-}
-
-.stat-number {
-    background: linear-gradient(
-        90deg,
-        currentColor 0%,
-        rgba(255, 255, 255, 0.8) 50%,
-        currentColor 100%
-    );
-    background-size: 1000px 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: shimmer 3s infinite;
-}
-
-/* ============================================
-   Glassmorphism Effects - 徹底した奥行き表現
-   ============================================ */
-
-.glass {
-    /* 強力なすりガラス効果 + 繊細な境界線 */
-    backdrop-filter: blur(42px) saturate(180%) brightness(108%);
-    -webkit-backdrop-filter: blur(42px) saturate(180%) brightness(108%);
-    background-color: rgba(255, 255, 255, 0.82);
-    border: 0.5px solid rgba(255, 255, 255, 0.35);
-    box-shadow:
-        0 8px 32px rgba(31, 38, 135, 0.12),
-        0 2px 8px rgba(31, 38, 135, 0.06),
-        inset 0 1px 0 rgba(255, 255, 255, 0.75),
-        inset 0 -0.5px 0 rgba(255, 255, 255, 0.25);
-}
-
-.glass-light {
-    backdrop-filter: blur(24px) saturate(160%) brightness(106%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(106%);
-    background-color: rgba(255, 255, 255, 0.58);
-    border: 0.5px solid rgba(255, 255, 255, 0.22);
-    box-shadow:
-        0 4px 16px rgba(31, 38, 135, 0.08),
-        0 1px 4px rgba(31, 38, 135, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-/* チャットエリア専用 - 超強力なガラス効果 */
-.glass-chat {
-    backdrop-filter: blur(64px) saturate(200%) brightness(112%);
-    -webkit-backdrop-filter: blur(64px) saturate(200%) brightness(112%);
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.88) 0%,
-        rgba(255, 255, 255, 0.82) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    box-shadow:
-        0 16px 56px rgba(31, 38, 135, 0.18),
-        0 8px 24px rgba(0, 0, 0, 0.06),
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        inset 0 2px 0 rgba(255, 255, 255, 0.88),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.38);
-}
-
-/* ============================================
-   Custom Scrollbar - Apple Style
-   ============================================ */
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* ============================================
-   Message Bubble Tails - iMessage Style
-   ============================================ */
-
-/* ユーザーメッセージのテール（右） */
-.message-tail-user::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -8px;
-    width: 0;
-    height: 0;
-    border-left: 8px solid;
-    border-left-color: inherit;
-    border-bottom: 8px solid transparent;
-}
-
-/* AIメッセージのテール（左） */
-.message-tail-ai::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: -8px;
-    width: 0;
-    height: 0;
-    border-right: 8px solid white;
-    border-bottom: 8px solid transparent;
-}
-
-/* ============================================
-   Special Effects
-   ============================================ */
-
-/* ホバー時の浮遊効果 */
-.hover-float {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-float:hover {
-    transform: translateY(-4px);
-}
-
-/* グロー効果 */
-.glow {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-}
-
-.glow:hover {
-    box-shadow: 0 0 40px rgba(102, 126, 234, 0.5);
-}
-
-/* フェードイン */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 0.5s ease-in;
-}
-
-/* ============================================
-   Loading States
-   ============================================ */
-
-.loading-shimmer {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-}
-
-/* ============================================
-   Status Indicators
-   ============================================ */
-
-.status-pulse {
-    animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes statusPulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
-/* ============================================
-   Responsive Enhancements
-   ============================================ */
-
-@media (max-width: 768px) {
-    .message-enter {
-        animation: messageSlideInMobile 0.3s ease-out;
-    }
-
-    @keyframes messageSlideInMobile {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-}
-
-/* ============================================
-   Typography - Apple Standard
-   ============================================ */
-
-/* メッセージテキスト - 読みやすさを徹底追求 */
-.message-text {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 15px;
-    line-height: 1.4667; /* 22px / 15px - 視認性最適化 */
-    letter-spacing: -0.015em; /* -0.225px - 光学調整 */
-    font-weight: 400;
-}
-
-/* タイトル・見出し */
-.text-title {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.022em; /* より詰める */
-    line-height: 1.1875; /* 38px / 32px */
-}
-
-/* 小さいテキスト（統計など） */
-.text-caption {
-    font-size: 11px;
-    line-height: 1.3636; /* 15px / 11px */
-    letter-spacing: 0.007em; /* 0.077px - 微調整 */
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.55); /* コントラスト調整 */
-}
-
-/* ============================================
-   Input Error Handling - 空送信時の震え
-   ============================================ */
-
-/* 入力欄の震えアニメーション */
-@keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: translateX(-8px);
-    }
-    20%, 40%, 60%, 80% {
-        transform: translateX(8px);
-    }
-}
-
-.shake {
-    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-}
-
-/* エラー状態の入力欄 */
-.input-error {
-    border-color: #ff3b30 !important;
-    box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.1) !important;
-}
-
-/* ============================================
-   Advanced Message Animations
-   ============================================ */
-
-/* メッセージの弾むような出現 - より洗練された動き */
-@keyframes messageSlideInAdvanced {
-    0% {
-        opacity: 0;
-        transform: translateY(28px) scale(0.93);
-        filter: blur(5px);
-    }
-    58% {
-        transform: translateY(-3px) scale(1.008);
-        filter: blur(0px);
-    }
-    76% {
-        transform: translateY(1.5px) scale(0.995);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0px);
-    }
-}
-
-.message-enter-advanced {
-    animation: messageSlideInAdvanced 0.64s cubic-bezier(0.32, 1.62, 0.58, 1);
-}
-
-/* ============================================
-   Enhanced Typing Indicator
-   ============================================ */
-
-/* より波打つような動き */
-.typing-dot-enhanced {
-    width: 9px; /* わずかに小さく */
-    height: 9px;
-    border-radius: 50%;
-    background: linear-gradient(137deg, #667eea, #764ba2);
-    animation: typingBounceEnhanced 1.68s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-    box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.12),
-        0 0 12px rgba(102, 126, 234, 0.24);
-}
-
-.typing-dot-enhanced:nth-child(1) {
-    animation-delay: -0.42s;
-}
-
-.typing-dot-enhanced:nth-child(2) {
-    animation-delay: -0.21s;
-}
-
-@keyframes typingBounceEnhanced {
-    0%, 62%, 100% {
-        transform: translateY(0) scale(1);
-        opacity: 0.68;
-    }
-    31% {
-        transform: translateY(-11px) scale(1.08);
-        opacity: 1;
-    }
-}
-
-/* ============================================
-   Micro-interactions - 極限まで洗練された物理的フィードバック
-   ============================================ */
-
-/* ボタンの押下感 - より物理的に */
-.btn-press {
-    transition: transform var(--duration-instant) var(--ease-apple);
-}
-
-.btn-press:active {
-    transform: scale(0.96);
-}
-
-/* 送信ボタン - 究極のインタラクション */
-.btn-send {
-    transition: all var(--duration-normal) var(--ease-apple);
-}
-
-.btn-send:hover {
-    transform: scale(1.02) translateY(-1px);
-    box-shadow:
-        0 16px 42px rgba(59, 130, 246, 0.28),
-        0 8px 20px rgba(59, 130, 246, 0.18),
-        0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.btn-send:active {
-    transform: scale(0.98) translateY(0px);
-    transition-duration: var(--duration-instant);
-}
-
-/* Quick Actionボタン - 軽快な弾力 */
-button[onclick^="quickInput"] {
-    transition: all var(--duration-fast) var(--ease-apple);
-}
-
-button[onclick^="quickInput"]:hover {
-    transform: scale(1.05) translateY(-1px);
-    box-shadow:
-        0 8px 20px rgba(99, 102, 241, 0.18),
-        0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-button[onclick^="quickInput"]:active {
-    transform: scale(1.01) translateY(0px);
-    transition-duration: var(--duration-instant);
-}
-
-/* 入力欄 - フォーカス時の拡張 */
-#messageInput {
-    transition: all var(--duration-normal) var(--ease-apple);
-}
-
-#messageInput:focus {
-    transform: scale(1.005);
-    box-shadow:
-        0 0 0 4px rgba(59, 130, 246, 0.12),
-        0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-/* ホバー時の浮遊感強化 - より自然な動き */
-.hover-lift {
-    transition: all var(--duration-normal) var(--ease-apple);
-}
-
-.hover-lift:hover {
-    transform: translateY(-2px) scale(1.005);
-    box-shadow:
-        0 16px 36px rgba(0, 0, 0, 0.12),
-        0 6px 14px rgba(0, 0, 0, 0.08);
-}
-
-/* メッセージバブル - スムーズな出現 */
-.message-tail-user,
-.message-tail-ai {
-    transition: all var(--duration-normal) var(--ease-apple);
-}
-
-.message-tail-user:hover,
-.message-tail-ai:hover {
-    transform: scale(1.008);
-    box-shadow:
-        0 10px 28px rgba(0, 0, 0, 0.10),
-        0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-/* 統計カード - ホバー時の拡大 */
-.group {
-    transition: all var(--duration-normal) var(--ease-apple);
-}
-
-.group:hover {
-    transform: scale(1.05);
-}
-
-/* フォーカス時のリング効果 - Appleスタイル */
-.focus-ring:focus,
-input:focus,
-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-    border-color: #007AFF;
-}
-
-/* ============================================
-   Crystal Status Card - SF Movie Hologram UI
-   ============================================ */
-
-/* カード本体 - 究極のグラスモーフィズム */
-.crystal-card {
-    position: relative;
-    width: 384px; /* 8の倍数 - グリッドに最適 */
-    min-height: 256px; /* 同上 */
-    padding: 28px 32px 32px; /* 上部余白を微調整 */
-    margin: 24px 0; /* 垂直リズム統一 */
-
-    /* 究極のすりガラス効果 */
-    backdrop-filter: blur(48px) saturate(190%) brightness(118%);
-    -webkit-backdrop-filter: blur(48px) saturate(190%) brightness(118%);
-    background: linear-gradient(
-        137deg, /* 微妙な角度変更 */
-        rgba(255, 255, 255, 0.28) 0%,
-        rgba(255, 255, 255, 0.16) 48%,
-        rgba(255, 255, 255, 0.28) 100%
-    );
-
-    /* 複数レイヤーの境界線 */
-    border: 1.5px solid rgba(255, 255, 255, 0.45);
-    border-radius: 28px; /* よりソフトな角 */
-
-    /* 複雑な多層シャドウで奥行き - 段階的に最適化 */
-    box-shadow:
-        0 10px 40px rgba(31, 38, 135, 0.22),
-        0 4px 16px rgba(31, 38, 135, 0.12),
-        0 1px 4px rgba(0, 0, 0, 0.08),
-        0 0 0 0.5px rgba(255, 255, 255, 0.55) inset,
-        0 24px 72px rgba(102, 126, 234, 0.28),
-        0 0 120px rgba(118, 75, 162, 0.18);
-
-    /* 3D変形の準備 */
-    transform-style: preserve-3d;
-    transition: all 0.42s cubic-bezier(0.22, 1, 0.36, 1); /* より滑らかに */
-
-    /* CSS変数でDynamic Lightingを制御 */
-    --mouse-x: 50%;
-    --mouse-y: 50%;
-}
-
-/* 光沢エフェクト - マウス位置に追従 */
-.crystal-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 28px; /* カードと同じ */
-    background: radial-gradient(
-        circle at var(--mouse-x) var(--mouse-y),
-        rgba(255, 255, 255, 0.38) 0%,
-        rgba(255, 255, 255, 0.12) 28%,
-        transparent 58%
-    );
-    opacity: 0;
-    transition: opacity 0.36s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    pointer-events: none;
-}
-
-.crystal-card:hover::before {
-    opacity: 1;
-}
-
-/* ホバー時の3Dチルト効果 */
-.crystal-card:hover {
-    transform: translateY(-6px) scale(1.015); /* より微細な変化 */
-    box-shadow:
-        0 18px 52px rgba(31, 38, 135, 0.32),
-        0 8px 24px rgba(31, 38, 135, 0.18),
-        0 2px 8px rgba(0, 0, 0, 0.12),
-        0 0 0 0.5px rgba(255, 255, 255, 0.62) inset,
-        0 28px 84px rgba(102, 126, 234, 0.36),
-        0 0 140px rgba(118, 75, 162, 0.24);
-}
-
-/* カードヘッダー */
-.crystal-card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px; /* より詰めた間隔 */
-    margin-bottom: 26px; /* リズム調整 */
-    position: relative;
-    z-index: 1;
-}
-
-.crystal-card-icon {
-    width: 52px; /* 4の倍数 */
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px; /* アイコンサイズ微調整 */
-    background: linear-gradient(137deg, #667eea, #764ba2);
-    border-radius: 18px; /* カード角とのバランス */
-    box-shadow:
-        0 6px 20px rgba(102, 126, 234, 0.38),
-        0 2px 8px rgba(102, 126, 234, 0.24);
-    animation: iconFloat 3.2s ease-in-out infinite;
-}
-
-@keyframes iconFloat {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-5px); /* より微細な動き */
-    }
-}
-
-.crystal-card-name {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 26px; /* わずかに小さく */
-    font-weight: 700;
-    letter-spacing: -0.024em; /* より詰める */
-    line-height: 1.15; /* 30px / 26px */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientShift 3.4s ease infinite;
-}
-
-@keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-/* カード情報グリッド */
-.crystal-card-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px; /* 統一された間隔 */
-    margin-bottom: 18px; /* リズム調整 */
-    position: relative;
-    z-index: 1;
-}
-
-.crystal-card-item {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(12px);
-    padding: 11px 14px 13px; /* 光学的バランス */
-    border-radius: 14px; /* カード全体とのハーモニー */
-    border: 0.5px solid rgba(255, 255, 255, 0.24);
-    transition: all 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.crystal-card-item:hover {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.32);
-    transform: translateY(-1.5px); /* より微細な浮遊 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.crystal-card-label {
-    font-size: 10px; /* わずかに小さく */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.09em; /* より空けて視認性向上 */
-    color: rgba(255, 255, 255, 0.72);
-    margin-bottom: 5px; /* 間隔微調整 */
-}
-
-.crystal-card-value {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 17px; /* 1px調整 */
-    font-weight: 600;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-    text-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.18),
-        0 0 8px rgba(255, 255, 255, 0.12);
-}
-
-/* ゴール（目標）- アクセントカラーで強調 */
-.crystal-card-goal {
-    grid-column: 1 / -1;
-    background: linear-gradient(137deg, rgba(102, 126, 234, 0.32), rgba(118, 75, 162, 0.28));
-    backdrop-filter: blur(24px);
-    padding: 18px 22px 20px; /* 光学的中央揃え */
-    border-radius: 18px; /* 統一されたR値 */
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.crystal-card-goal::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        47deg, /* 微妙な角度調整 */
-        transparent,
-        rgba(255, 255, 255, 0.12),
-        transparent
-    );
-    animation: goalShine 3.6s ease-in-out infinite;
-}
-
-@keyframes goalShine {
-    0% {
-        transform: translateX(-100%) translateY(-100%) rotate(47deg);
-        opacity: 0;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(100%) translateY(100%) rotate(47deg);
-        opacity: 0;
-    }
-}
-
-.crystal-card-goal-label {
-    font-size: 11px; /* 統一 */
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em; /* より空ける */
-    color: rgba(255, 255, 255, 0.82);
-    margin-bottom: 10px; /* 間隔調整 */
-    position: relative;
-    z-index: 1;
-}
-
-.crystal-card-goal-value {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 30px; /* わずかに小さく */
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: goldShimmer 2.4s ease-in-out infinite;
-    filter: drop-shadow(0 0 24px rgba(255, 215, 0, 0.48));
-    position: relative;
-    z-index: 1;
-}
-
-@keyframes goldShimmer {
-    0%, 100% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-}
-
-/* 3D回転しながら出現するアニメーション */
-@keyframes crystalReveal {
-    0% {
-        opacity: 0;
-        transform: perspective(1200px) rotateY(-92deg) translateY(32px) scale(0.94);
-        filter: blur(12px);
-    }
-    58% {
-        transform: perspective(1200px) rotateY(4deg) translateY(-4px) scale(1.01);
-        filter: blur(0px);
-    }
-    78% {
-        transform: perspective(1200px) rotateY(-2deg) translateY(1px) scale(0.998);
-    }
-    100% {
-        opacity: 1;
-        transform: perspective(1200px) rotateY(0deg) translateY(0px) scale(1);
-        filter: blur(0px);
-    }
-}
-
-.crystal-card-reveal {
-    animation: crystalReveal 1.28s cubic-bezier(0.19, 1, 0.22, 1) forwards;
-}
-
-/* カードコンテナ（チャット内） */
-.crystal-card-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    padding: 20px 0;
-}
-
-/* ============================================
-   Floating Satellites - HUD Status Chips (Enhanced)
-   ============================================ */
-
-/* 基本サテライトスタイル - ノイズテクスチャ付きガラス */
+/* Floating Satellites - Vision Pro風HUD */
 .satellite {
     position: absolute;
-    padding: 10px 20px;
-
-    /* 究極のシンプルなPill shape */
-    border-radius: 28px;
-
-    /* 透明度の高いすりガラス + ノイズ感 */
-    backdrop-filter: var(--glass-blur) saturate(140%);
-    -webkit-backdrop-filter: var(--glass-blur) saturate(140%);
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%),
-        url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.03"/></svg>');
-
-    /* 1pxの白い境界線 - より明確に */
-    border: 1px solid rgba(255, 255, 255, 0.22);
-
-    /* 奥行き感を出す影 */
+    padding: 12px 24px;
+    border-radius: 32px;
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18),
-        inset 0 -0.5px 0 rgba(0, 0, 0, 0.08);
-
-    /* クリック可能に */
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     pointer-events: auto;
     cursor: default;
-
-    /* 物理的なトランジション */
-    transition: all var(--duration-normal) var(--ease-apple);
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1.0);
 }
 
-/* ホバー時 - 物理的な弾力（scale + shadow expansion） */
 .satellite:hover {
-    transform: scale(1.04) translateY(-1px);
-    background:
-        linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.10) 100%),
-        url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.03"/></svg>');
-    border-color: rgba(255, 255, 255, 0.35);
+    transform: scale(1.05) translateY(-2px);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
     box-shadow:
-        0 14px 36px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.06),
-        inset 0 1.5px 0 rgba(255, 255, 255, 0.28),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.10),
-        var(--shadow-glow);
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        0 0 60px rgba(102, 126, 234, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
-/* アクティブ時 - 押し込む感覚 */
-.satellite:active {
-    transform: scale(1.01) translateY(0px);
-    transition-duration: var(--duration-instant);
-}
-
-/* サテライトテキスト - 極めて上品 */
 .satellite-text {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    letter-spacing: 0.03em;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     white-space: nowrap;
 }
 
-/* 各サテライトの配置 - 計算された位置 */
-
-/* Satellite 1: MBTI (左上) */
+/* Satellite Positions */
 .satellite-1 {
-    top: 32px;
-    left: 40px;
-    animation: floatSatellite1 5.2s ease-in-out infinite;
+    top: 40px;
+    left: 50px;
+    animation: floatSatellite1 6s ease-in-out infinite;
 }
 
-/* Satellite 2: Level (右上) */
 .satellite-2 {
-    top: 48px;
-    right: 56px;
-    animation: floatSatellite2 4.6s ease-in-out infinite;
+    top: 50px;
+    right: 60px;
+    animation: floatSatellite2 5.5s ease-in-out infinite;
 }
 
-/* Satellite 3: Target (左下) */
 .satellite-3 {
-    bottom: 64px;
-    left: 52px;
-    animation: floatSatellite3 5.8s ease-in-out infinite;
+    bottom: 70px;
+    left: 60px;
+    animation: floatSatellite3 6.5s ease-in-out infinite;
 }
 
-/* Satellite 4: Color (右下) */
-.satellite-4 {
-    bottom: 80px;
-    right: 68px;
-    animation: floatSatellite4 4.2s ease-in-out infinite;
-}
-
-/* 無重力モーション（Anti-gravity Animation） */
-/* 各サテライトが異なる周期でゆっくり浮遊 */
-
+/* Anti-gravity Animations */
 @keyframes floatSatellite1 {
     0%, 100% {
         transform: translate(0, 0);
-        opacity: 0.88;
-    }
-    25% {
-        transform: translate(-8px, -12px);
-        opacity: 1;
+        opacity: 0.9;
     }
     50% {
-        transform: translate(6px, -8px);
-        opacity: 0.92;
-    }
-    75% {
-        transform: translate(-4px, 10px);
-        opacity: 0.96;
+        transform: translate(-10px, -15px);
+        opacity: 1;
     }
 }
 
 @keyframes floatSatellite2 {
     0%, 100% {
         transform: translate(0, 0);
-        opacity: 0.92;
+        opacity: 0.85;
     }
-    30% {
-        transform: translate(10px, 8px);
-        opacity: 0.96;
-    }
-    60% {
-        transform: translate(-6px, 14px);
+    50% {
+        transform: translate(12px, 18px);
         opacity: 1;
-    }
-    90% {
-        transform: translate(8px, -6px);
-        opacity: 0.88;
     }
 }
 
@@ -1154,69 +248,140 @@ button:focus {
         transform: translate(0, 0);
         opacity: 0.9;
     }
-    20% {
-        transform: translate(12px, -10px);
-        opacity: 0.94;
-    }
-    55% {
-        transform: translate(-8px, 6px);
+    50% {
+        transform: translate(15px, -12px);
         opacity: 1;
-    }
-    80% {
-        transform: translate(6px, 12px);
-        opacity: 0.86;
     }
 }
 
-@keyframes floatSatellite4 {
-    0%, 100% {
-        transform: translate(0, 0);
-        opacity: 0.86;
+/* Layer 3: App Layer */
+#app-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* ============================================
+   Message Animations - Vision Pro風
+   ============================================ */
+
+/* メッセージの出現アニメーション */
+@keyframes messageAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+        filter: blur(4px);
     }
-    35% {
-        transform: translate(-10px, 14px);
+    100% {
         opacity: 1;
-    }
-    65% {
-        transform: translate(8px, -8px);
-        opacity: 0.92;
-    }
-    85% {
-        transform: translate(-6px, -12px);
-        opacity: 0.94;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
     }
 }
 
-/* レスポンシブ - モバイル対応 */
+.message-appear {
+    animation: messageAppear 0.5s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+/* タイピングインジケーター */
+@keyframes typingDot {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    display: inline-block;
+    margin: 0 2px;
+    animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* ============================================
+   Crystal Status Card - Vision Pro風
+   ============================================ */
+
+.crystal-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        0 0 80px rgba(102, 126, 234, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    animation: crystalReveal 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes crystalReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
 @media (max-width: 768px) {
     .satellite {
-        padding: 6px 14px;
-        border-radius: 20px;
+        padding: 8px 16px;
+        border-radius: 24px;
     }
 
     .satellite-text {
         font-size: 10px;
     }
 
-    /* モバイルでは配置を調整 */
     .satellite-1 {
-        top: 16px;
-        left: 16px;
+        top: 20px;
+        left: 20px;
     }
 
     .satellite-2 {
-        top: 16px;
-        right: 16px;
+        top: 20px;
+        right: 20px;
     }
 
     .satellite-3 {
-        bottom: 24px;
-        left: 16px;
+        bottom: 30px;
+        left: 20px;
     }
 
-    .satellite-4 {
-        bottom: 24px;
-        right: 16px;
+    .orb {
+        filter: blur(60px);
+        opacity: 0.1;
     }
 }
 
@@ -1225,25 +390,12 @@ button:focus {
    ============================================ */
 
 @media print {
+    #ambient-layer,
+    #hud-layer {
+        display: none;
+    }
+
     body {
         background: white;
-        animation: none;
-    }
-
-    .glass, .glass-chat, .glass-light {
-        background: white;
-        backdrop-filter: none;
-        border: 1px solid #e5e5e5;
-    }
-
-    .crystal-card {
-        background: white;
-        backdrop-filter: none;
-        border: 2px solid #667eea;
-    }
-
-    /* サテライトを印刷時に非表示 */
-    .satellite-container {
-        display: none;
     }
 }

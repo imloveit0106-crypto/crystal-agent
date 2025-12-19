@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,23 +11,22 @@
     <!-- Custom Tailwind Config -->
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         apple: {
                             blue: '#007AFF',
                             darkblue: '#0051D5',
-                            lightblue: '#E3F2FD',
-                            gray: '#F5F5F7',
-                            darkgray: '#1D1D1F',
                         }
                     },
                     fontFamily: {
                         sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
                     },
-                    boxShadow: {
-                        'apple': '0 4px 16px rgba(0, 0, 0, 0.08)',
-                        'apple-lg': '0 8px 32px rgba(0, 0, 0, 0.12)',
+                    backdropBlur: {
+                        'xs': '2px',
+                        'apple': '20px',
+                        'heavy': '40px',
                     }
                 }
             }
@@ -37,7 +36,7 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="font-sans">
+<body class="bg-slate-900 font-sans overflow-hidden">
 
     <!-- ============================================
          Layer 1: Ambient Layer - Animated Light Orbs
@@ -73,129 +72,118 @@
 
     <!-- ============================================
          Layer 3: App Layer - Main Chat Window (最前面)
-         メインのチャットインターフェース
+         Apple Vision Pro風 空間UI
          ============================================ -->
-    <div id="app-layer">
-        <div class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-4xl h-[90vh] glass rounded-3xl shadow-apple-lg overflow-hidden flex flex-col">
+    <div id="app-layer" class="relative z-[100] min-h-screen flex items-center justify-center p-6">
 
-            <!-- Header - Elegant & Minimal -->
-            <header class="bg-gradient-to-r from-white/90 to-white/80 backdrop-blur-md border-b border-white/20 px-8 py-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span class="text-2xl">🔮</span>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold bg-gradient-to-r from-apple-blue to-purple-600 bg-clip-text text-transparent">
-                                Crystal Agent
-                            </h1>
-                            <p class="text-sm text-gray-500 font-medium">Your AI Assistant</p>
-                        </div>
+        <!-- Main Container - 透明ガラスコンテナ -->
+        <div class="w-full max-w-5xl h-[95vh] flex flex-col">
+
+            <!-- Header - Vision Pro風ヘッダー -->
+            <header class="bg-white/5 backdrop-blur-apple border border-white/10 rounded-t-3xl px-8 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10">
+                        <span class="text-3xl">🔮</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <div id="statusIndicator" class="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full">
-                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-semibold text-green-700">Online</span>
-                        </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-white tracking-tight">
+                            Crystal Agent
+                        </h1>
+                        <p class="text-sm text-white/50 font-medium">AI Personal Assistant</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="statusIndicator" class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                        <span class="text-xs font-semibold text-white/70">Online</span>
                     </div>
                 </div>
             </header>
 
-            <!-- Stats Bar - Clean & Modern -->
-            <div class="bg-gradient-to-r from-gray-50 to-white px-8 py-4 border-b border-gray-100">
-                <div class="grid grid-cols-3 gap-6">
-                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
-                        <div class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent" id="statTotal">0</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Records</div>
-                    </div>
-                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
-                        <div class="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-400 bg-clip-text text-transparent" id="statAmount">¥0</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Expenses</div>
-                    </div>
-                    <div class="text-center group hover:scale-105 transition-transform cursor-pointer">
-                        <div class="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-400 bg-clip-text text-transparent" id="statTypes">0</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold mt-1">Categories</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Main Content Area - 透明スペース -->
+            <div class="flex-1 bg-white/[0.03] backdrop-blur-heavy border-x border-white/10 flex flex-col overflow-hidden">
 
-            <!-- Chat Messages - iMessage Style -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto px-8 py-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/50">
-                <!-- Welcome Message -->
-                <div class="flex gap-3 items-end message-enter">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
-                        <span class="text-xl">🤖</span>
-                    </div>
-                    <div class="flex flex-col max-w-md">
-                        <div class="relative bg-white message-tail-ai rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
-                            <p class="text-gray-800 leading-relaxed">
-                                こんにちは！今日はどんなことがありましたか？✨
+                <!-- Chat Messages Container -->
+                <div id="chatContainer" class="flex-1 overflow-y-auto px-8 py-6 space-y-4 scroll-smooth">
+                    <!-- Welcome Message -->
+                    <div class="flex justify-center my-12">
+                        <div class="bg-white/5 backdrop-blur-apple border border-white/10 rounded-2xl px-8 py-6 max-w-2xl text-center">
+                            <div class="text-6xl mb-4">👋</div>
+                            <h2 class="text-2xl font-bold text-white mb-2">Welcome to Crystal Agent</h2>
+                            <p class="text-white/60 leading-relaxed">
+                                あなたの日々の行動や思考を記録し、AIがサポートします。<br>
+                                なんでも話しかけてください。
                             </p>
                         </div>
-                        <span class="text-xs text-gray-400 mt-2 ml-2">Crystal Agent • たった今</span>
                     </div>
-                </div>
-            </div>
 
-            <!-- Typing Indicator (hidden by default) -->
-            <div id="typingIndicator" class="hidden px-8 pb-2">
-                <div class="flex gap-3 items-end">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-lg flex-shrink-0">
-                        <span class="text-xl">🤖</span>
-                    </div>
-                    <div class="bg-white rounded-3xl rounded-bl-md px-6 py-4 shadow-apple">
-                        <div class="typing-indicator">
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
+                    <!-- Messages will be inserted here dynamically -->
+                </div>
+
+                <!-- Stats Display - ガラスカード -->
+                <div id="statsDisplay" class="px-8 py-4 border-t border-white/10">
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Stat Card 1 -->
+                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Total</div>
+                            <div id="totalCount" class="text-2xl font-bold text-white">0</div>
+                        </div>
+                        <!-- Stat Card 2 -->
+                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Diary</div>
+                            <div id="diaryCount" class="text-2xl font-bold text-white">0</div>
+                        </div>
+                        <!-- Stat Card 3 -->
+                        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 hover:bg-white/10 transition-all duration-300 hover:scale-105">
+                            <div class="text-white/50 text-xs font-semibold uppercase tracking-wider mb-1">Tasks</div>
+                            <div id="taskCount" class="text-2xl font-bold text-white">0</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Input Area - Fixed Bottom -->
-            <div class="bg-white border-t border-gray-100 px-8 py-6">
-                <form id="chatForm" class="flex gap-3 items-center">
+            <!-- Input Area - Vision Pro風フッター -->
+            <footer class="bg-white/5 backdrop-blur-apple border border-white/10 rounded-b-3xl px-8 py-6">
+                <!-- Quick Actions - ガラスボタン -->
+                <div class="mb-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    <button onclick="quickInput('今日のランチは800円でした')"
+                            class="quick-action-btn bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105">
+                        💰 支出を記録
+                    </button>
+                    <button onclick="quickInput('今日やることリスト')"
+                            class="quick-action-btn bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105">
+                        📝 タスク追加
+                    </button>
+                    <button onclick="quickInput('今日の振り返り')"
+                            class="quick-action-btn bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105">
+                        ✨ 日記を書く
+                    </button>
+                    <button onclick="quickInput('ステータス')"
+                            class="quick-action-btn bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 hover:scale-105">
+                        🔮 ステータス確認
+                    </button>
+                </div>
+
+                <!-- Input Box - ガラス入力欄 -->
+                <div class="flex gap-3">
                     <input
                         type="text"
                         id="messageInput"
                         placeholder="メッセージを入力..."
-                        class="flex-1 px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-full text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-base"
-                        autocomplete="off"
-                    />
-                    <button
-                        type="submit"
-                        class="btn-send px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 flex items-center gap-2"
+                        class="flex-1 bg-white/5 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 rounded-2xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-apple-blue/50 focus:border-apple-blue/50 transition-all duration-300"
+                        onkeypress="if(event.key === 'Enter') sendMessage()"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                        </svg>
+                    <button
+                        onclick="sendMessage()"
+                        id="sendButton"
+                        class="bg-gradient-to-r from-apple-blue to-blue-600 hover:from-blue-600 hover:to-apple-blue text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-apple-blue/30">
                         送信
                     </button>
-                </form>
-
-                <!-- Quick Actions -->
-                <div class="flex flex-wrap gap-2 mt-4">
-                    <button onclick="quickInput('ステータス')" class="px-4 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 text-indigo-700 text-sm font-semibold rounded-full border border-indigo-200 transition-all hover:scale-105 shadow-md hover:shadow-lg">
-                        🔮 ステータス
-                    </button>
-                    <button onclick="quickInput('今日のランチに1000円使った')" class="px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 text-green-700 text-sm font-semibold rounded-full border border-green-200 transition-all hover:scale-105">
-                        💰 支出を記録
-                    </button>
-                    <button onclick="quickInput('今日は良い天気だった')" class="px-4 py-2 bg-gradient-to-r from-blue-50 to-sky-50 hover:from-blue-100 hover:to-sky-100 text-blue-700 text-sm font-semibold rounded-full border border-blue-200 transition-all hover:scale-105">
-                        📔 日記を書く
-                    </button>
-                    <button onclick="quickInput('明日までに資料を完成させる')" class="px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 text-purple-700 text-sm font-semibold rounded-full border border-purple-200 transition-all hover:scale-105">
-                        ✅ タスクを追加
-                    </button>
                 </div>
-            </div>
+            </footer>
 
-        </div>
         </div>
     </div>
-    <!-- End of App Layer -->
 
     <!-- Custom JavaScript -->
     <script src="/static/js/script.js"></script>

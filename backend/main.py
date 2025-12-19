@@ -46,7 +46,21 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # API設定
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
-NOTION_DB_ID = os.getenv("NOTION_LIFE_LOG_DB_ID")
+# 複数の変数名に対応（柔軟性向上）
+NOTION_DB_ID = os.getenv("NOTION_LIFE_LOG_DB_ID") or os.getenv("NOTION_DATABASE_ID")
+
+# デバッグ: 環境変数の読み込み状況を詳細に表示
+print("\n" + "="*67)
+print("🔍 環境変数読み込み状況")
+print("="*67)
+print(f"GEMINI_API_KEY: {'✅ 設定済み' if GEMINI_API_KEY else '❌ 未設定 (None)'}")
+print(f"NOTION_API_KEY: {'✅ 設定済み' if NOTION_API_KEY else '❌ 未設定 (None)'}")
+if NOTION_API_KEY:
+    print(f"  └─ 値の先頭: {NOTION_API_KEY[:20]}...")
+print(f"NOTION_DB_ID: {'✅ 設定済み' if NOTION_DB_ID else '❌ 未設定 (None)'}")
+if NOTION_DB_ID:
+    print(f"  └─ 値: {NOTION_DB_ID}")
+print("="*67 + "\n")
 
 # Notion接続チェック
 is_notion_active = False
@@ -54,13 +68,31 @@ notion = None
 
 if NOTION_API_KEY and NOTION_DB_ID:
     try:
+        print("🔄 Notion接続を試行中...")
         notion = Client(auth=NOTION_API_KEY)
-        notion.databases.retrieve(database_id=NOTION_DB_ID)
+        # データベース接続テスト
+        db_info = notion.databases.retrieve(database_id=NOTION_DB_ID)
         is_notion_active = True
         print("✅ Notion DB接続成功")
+        print(f"  └─ データベース名: {db_info.get('title', [{}])[0].get('plain_text', 'N/A')}")
     except Exception as e:
-        print(f"⚠️ Notion DB接続失敗: {e}")
+        print(f"❌ Notion DB接続失敗")
+        print(f"  └─ エラータイプ: {type(e).__name__}")
+        print(f"  └─ エラー詳細: {str(e)}")
+        if "Unauthorized" in str(e) or "API token is invalid" in str(e):
+            print(f"  └─ 💡 ヒント: NOTION_API_KEYが正しいか確認してください")
+            print(f"     - Integration Tokenは 'secret_' で始まります")
+            print(f"     - データベースにIntegrationを招待しましたか？")
+        if "object_not_found" in str(e).lower() or "Could not find" in str(e):
+            print(f"  └─ 💡 ヒント: NOTION_DB_IDが正しいか確認してください")
+            print(f"     - データベースURLから32文字のIDを取得")
         is_notion_active = False
+else:
+    print("⚠️ Notion接続スキップ（環境変数が未設定）")
+    if not NOTION_API_KEY:
+        print("  └─ NOTION_API_KEYが未設定です")
+    if not NOTION_DB_ID:
+        print("  └─ NOTION_DB_ID（またはNOTION_LIFE_LOG_DB_ID）が未設定です")
 
 # Gemini設定
 if not GEMINI_API_KEY:

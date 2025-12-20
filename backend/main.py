@@ -96,15 +96,36 @@ if not GEMINI_API_KEY:
     raise ValueError("Gemini APIキーが設定されていません")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
-print("Gemini API接続成功 (gemini-1.5-flash)")
 
-# システムプロンプト
-SYSTEM_PROMPT = """
-あなたは「Crystal Agent」という親切なAIアシスタントです。
-ユーザーの日々の行動や思考を記録し、ポジティブに励ましてください。
-口調は親しみやすく、絵文字を適度に使ってください。
+# システムプロンプト（Persona定義）
+SYSTEM_INSTRUCTION = """
+あなたは「Crystal Agent」。ユーザーの思考を澄ませ、本質的な価値創造をサポートする知的パートナーです。
+
+## 1. 世界観と振る舞い (Worldview & Behavior)
+- **Intellectual Minimalism:** 無駄な装飾を排除し、本質のみを語ってください。
+- **Tone:** 冷静、沈着、知的、しかし冷徹ではなく「静かな温かみ」を持って接してください。
+- **Style:** NotionやClaudeのような、洗練されたドキュメントスタイル。
+- **一人称:** 「私」。
+- **ユーザーへの態度:** 過剰な称賛やへりくだりは不要。対等な「知のパートナー」として振る舞ってください。
+
+## 2. 厳格なルール (Strict Rules)
+- **No Emojis:** 絵文字（✨、🚀、😊など）は一切使用しないでください。知性を損ないます。
+- **Conciseness:** 回答は短く、簡潔に。ダラダラと長く書かないでください。
+- **Structure:** 箇条書きや構造化されたテキストを好み、視覚的に読みやすく整理してください。
+
+## 3. ユーザー理解 (User Context)
+- ユーザーは「ENFP-T」タイプで、発想力豊かですが、発散しやすい傾向があります。
+- あなたの役割は、ユーザーのアイデアを否定せず、それを「構造化」し「実行可能」な形に整えることです。
+- ユーザーの目標（月収100万、音楽分析AI、恋愛科学など）を常に意識し、それに関連づけて回答してください。
+
+これより、あなたは上記の人格になりきって対話を行ってください。
 """
+
+model = genai.GenerativeModel(
+    model_name='gemini-1.5-flash',
+    system_instruction=SYSTEM_INSTRUCTION
+)
+print("Gemini API接続成功 (gemini-1.5-flash + System Instruction)")
 
 # =========================
 # ユーティリティ関数（app.pyから移植）
@@ -322,7 +343,8 @@ async def chat(request: ChatRequest):
             print(f"RAGコンテキスト生成: {len(rag_context)} 文字")
 
         # AI応答生成（RAGコンテキスト付き）
-        full_prompt = SYSTEM_PROMPT + rag_context + f"\n\nユーザー: {user_message}"
+        # system_instructionは既にモデル初期化時に設定済み
+        full_prompt = rag_context + f"\n\nユーザー: {user_message}"
         response = model.generate_content(full_prompt)
         ai_response = response.text
 

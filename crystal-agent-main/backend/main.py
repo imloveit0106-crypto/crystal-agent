@@ -55,6 +55,31 @@ text_analyzer = TextAnalyzer()
 local_storage = LocalStorage()
 context_engine = ContextEngine(local_storage)
 
+# ==================== Conversation History Buffer ====================
+# In-memory conversation history (use Redis/DB in production)
+conversation_history = {}  # {user_id: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]}
+MAX_HISTORY_TURNS = 5  # Keep last 5 conversation turns (5 user + 5 assistant = 10 messages)
+
+
+def add_to_history(user_id: str, role: str, content: str):
+    """Add a message to conversation history"""
+    if user_id not in conversation_history:
+        conversation_history[user_id] = []
+
+    conversation_history[user_id].append({
+        "role": role,
+        "content": content
+    })
+
+    # Keep only the last MAX_HISTORY_TURNS * 2 messages
+    if len(conversation_history[user_id]) > MAX_HISTORY_TURNS * 2:
+        conversation_history[user_id] = conversation_history[user_id][-(MAX_HISTORY_TURNS * 2):]
+
+
+def get_history(user_id: str) -> list:
+    """Get conversation history for a user"""
+    return conversation_history.get(user_id, [])
+
 
 # ==================== Request/Response Models ====================
 
@@ -173,11 +198,21 @@ async def chat(message: ChatMessage) -> ChatResponse:
     ai_context = context_engine.get_context_for_ai(message.message, context.get('profile'))
     context.update(ai_context)
 
+    # Add conversation history to context
+    history = get_history(message.user_id)
+    if history:
+        context['conversation_history'] = history
+
     # Generate response
     if ai_brain:
         response_text = ai_brain.generate_response(message.message, context)
     else:
         response_text = "AI not configured. Please set GEMINI_API_KEY in .env file."
+
+    # Save to conversation history
+    add_to_history(message.user_id, "user", message.message)
+    if response_text:
+        add_to_history(message.user_id, "assistant", response_text)
 
     # Save to local storage
     local_storage.add_life_log(
@@ -235,9 +270,30 @@ async def chat_stream(message: ChatMessage):
         ai_context = context_engine.get_context_for_ai(message.message, context.get('profile'))
         context.update(ai_context)
 
+        # Add conversation history to context
+        history = get_history(message.user_id)
+        if history:
+            context['conversation_history'] = history
+
+        # Collect full response for history
+        full_ai_response = ""
+
         # Stream the response
-        async for chunk in stream_gemini_response(message.message, context):
-            yield chunk
+        async for chunk_data in stream_gemini_response(message.message, context):
+            # Extract chunk text from SSE format
+            if chunk_data.startswith("data: "):
+                chunk_json = json.loads(chunk_data[6:])
+                if chunk_json.get('chunk') and not chunk_json.get('done'):
+                    full_ai_response += chunk_json['chunk']
+
+            yield chunk_data
+
+        # Save user message to conversation history
+        add_to_history(message.user_id, "user", message.message)
+
+        # Save AI response to conversation history
+        if full_ai_response:
+            add_to_history(message.user_id, "assistant", full_ai_response)
 
         # Save to local storage after streaming completes
         # (In production, this should be non-blocking)

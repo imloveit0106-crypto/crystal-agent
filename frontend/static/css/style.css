@@ -3,6 +3,45 @@
    Tailwind CSS完全移行により、最小限のスタイルのみ
    ============================================ */
 
+/* ============================================
+   Physics Constants (商用レベル物理演算)
+   ============================================ */
+
+/* 定数定義: iOSライクな「Expo Ease Out」を採用 */
+:root {
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-enter: 800ms;
+    --duration-exit: 600ms;
+}
+
+/* Base Motion Class: GPUアクセラレーションを有効化 */
+.motion-base {
+    transition-property: opacity, transform;
+    transition-timing-function: var(--ease-expo);
+    will-change: opacity, transform;
+}
+
+/* State: Exit (退場) - 上方へ浮遊しながら消失 */
+.motion-exit-up {
+    opacity: 0;
+    transform: translateY(-1.5rem) scale(0.98);
+    transition-duration: var(--duration-exit);
+    pointer-events: none;
+}
+
+/* State: Enter (入場準備) - 下方に待機 */
+.motion-enter-down {
+    opacity: 0;
+    transform: translateY(1.5rem);
+}
+
+/* State: Active (表示) - 定位置 */
+.motion-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-duration: var(--duration-enter);
+}
+
 /* Custom Scrollbar */
 #chatContainer::-webkit-scrollbar {
     width: 6px;
@@ -63,15 +102,15 @@
     display: none;
 }
 
-/* Typing Indicator Dots */
-@keyframes typingDot {
-    0%, 60%, 100% {
+/* Loading Indicator: 呼吸するような波打ちアニメーション */
+@keyframes breathing-dot {
+    0%, 100% {
         transform: translateY(0);
-        opacity: 0.3;
+        opacity: 0.4;
     }
-    30% {
-        transform: translateY(-6px);
-        opacity: 0.8;
+    50% {
+        transform: translateY(-0.25rem);
+        opacity: 1;
     }
 }
 
@@ -82,19 +121,20 @@
     background: rgba(55, 53, 47, 0.35);
     display: inline-block;
     margin: 0 2px;
-    animation: typingDot 1.4s infinite ease-in-out;
+    animation: breathing-dot 1.4s infinite ease-in-out both;
 }
 
+/* スタッガリング（遅延）設定 */
 .typing-dot:nth-child(1) {
-    animation-delay: 0s;
+    animation-delay: 0ms;
 }
 
 .typing-dot:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: 150ms;
 }
 
 .typing-dot:nth-child(3) {
-    animation-delay: 0.4s;
+    animation-delay: 300ms;
 }
 
 /* Smooth Scroll */

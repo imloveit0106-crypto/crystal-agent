@@ -53,8 +53,12 @@ window.sendMessage = async function() {
         return;
     }
 
-    // ウェルカムスクリーンを非表示
-    hideWelcomeScreen();
+    // ウェルカムスクリーンを非表示（初回のみ）
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    if (welcomeScreen && welcomeScreen.style.display !== 'none') {
+        // サジェストと同じオーケストレーション実行
+        await hideWelcomeScreenWithAnimation();
+    }
 
     addMessage(message, 'user');
     input.value = '';
@@ -87,16 +91,21 @@ window.quickInput = function(text) {
 
 /**
  * サジェストチップから送信
+ * 画面遷移とAPI通信を並行処理するオーケストレーター
  */
-window.sendSuggest = async function(message) {
-    // ウェルカムスクリーンを非表示
-    hideWelcomeScreen();
+window.sendSuggest = async function(prompt) {
+    // Step 1-4: Welcome Screen Exit & Chat Area Enter
+    // 高精細アニメーションでウェルカムスクリーンを非表示
+    await hideWelcomeScreenWithAnimation();
 
-    addMessage(message, 'user');
+    // Step 5: Interaction Feedback (Optimistic UI)
+    // ユーザー入力を即時反映し、ローディングを開始
+    addMessage(prompt, 'user');
     showTypingIndicator();
 
+    // Step 6: API Request
     try {
-        const data = await sendChatMessage(message);
+        const data = await sendChatMessage(prompt);
         hideTypingIndicator();
         addMessage(data.response, 'assistant', {
             type: data.detected_type,
@@ -281,7 +290,7 @@ function hideTypingIndicator() {
 // ============================================
 
 /**
- * ウェルカムスクリーンを非表示
+ * ウェルカムスクリーンを非表示（旧バージョン・互換性用）
  */
 function hideWelcomeScreen() {
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -292,6 +301,49 @@ function hideWelcomeScreen() {
             welcomeScreen.classList.add('gone');
         }, 500);
     }
+}
+
+/**
+ * ウェルカムスクリーンを高精細アニメーションで非表示
+ * 商用プロダクトレベルのオーケストレーション
+ */
+async function hideWelcomeScreenWithAnimation() {
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const chatContainer = document.getElementById('chatContainer');
+
+    if (!welcomeScreen || welcomeScreen.style.display === 'none') {
+        return; // 既に非表示なら何もしない
+    }
+
+    // UI Lock
+    document.body.style.pointerEvents = 'none';
+
+    // Exit Animation
+    welcomeScreen.classList.add('motion-base');
+    welcomeScreen.classList.remove('motion-active');
+    welcomeScreen.classList.add('motion-exit-up');
+
+    // 600msのアニメーション完了を待機
+    await new Promise(resolve => setTimeout(resolve, 600));
+
+    // DOM Swapping
+    welcomeScreen.style.display = 'none';
+
+    // Enter Animation for Chat Area
+    const messageContainer = chatContainer.querySelector('.max-w-3xl');
+    if (messageContainer) {
+        messageContainer.classList.add('motion-base', 'motion-enter-down');
+
+        // 強制リフロー
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        // Active State
+        messageContainer.classList.remove('motion-enter-down');
+        messageContainer.classList.add('motion-active');
+    }
+
+    // UIロック解除
+    document.body.style.pointerEvents = 'auto';
 }
 
 /**

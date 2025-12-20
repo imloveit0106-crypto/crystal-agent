@@ -22,89 +22,379 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# カスタムCSS - モダンなデザイン
+# Custom CSS - Silicon Valley Standard High-Fidelity UX
 st.markdown("""
 <style>
-    /* メイン背景 */
-    .main {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* ==================== Global Variables ==================== */
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.18);
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+        --spring-timing: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --smooth-timing: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* チャットメッセージスタイル */
+    /* ==================== Base Styles ==================== */
+    .main {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+    }
+
+    /* Remove default Streamlit padding */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    /* ==================== Glassmorphism 2.0 ==================== */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 20px;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.4s var(--spring-timing);
+    }
+
+    .glass-card:hover {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .glass-card:active {
+        transform: scale(0.98);
+    }
+
+    /* ==================== Skeleton Loading Animation ==================== */
+    @keyframes shimmer {
+        0% {
+            background-position: -1000px 0;
+        }
+        100% {
+            background-position: 1000px 0;
+        }
+    }
+
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0.1) 100%
+        );
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear;
+        border-radius: 12px;
+    }
+
+    .skeleton-text {
+        height: 16px;
+        margin: 8px 0;
+        border-radius: 8px;
+    }
+
+    .skeleton-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+    }
+
+    /* ==================== Bento Grid Layout ==================== */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .bento-item {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 24px;
+        transition: all 0.4s var(--spring-timing);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .bento-item:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .bento-item:active {
+        transform: translateY(-2px) scale(0.98);
+    }
+
+    /* ==================== Chat Messages ==================== */
     .user-message {
-        background: #ffffff;
-        padding: 15px 20px;
-        border-radius: 20px 20px 5px 20px;
-        margin: 10px 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 16px 24px;
+        border-radius: 24px 24px 4px 24px;
+        margin: 12px 0;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         max-width: 70%;
         margin-left: auto;
+        transition: all 0.3s var(--smooth-timing);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .user-message:hover {
+        transform: translateX(-4px) scale(1.01);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 
     .agent-message {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+        backdrop-filter: blur(10px);
         color: white;
-        padding: 15px 20px;
-        border-radius: 20px 20px 20px 5px;
-        margin: 10px 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        padding: 16px 24px;
+        border-radius: 24px 24px 24px 4px;
+        margin: 12px 0;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         max-width: 70%;
+        transition: all 0.3s var(--smooth-timing);
+        border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* ヘッダー */
+    .agent-message:hover {
+        transform: translateX(4px) scale(1.01);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ==================== Header ==================== */
     .header {
         text-align: center;
-        padding: 20px;
+        padding: 32px 20px;
         color: white;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        margin-bottom: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s var(--smooth-timing);
     }
 
-    /* サイドバー */
-    .css-1d391kg {
-        background: rgba(255,255,255,0.95);
+    .header:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
     }
 
-    /* ボタン */
+    .header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ==================== Buttons - Physics-Based Interactions ==================== */
     .stButton>button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        border-radius: 25px;
-        padding: 10px 30px;
-        font-weight: bold;
-        transition: all 0.3s;
+        border-radius: 16px;
+        padding: 12px 28px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s var(--spring-timing);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
     }
 
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        border-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* 入力フィールド */
+    .stButton>button:active {
+        transform: translateY(0) scale(0.98);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    /* ==================== Input Fields ==================== */
     .stTextInput>div>div>input {
-        border-radius: 25px;
-        border: 2px solid #667eea;
-        padding: 10px 20px;
+        border-radius: 16px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s var(--smooth-timing);
+        font-size: 15px;
     }
 
-    /* サイドバー統計カード */
+    .stTextInput>div>div>input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        transform: scale(1.01);
+    }
+
+    /* ==================== Sidebar Stats Cards ==================== */
     .stat-card {
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        margin: 10px 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        margin: 12px 0;
         text-align: center;
+        transition: all 0.4s var(--spring-timing);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 1);
+    }
+
+    .stat-card:active {
+        transform: translateY(-2px) scale(0.98);
     }
 
     .stat-number {
-        font-size: 36px;
-        font-weight: bold;
-        color: #667eea;
+        font-size: 42px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
     }
 
     .stat-label {
         color: #666;
-        font-size: 14px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ==================== Sidebar Styling ==================== */
+    section[data-testid="stSidebar"] {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px) saturate(180%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    section[data-testid="stSidebar"] > div {
+        background: transparent;
+    }
+
+    /* ==================== Loading Spinner Enhancement ==================== */
+    .stSpinner > div {
+        border-color: rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+    }
+
+    /* ==================== Form Container ==================== */
+    .stForm {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s var(--smooth-timing);
+    }
+
+    .stForm:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ==================== Type Badges ==================== */
+    .type-badge {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: inline-block;
+        margin-left: 8px;
+        transition: all 0.2s var(--smooth-timing);
+    }
+
+    .type-badge:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+    }
+
+    /* ==================== Scrollbar Styling ==================== */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ==================== Animations ==================== */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.6s var(--smooth-timing);
+    }
+
+    /* ==================== Responsive Design ==================== */
+    @media (max-width: 768px) {
+        .user-message, .agent-message {
+            max-width: 90%;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .stat-number {
+            font-size: 32px;
+        }
+
+        .bento-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -373,7 +663,7 @@ with chat_container:
             </div>
             """, unsafe_allow_html=True)
         else:
-            type_badge = f"<span style='background:#667eea;color:white;padding:2px 8px;border-radius:10px;font-size:12px;margin-left:5px;'>{message.get('type', '日記')}</span>"
+            type_badge = f"<span class='type-badge'>{message.get('type', '日記')}</span>"
             emotion_emoji = {'良好': '😊', '普通': '😐', '疲労': '😫', '悩み': '😟'}.get(message.get('emotion', '普通'), '😐')
 
             st.markdown(f"""

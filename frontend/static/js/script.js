@@ -193,7 +193,7 @@ function addMessage(text, role, meta = {}) {
     if (role === 'user') {
         messageDiv.innerHTML = `
             <div class="flex justify-end items-start gap-3">
-                <div class="bg-gray-900 text-white rounded-xl px-5 py-3.5 max-w-[75%]">
+                <div class="bg-gray-800 text-white rounded-xl px-5 py-3.5 max-w-[75%]">
                     <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
                 </div>
                 <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
@@ -214,7 +214,7 @@ function addMessage(text, role, meta = {}) {
                 <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                     <i data-lucide="sparkles" class="w-4 h-4 text-gray-400"></i>
                 </div>
-                <div class="bg-gray-50 text-gray-900 rounded-xl px-5 py-3.5 max-w-[75%]">
+                <div class="bg-gray-50 text-gray-800 rounded-xl px-5 py-3.5 max-w-[75%]">
                     <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
                     ${metaInfo}
                 </div>
@@ -247,7 +247,7 @@ function showTypingIndicator() {
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                 <i data-lucide="sparkles" class="w-4 h-4 text-gray-400"></i>
             </div>
-            <div class="bg-gray-50 text-gray-900 rounded-xl px-5 py-3.5">
+            <div class="bg-gray-50 text-gray-800 rounded-xl px-5 py-3.5">
                 <div class="flex gap-1">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>

@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crystal Agent - AI Personal Assistant</title>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -17,10 +22,14 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        serif: ['Noto Serif JP', 'Georgia', 'Times New Roman', 'serif'],
                     },
                     letterSpacing: {
                         'tighter': '-0.02em',
+                    },
+                    colors: {
+                        'notion-text': '#37352f',
                     }
                 }
             }
@@ -31,17 +40,17 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
-<body class="bg-white font-sans antialiased text-gray-900">
+<body class="bg-white font-sans antialiased text-notion-text">
 
     <!-- Main Container -->
     <div class="min-h-screen flex flex-col">
 
         <!-- Header -->
-        <header class="bg-white border-b border-gray-100 px-6 py-5 sticky top-0 z-50">
+        <header class="bg-white border-b border-gray-200 px-6 py-5 sticky top-0 z-50">
             <div class="max-w-5xl mx-auto flex items-center justify-between">
                 <!-- Title -->
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-notion-text font-serif">
                         Crystal Agent
                     </h1>
                     <p class="text-xs text-gray-500 font-medium hidden sm:block">AI Personal Assistant</p>
@@ -56,7 +65,7 @@
         </header>
 
         <!-- Welcome Screen (Notion Style) -->
-        <div id="welcomeScreen" class="bg-white border-b border-gray-100 py-12 welcome-screen">
+        <div id="welcomeScreen" class="bg-white border-b border-gray-200 py-12 welcome-screen">
             <div class="max-w-3xl mx-auto text-center px-4">
                 <!-- Artwork -->
                 <img id="heroArtwork"
@@ -66,7 +75,7 @@
                      style="filter: grayscale(100%);">
 
                 <!-- Title & Description -->
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-2">
+                <h2 class="text-2xl font-bold tracking-tight text-notion-text mb-2 font-serif">
                     Crystal Agent
                 </h2>
                 <p class="text-sm text-gray-500 mb-6">
@@ -110,23 +119,23 @@
             </div>
 
             <!-- Stats Bar -->
-            <div class="border-t border-gray-100 bg-white px-4 py-4">
+            <div class="border-t border-gray-200 bg-white px-4 py-4">
                 <div class="max-w-3xl mx-auto">
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Total -->
                         <div class="text-center py-3">
                             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total</div>
-                            <div id="totalCount" class="text-2xl font-bold text-gray-900">0</div>
+                            <div id="totalCount" class="text-2xl font-bold text-notion-text">0</div>
                         </div>
                         <!-- Diary -->
                         <div class="text-center py-3">
                             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Diary</div>
-                            <div id="diaryCount" class="text-2xl font-bold text-gray-900">0</div>
+                            <div id="diaryCount" class="text-2xl font-bold text-notion-text">0</div>
                         </div>
                         <!-- Tasks -->
                         <div class="text-center py-3">
                             <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Tasks</div>
-                            <div id="taskCount" class="text-2xl font-bold text-gray-900">0</div>
+                            <div id="taskCount" class="text-2xl font-bold text-notion-text">0</div>
                         </div>
                     </div>
                 </div>
@@ -135,21 +144,21 @@
         </main>
 
         <!-- Footer / Input Area -->
-        <footer class="bg-white border-t border-gray-100 px-4 py-6 sticky bottom-0">
+        <footer class="bg-white border-t border-gray-200 px-4 py-6 sticky bottom-0">
             <div class="max-w-3xl mx-auto">
 
                 <!-- Quick Actions -->
                 <div class="mb-4 flex gap-2">
                     <button onclick="quickInput('今日のランチは800円でした')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                         支出を記録
                     </button>
                     <button onclick="quickInput('今日の振り返り')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                         日記を書く
                     </button>
                     <button onclick="quickInput('今日やることリスト')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
                         タスク追加
                     </button>
                 </div>
@@ -160,13 +169,13 @@
                         type="text"
                         id="messageInput"
                         placeholder="メッセージを入力..."
-                        class="flex-1 bg-gray-100 border-0 text-gray-900 placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-gray-900 transition-shadow duration-200 text-base"
+                        class="flex-1 bg-gray-100 border-0 text-notion-text placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-notion-text transition-shadow duration-200 text-base"
                         onkeypress="if(event.key === 'Enter') sendMessage()"
                     >
                     <button
                         onclick="sendMessage()"
                         id="sendButton"
-                        class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base flex items-center gap-2">
+                        class="bg-notion-text hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base flex items-center gap-2">
                         <span>送信</span>
                         <i data-lucide="arrow-up" class="w-4 h-4"></i>
                     </button>

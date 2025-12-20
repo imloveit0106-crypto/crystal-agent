@@ -1,6 +1,6 @@
 """
 Crystal Agent Backend - FastAPI
-Streamlit app.py からの完全移植 - RAG機能を含む全ロジックを保持
+AI Personal Assistant with Notion Integration & RAG
 """
 
 from fastapi import FastAPI, HTTPException
@@ -25,22 +25,19 @@ load_dotenv()
 # FastAPI アプリ
 app = FastAPI(title="Crystal Agent API")
 
-# CORS設定 - ローカル開発用
+# CORS設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 本番環境では適切に制限してください
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 静的ファイルのマウント（CSS, JS用）
-# プロジェクトルートからの相対パスを計算
+# 静的ファイルのマウント
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "frontend" / "static"
 TEMPLATES_DIR = BASE_DIR / "frontend" / "templates"
-
-# /static パスに静的ファイルをマウント
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # API設定

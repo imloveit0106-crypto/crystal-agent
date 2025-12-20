@@ -153,34 +153,68 @@ class CrystalAgentManager:
             self.print_status(f"Failed to install dependencies: {e}", "ERROR")
             return False
 
-    def launch_app(self):
-        """Launch the Streamlit application"""
-        if not self.app_file.exists():
-            self.print_status(f"Application file not found: {self.app_file}", "ERROR")
-            return False
-
+    def launch_app(self, streaming=False):
+        """Launch the application (Streamlit or FastAPI streaming chat)"""
         python_exe = self.get_python_executable()
 
-        self.print_status("Launching Crystal Agent...", "INFO")
-        self.print_status(f"OS: {self.os_type}", "INFO")
-        self.print_status(f"Python: {python_exe}", "INFO")
+        if streaming:
+            # Launch FastAPI streaming chat server
+            backend_file = self.project_root / "backend" / "main.py"
 
-        print("\n" + "="*60)
-        print("🚀 Crystal Agent is starting...")
-        print("="*60 + "\n")
+            if not backend_file.exists():
+                self.print_status(f"Streaming backend not found: {backend_file}", "ERROR")
+                return False
 
-        try:
-            # Launch streamlit using the virtual environment's Python
-            subprocess.run(
-                [str(python_exe), "-m", "streamlit", "run", str(self.app_file)],
-                check=True
-            )
-        except subprocess.CalledProcessError as e:
-            self.print_status(f"Failed to launch application: {e}", "ERROR")
-            return False
-        except KeyboardInterrupt:
-            self.print_status("\nApplication stopped by user.", "INFO")
-            return True
+            self.print_status("Launching Crystal Agent Streaming Chat...", "INFO")
+            self.print_status(f"OS: {self.os_type}", "INFO")
+            self.print_status(f"Python: {python_exe}", "INFO")
+
+            print("\n" + "="*60)
+            print("🚀 Crystal Agent - Streaming Chat Server")
+            print("="*60)
+            print("URL: http://localhost:8000")
+            print("API Docs: http://localhost:8000/docs")
+            print("="*60 + "\n")
+
+            try:
+                subprocess.run(
+                    [str(python_exe), str(backend_file)],
+                    check=True,
+                    cwd=str(self.project_root / "backend")
+                )
+            except subprocess.CalledProcessError as e:
+                self.print_status(f"Failed to launch streaming server: {e}", "ERROR")
+                return False
+            except KeyboardInterrupt:
+                self.print_status("\nServer stopped by user.", "INFO")
+                return True
+
+        else:
+            # Launch Streamlit app
+            if not self.app_file.exists():
+                self.print_status(f"Application file not found: {self.app_file}", "ERROR")
+                return False
+
+            self.print_status("Launching Crystal Agent (Streamlit)...", "INFO")
+            self.print_status(f"OS: {self.os_type}", "INFO")
+            self.print_status(f"Python: {python_exe}", "INFO")
+
+            print("\n" + "="*60)
+            print("🚀 Crystal Agent is starting...")
+            print("="*60 + "\n")
+
+            try:
+                # Launch streamlit using the virtual environment's Python
+                subprocess.run(
+                    [str(python_exe), "-m", "streamlit", "run", str(self.app_file)],
+                    check=True
+                )
+            except subprocess.CalledProcessError as e:
+                self.print_status(f"Failed to launch application: {e}", "ERROR")
+                return False
+            except KeyboardInterrupt:
+                self.print_status("\nApplication stopped by user.", "INFO")
+                return True
 
         return True
 
@@ -201,7 +235,7 @@ class CrystalAgentManager:
             self.print_status("Virtual environment does not exist.", "INFO")
             return True
 
-    def run(self, clean=False, install_only=False):
+    def run(self, clean=False, install_only=False, streaming=False):
         """Main execution flow"""
         print("\n" + "="*60)
         print("🔮 Crystal Agent - Cross-Platform Manager")
@@ -233,10 +267,11 @@ class CrystalAgentManager:
 
         # Step 3: Launch application (unless install-only mode)
         if install_only:
-            self.print_status("Installation complete! Run 'python manage.py' to launch.", "SUCCESS")
+            app_type = "streaming chat" if streaming else "Streamlit app"
+            self.print_status(f"Installation complete! Run 'python manage.py{' --streaming' if streaming else ''}' to launch the {app_type}.", "SUCCESS")
             return True
 
-        return self.launch_app()
+        return self.launch_app(streaming=streaming)
 
 
 def main():
@@ -254,13 +289,22 @@ def main():
         action="store_true",
         help="Clean virtual environment and reinstall everything"
     )
+    parser.add_argument(
+        "--streaming",
+        action="store_true",
+        help="Launch streaming chat server (FastAPI) instead of Streamlit app"
+    )
 
     args = parser.parse_args()
 
     manager = CrystalAgentManager()
 
     try:
-        success = manager.run(clean=args.clean, install_only=args.install)
+        success = manager.run(
+            clean=args.clean,
+            install_only=args.install,
+            streaming=args.streaming
+        )
         sys.exit(0 if success else 1)
     except KeyboardInterrupt:
         print("\n\nOperation cancelled by user.")

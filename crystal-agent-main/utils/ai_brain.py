@@ -90,8 +90,18 @@ class AIBrain:
                     items_str = ', '.join(spending['frequent_items'][:3])
                     prompt_parts.append(f"\n【支出傾向】\nよく買うもの: {items_str}\n")
 
+            # 会話履歴（最新の3-5ターンの会話）
+            if 'conversation_history' in context and context['conversation_history']:
+                history = context['conversation_history']
+                if history:
+                    history_str = "\n".join([
+                        f"{'ユーザー' if msg['role'] == 'user' else 'あなた（Crystal Agent）'}: {msg['content']}"
+                        for msg in history
+                    ])
+                    prompt_parts.append(f"\n【これまでの会話】\n{history_str}\n")
+
         # ユーザー入力を追加
         prompt_parts.append(f"\n【ユーザーの入力】\n{user_input}\n")
-        prompt_parts.append("\n【応答】\n上記のすべての情報を踏まえて、ユーザーの状況や過去の記録を活かしたパーソナライズされた応答をしてください。親しみやすく簡潔に（2-3文程度、絵文字も使ってOK）。")
+        prompt_parts.append("\n【応答】\n上記のすべての情報（会話履歴を含む）を踏まえて、ユーザーの状況や過去の記録を活かしたパーソナライズされた応答をしてください。会話の文脈を理解し、自然な対話を続けてください。親しみやすく簡潔に（2-3文程度、絵文字も使ってOK）。")
 
         return "\n".join(prompt_parts)

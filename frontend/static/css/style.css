@@ -67,11 +67,11 @@
 @keyframes typingDot {
     0%, 60%, 100% {
         transform: translateY(0);
-        opacity: 0.4;
+        opacity: 0.3;
     }
     30% {
-        transform: translateY(-8px);
-        opacity: 1;
+        transform: translateY(-6px);
+        opacity: 0.8;
     }
 }
 
@@ -79,7 +79,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(55, 53, 47, 0.35);
     display: inline-block;
     margin: 0 2px;
     animation: typingDot 1.4s infinite ease-in-out;

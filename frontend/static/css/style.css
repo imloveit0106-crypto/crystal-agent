@@ -1,5 +1,13 @@
 /* ==================== Crystal Agent - Streaming Chat UI ====================
  * Commercial-grade chat interface with Glassmorphism 2.0 and streaming support
+ *
+ * Typography Philosophy: "Optical Perfection"
+ * - System Native Font Stack (OS-specific sharpness)
+ * - Reading Rhythm: line-height 1.65 (Notion standard)
+ * - Micro-tightening: letter-spacing -0.015em (visual cohesion)
+ * - Soft Contrast: Off-black #1A1A1A (no eye strain)
+ * - Optimal Line Length: max-width 70ch (readability science)
+ * - Font Weights: 400 body, 600 headers (seamless flow)
  * ========================================================================== */
 
 /* ==================== CSS Variables ==================== */
@@ -11,7 +19,14 @@
     --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
     --spring-timing: cubic-bezier(0.34, 1.56, 0.64, 1);
     --smooth-timing: cubic-bezier(0.4, 0, 0.2, 1);
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Typography System (System Native Stack) */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --text-primary: #1A1A1A;        /* Off-black for primary text */
+    --text-secondary: #6B7280;      /* Slate gray for secondary text */
+    --text-inverse: #FFFFFF;        /* Pure white for dark backgrounds */
+    --line-height-body: 1.65;       /* Notion standard for reading rhythm */
+    --letter-spacing-tight: -0.015em; /* Micro-tightening for cohesion */
 }
 
 /* ==================== Reset & Base Styles ==================== */
@@ -27,6 +42,10 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--text-primary);
+    font-weight: 400;
 }
 
 body {
@@ -82,16 +101,18 @@ body {
 
 .header-title {
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 600;  /* Refined: 600 for better optical balance */
     color: white;
     margin-bottom: 4px;
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.02em;
 }
 
 .header-subtitle {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 
 .header-status {
@@ -158,11 +179,11 @@ body {
 
 .sidebar-title {
     font-size: 1rem;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     margin-bottom: 16px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;  /* Uppercase benefits from wider spacing */
 }
 
 /* ==================== Stat Cards ==================== */
@@ -189,16 +210,17 @@ body {
 
 .stat-number {
     font-size: 2.5rem;
-    font-weight: 800;
+    font-weight: 600;  /* Refined: 600 for better optical balance */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 4px;
+    letter-spacing: -0.02em;
 }
 
 .stat-label {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -319,37 +341,41 @@ body {
 }
 
 .message-author {
-    font-weight: 700;
+    font-weight: 600;  /* Refined: 600 instead of 700 */
     font-size: 0.9rem;
-    color: white;
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: -0.01em;
 }
 
 .message-badge {
     background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
     padding: 2px 8px;
     border-radius: 8px;
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;  /* Uppercase benefits from wider spacing */
 }
 
 .message-text {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    padding: 16px 20px;
+    padding: 1.25rem;  /* Increased for "room to breathe" */
     border-radius: 16px 16px 4px 16px;
-    color: #333;
-    line-height: 1.6;
+    color: var(--text-primary);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    max-width: 70ch;  /* Optimal line length for readability */
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     transition: all 0.3s var(--smooth-timing);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    font-weight: 400;
 }
 
 .agent-message .message-text {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
-    color: white;
+    color: var(--text-inverse);
     border-radius: 16px 16px 16px 4px;
 }
 
@@ -366,7 +392,8 @@ body {
 .message-text h1, .message-text h2, .message-text h3 {
     margin-top: 16px;
     margin-bottom: 8px;
-    font-weight: 700;
+    font-weight: 600;  /* Refined: 600 instead of 700 for better flow */
+    letter-spacing: -0.02em;  /* Slightly tighter for headers */
 }
 
 .message-text h1 { font-size: 1.5rem; }
@@ -481,10 +508,13 @@ body {
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid rgba(102, 126, 234, 0.3);
     border-radius: 16px;
-    padding: 14px 20px;
+    padding: 1rem 1.25rem;  /* Increased for better breathing room */
     font-size: 0.95rem;
     font-family: var(--font-family);
-    color: #333;
+    color: var(--text-primary);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    font-weight: 400;
     transition: all 0.3s var(--smooth-timing);
     outline: none;
 }
@@ -497,7 +527,8 @@ body {
 }
 
 .chat-input::placeholder {
-    color: #999;
+    color: var(--text-secondary);
+    letter-spacing: 0;  /* Reset for placeholder */
 }
 
 .send-button {

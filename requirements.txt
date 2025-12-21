@@ -1,5 +1,18 @@
+# Crystal Agent - Required Libraries
+
+# UI Framework
 streamlit>=1.30.0
+
+# Web Framework (for streaming chat)
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# AI Model
 google-generativeai>=0.3.0
+
+# Database
 notion-client>=2.2.0
+
+# Utilities
 python-dotenv>=1.0.0
-plotly>=5.18.0
+requests>=2.31.0

@@ -3,287 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal Agent - AI Personal Assistant</title>
+    <title>🔮 Crystal Agent - Streaming Chat</title>
 
-    <!-- Google Fonts -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Markdown Parser - Marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Syntax Highlighting - Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-    <!-- Tailwind Custom Configuration -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                        serif: ['Noto Serif JP', 'Georgia', 'Times New Roman', 'serif'],
-                    },
-                    letterSpacing: {
-                        'base': '0.02em',
-                        'tighter': '-0.02em',
-                    },
-                    spacing: {
-                        '4.5': '1.125rem', // 18px for icons
-                    },
-                    colors: {
-                        'notion-text': '#37352f',
-                        'notion-secondary': 'rgba(55, 53, 47, 0.6)',
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Minimal Custom CSS -->
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-
-<body class="bg-white font-sans antialiased text-notion-text tracking-base">
+<body>
+    <!-- Background Gradient -->
+    <div class="background-gradient"></div>
 
     <!-- Main Container -->
-    <div class="min-h-screen flex flex-col">
-
+    <div class="container">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 px-6 py-5 sticky top-0 z-50">
-            <div class="max-w-5xl mx-auto flex items-center justify-between">
-                <!-- Title -->
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-notion-text font-serif">
-                        Crystal Agent
-                    </h1>
-                    <p class="text-xs text-gray-500 font-medium hidden sm:block">AI Personal Assistant</p>
-                </div>
-
-                <!-- Status -->
-                <div id="statusIndicator" class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full">
-                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
-                </div>
-
-                <!-- Help Button -->
-                <button onclick="toggleHelpModal()"
-                        class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                        aria-label="使い方ガイド">
-                    <i data-lucide="circle-help" class="w-5 h-5 text-gray-600"></i>
-                </button>
+        <header class="header">
+            <div class="header-content">
+                <h1 class="header-title">🔮 Crystal Agent</h1>
+                <p class="header-subtitle">Your Personal AI Assistant with Real-Time Streaming</p>
+            </div>
+            <div class="header-status" id="connectionStatus">
+                <span class="status-indicator"></span>
+                <span class="status-text">Connected</span>
             </div>
         </header>
 
-        <!-- Welcome Screen (Notion Style) -->
-        <div id="welcomeScreen" class="bg-white border-b border-gray-200 py-12 welcome-screen motion-base motion-active">
-            <div class="max-w-3xl mx-auto text-center px-4">
-                <!-- Artwork -->
-                <img id="heroArtwork"
-                     src=""
-                     alt="Illustration"
-                     class="mx-auto h-32 mb-6 opacity-60 grayscale"
-                     style="filter: grayscale(100%);">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h2 class="sidebar-title">📊 Statistics</h2>
 
-                <!-- Title & Description -->
-                <h2 class="text-2xl font-bold tracking-tight text-notion-text mb-2 font-serif">
-                    Crystal Agent
-                </h2>
-                <p class="text-sm text-gray-500 mb-6">
-                    あなたの日々の行動や思考を記録し、AIがサポートします
-                </p>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statTotalLogs">0</div>
+                        <div class="stat-label">Total Logs</div>
+                    </div>
 
-                <!-- Suggest Chips -->
-                <div class="flex flex-wrap justify-center gap-2">
-                    <button onclick="sendSuggest('支出を記録したいので、金額と内容を聞いてください。')"
-                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
-                        <i data-lucide="wallet" class="w-4.5 h-4.5 text-gray-400"></i>
-                        <span>支出を記録</span>
-                    </button>
-                    <button onclick="sendSuggest('今日の日記を書きたいです。出来事を聞いてください。')"
-                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
-                        <i data-lucide="book-open" class="w-4.5 h-4.5 text-gray-400"></i>
-                        <span>日記を書く</span>
-                    </button>
-                    <button onclick="sendSuggest('今日の運勢と、ラッキーカラーを教えてください。')"
-                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
-                        <i data-lucide="sparkles" class="w-4.5 h-4.5 text-gray-400"></i>
-                        <span>今日の運勢</span>
-                    </button>
-                    <button onclick="sendSuggest('未完了のタスクをNotionから探して教えてください。')"
-                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
-                        <i data-lucide="list-todo" class="w-4.5 h-4.5 text-gray-400"></i>
-                        <span>タスク確認</span>
-                    </button>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statTasks">0</div>
+                        <div class="stat-label">Tasks</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-number" id="statSpending">¥0</div>
+                        <div class="stat-label">Total Spending</div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Chat Container -->
-        <main class="flex-1 overflow-hidden flex flex-col bg-white">
-
-            <!-- Messages Area -->
-            <div id="chatContainer" class="flex-1 overflow-y-auto px-4 py-8">
-                <div class="max-w-3xl mx-auto space-y-6">
-                    <!-- Messages will be inserted here -->
+                <div class="sidebar-section">
+                    <h2 class="sidebar-title">⚡ Quick Actions</h2>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" data-action="📝 日記を書きたい">📝 Diary</button>
+                        <button class="quick-action-btn" data-action="💰 支出を記録したい">💰 Expense</button>
+                        <button class="quick-action-btn" data-action="✅ タスクを追加したい">✅ Task</button>
+                        <button class="quick-action-btn" data-action="💭 悩みを相談したい">💭 Concern</button>
+                    </div>
                 </div>
-            </div>
+            </aside>
 
-            <!-- Stats Bar -->
-            <div class="border-t border-gray-200 bg-white px-4 py-4">
-                <div class="max-w-3xl mx-auto">
-                    <div class="grid grid-cols-3 gap-4">
-                        <!-- Total -->
-                        <div class="text-center py-3">
-                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total</div>
-                            <div id="totalCount" class="text-2xl font-bold text-notion-text">0</div>
-                        </div>
-                        <!-- Diary -->
-                        <div class="text-center py-3">
-                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Diary</div>
-                            <div id="diaryCount" class="text-2xl font-bold text-notion-text">0</div>
-                        </div>
-                        <!-- Tasks -->
-                        <div class="text-center py-3">
-                            <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Tasks</div>
-                            <div id="taskCount" class="text-2xl font-bold text-notion-text">0</div>
+            <!-- Chat Area -->
+            <main class="chat-container">
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="message agent-message">
+                        <div class="message-avatar">🔮</div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-author">Crystal Agent</span>
+                                <span class="message-badge">AI</span>
+                            </div>
+                            <div class="message-text">
+                                こんにちは！私はあなた専用のAIアシスタントです。<br><br>
+                                日記、支出、タスク、悩み...何でも話してください。<br>
+                                あなたの人生をもっと豊かにするお手伝いをします！✨
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        </main>
-
-        <!-- Footer / Input Area -->
-        <footer class="bg-white border-t border-gray-200 px-4 py-6 sticky bottom-0">
-            <div class="max-w-3xl mx-auto">
-
-                <!-- Quick Actions -->
-                <div class="mb-4 flex gap-2">
-                    <button onclick="quickInput('今日のランチは800円でした')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                        支出を記録
-                    </button>
-                    <button onclick="quickInput('今日の振り返り')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                        日記を書く
-                    </button>
-                    <button onclick="quickInput('今日やることリスト')"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-notion-text bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                        タスク追加
-                    </button>
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
                 </div>
 
-                <!-- Input Box: Floating Card -->
-                <div class="input-container flex gap-3">
-                    <input
-                        type="text"
-                        id="messageInput"
-                        placeholder="メッセージを入力..."
-                        class="flex-1 bg-gray-100 border-0 text-notion-text placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none text-base"
-                        onkeypress="if(event.key === 'Enter') sendMessage()"
-                    >
-                    <button
-                        onclick="sendMessage()"
-                        id="sendButton"
-                        class="bg-notion-text hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold text-base flex items-center gap-2">
-                        <span>送信</span>
-                        <i data-lucide="arrow-up" class="w-4.5 h-4.5"></i>
-                    </button>
+                <!-- Chat Input -->
+                <div class="chat-input-container">
+                    <form class="chat-input-form" id="chatForm">
+                        <input
+                            type="text"
+                            class="chat-input"
+                            id="messageInput"
+                            placeholder="Type your message..."
+                            autocomplete="off"
+                            required
+                        />
+                        <button type="submit" class="send-button" id="sendButton">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
-
-            </div>
-        </footer>
-
-    </div>
-
-    <!-- Help Modal -->
-    <div id="helpModal" class="help-modal-backdrop hidden">
-        <div class="help-modal-container">
-            <!-- Close Button -->
-            <button onclick="toggleHelpModal()" class="help-modal-close" aria-label="閉じる">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-
-            <!-- Illustration -->
-            <div class="text-center mb-6">
-                <img src="https://i.imgur.com/Pl5KbPL.png"
-                     alt="使い方ガイド"
-                     class="mx-auto opacity-70 grayscale"
-                     style="max-width: 160px; filter: grayscale(100%);">
-            </div>
-
-            <!-- Header -->
-            <h3 class="text-xl font-bold text-notion-text mb-4 text-center font-serif">
-                使い方ガイド
-            </h3>
-
-            <!-- Content -->
-            <div class="mb-6">
-                <p class="text-sm text-gray-600 mb-4">
-                    メッセージ入力欄に品目と金額を入力して送信すると、自動的にNotionに記録されます。
-                </p>
-
-                <ul class="help-list space-y-3">
-                    <li class="flex items-start gap-3">
-                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
-                            <i data-lucide="check" class="w-3.5 h-3.5 text-green-600"></i>
-                        </div>
-                        <div>
-                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">ランチ 1000</code>
-                            <p class="text-xs text-gray-500 mt-1">→ 食費として記録</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                            <i data-lucide="check" class="w-3.5 h-3.5 text-blue-600"></i>
-                        </div>
-                        <div>
-                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">給料 250000</code>
-                            <p class="text-xs text-gray-500 mt-1">→ 収入として記録</p>
-                        </div>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5">
-                            <i data-lucide="check" class="w-3.5 h-3.5 text-purple-600"></i>
-                        </div>
-                        <div>
-                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">タクシー 2000</code>
-                            <p class="text-xs text-gray-500 mt-1">→ 交通費として記録</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Note -->
-            <div class="text-center">
-                <p class="text-xs text-gray-500">
-                    ※品目と金額を入力して送信してください。
-                </p>
-            </div>
+            </main>
         </div>
     </div>
 
-    <!-- JavaScript -->
-    <script src="/static/js/script.js"></script>
-
-    <!-- Initialize Lucide Icons & Artwork -->
-    <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Random Artwork Selection (Notion Style)
-        const artworks = [
-            'https://i.imgur.com/Pl5KbPL.png',  // 読書しながら箱に座る
-            'https://i.imgur.com/1nxuEnz.png',  // 時計とヘッドフォン
-            'https://i.imgur.com/Pl5KbPL.png',  // 椅子に座ってコーヒー
-            'https://i.imgur.com/wODM5z4.png'   // コーヒーカップと人
-        ];
-
-        const randomArtwork = artworks[Math.floor(Math.random() * artworks.length)];
-        document.getElementById('heroArtwork').src = randomArtwork;
-    </script>
-
+    <!-- Main JavaScript -->
+    <script src="/static/js/chat.js"></script>
 </body>
 </html>

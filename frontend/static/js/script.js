@@ -41,10 +41,11 @@ function setupEventListeners() {
 // ============================================
 
 /**
- * メッセージ送信
+ * メッセージ送信 (Expense Detection & API Integration)
  */
 window.sendMessage = async function() {
     const input = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
     const message = input.value.trim();
 
     if (!message) {
@@ -60,11 +61,37 @@ window.sendMessage = async function() {
         await hideWelcomeScreenWithAnimation();
     }
 
+    // Loading State: 送信ボタンを無効化
+    if (sendButton) {
+        sendButton.disabled = true;
+        sendButton.style.opacity = '0.7';
+    }
+
     addMessage(message, 'user');
     input.value = '';
     showTypingIndicator();
 
     try {
+        // 支出情報を検出
+        const expenseData = parseExpenseFromMessage(message);
+
+        // 支出データがあればNotionに送信
+        if (expenseData) {
+            try {
+                const expenseResult = await sendExpenseToBackend(
+                    expenseData.item,
+                    expenseData.amount,
+                    expenseData.category
+                );
+                console.log('Expense saved to Notion:', expenseResult);
+                showToast('Saved to Notion', 'success');
+            } catch (expenseError) {
+                console.error('Expense save error:', expenseError);
+                showToast('Failed to save expense', 'error');
+            }
+        }
+
+        // AIチャット応答を取得（既存フロー）
         const data = await sendChatMessage(message);
         hideTypingIndicator();
         addMessage(data.response, 'assistant', {
@@ -73,10 +100,18 @@ window.sendMessage = async function() {
             saved: data.saved_to_notion
         });
         await loadStats();
+
     } catch (error) {
         hideTypingIndicator();
         addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
         console.error('Send message error:', error);
+        showToast('Error occurred', 'error');
+    } finally {
+        // Loading State: 送信ボタンを再有効化
+        if (sendButton) {
+            sendButton.disabled = false;
+            sendButton.style.opacity = '1';
+        }
     }
 }
 
@@ -125,7 +160,7 @@ window.sendSuggest = async function(prompt) {
 // ============================================
 
 /**
- * 接続チェック
+ * 接続チェック (Updated for new API structure)
  */
 async function checkConnection() {
     try {
@@ -133,7 +168,12 @@ async function checkConnection() {
         const data = await response.json();
         const statusIndicator = document.getElementById('statusIndicator');
 
-        if (data.notion === 'connected' && data.gemini === 'connected') {
+        // New API structure: data.services.notion, data.services.gemini
+        const services = data.services || data;
+        const notionStatus = services.notion || data.notion;
+        const geminiStatus = services.gemini || data.gemini;
+
+        if (notionStatus === 'connected' && geminiStatus === 'connected') {
             statusIndicator.innerHTML = `
                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
@@ -185,6 +225,67 @@ async function sendChatMessage(message) {
     }
 
     return await response.json();
+}
+
+/**
+ * 支出データをNotionバックエンドに送信 (Fetch API)
+ * @param {string} item - 支出項目の説明
+ * @param {number} amount - 金額（正の整数）
+ * @param {string} category - カテゴリー（デフォルト: "支出"）
+ * @returns {Promise<Object>} APIレスポンス
+ */
+async function sendExpenseToBackend(item, amount, category = "支出") {
+    const response = await fetch(`${API_BASE_URL}/api/notion/expense`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            item: String(item),
+            amount: parseInt(amount, 10),
+            category: String(category)
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.detail || `HTTP error! status: ${response.status}`);
+    }
+
+    return data;
+}
+
+/**
+ * メッセージから支出情報を抽出
+ * @param {string} text - ユーザーメッセージ
+ * @returns {Object|null} {item, amount, category} または null
+ */
+function parseExpenseFromMessage(text) {
+    // 金額パターン: "800円", "¥800", "800yen"
+    const amountPattern = /(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:円|¥|yen)/i;
+    const amountMatch = text.match(amountPattern);
+
+    if (!amountMatch) {
+        return null; // 金額が見つからない
+    }
+
+    const amount = parseInt(amountMatch[1].replace(/,/g, ''), 10);
+
+    // カテゴリー推測
+    let category = "支出";
+    if (text.includes('ランチ') || text.includes('食事') || text.includes('飲み会') || text.includes('食費')) {
+        category = "食費";
+    } else if (text.includes('電車') || text.includes('バス') || text.includes('交通')) {
+        category = "交通費";
+    } else if (text.includes('買い物') || text.includes('購入')) {
+        category = "買い物";
+    }
+
+    // 項目説明を抽出（金額部分を除く）
+    const item = text.replace(amountPattern, '').trim() || `${category} (詳細なし)`;
+
+    return { item, amount, category };
 }
 
 // ============================================
@@ -283,6 +384,53 @@ function hideTypingIndicator() {
     if (indicator) {
         indicator.remove();
     }
+}
+
+/**
+ * Toast通知を表示 (Success/Error Feedback)
+ * @param {string} message - 表示メッセージ
+ * @param {string} type - 'success' または 'error'
+ */
+function showToast(message, type = 'success') {
+    // 既存のtoastがあれば削除
+    const existingToast = document.getElementById('toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+
+    // Toast要素を作成
+    const toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.className = `fixed bottom-6 right-6 px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 motion-base motion-enter-down z-50 ${
+        type === 'success' ? 'bg-gray-800 text-white' : 'bg-red-600 text-white'
+    }`;
+
+    // アイコンとメッセージ
+    const icon = type === 'success' ? 'check' : 'alert-circle';
+    toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4.5 h-4.5"></i>
+        <span class="text-sm font-medium">${message}</span>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Lucideアイコンを初期化
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
+    // アニメーション: Enter
+    requestAnimationFrame(() => {
+        toast.classList.remove('motion-enter-down');
+        toast.classList.add('motion-active');
+    });
+
+    // 3秒後に自動削除
+    setTimeout(() => {
+        toast.classList.remove('motion-active');
+        toast.classList.add('motion-exit-up');
+        setTimeout(() => toast.remove(), 600);
+    }, 3000);
 }
 
 // ============================================

@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Dict, List
 import os
 from pathlib import Path
@@ -19,11 +19,25 @@ import re
 import google.generativeai as genai
 from notion_client import Client
 
+# Services Layer
+from services.notion_service import get_notion_service
+
 # 環境変数読み込み
 load_dotenv()
 
 # FastAPI アプリ
 app = FastAPI(title="Crystal Agent API")
+
+# Initialize Notion Service at startup
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on application startup"""
+    notion_service = get_notion_service()
+    print(f"\n{'='*67}")
+    print("Services Initialization")
+    print(f"{'='*67}")
+    print(f"Notion Service: {'✓ Active' if notion_service.is_active else '✗ Inactive'}")
+    print(f"{'='*67}\n")
 
 # CORS設定
 app.add_middleware(
@@ -293,6 +307,29 @@ class StatsResponse(BaseModel):
     amounts: List[float]
 
 
+class ExpenseRequest(BaseModel):
+    """Request model for adding expense to Notion"""
+    item: str = Field(..., min_length=1, max_length=200, description="Description of the expense item")
+    amount: int = Field(..., gt=0, description="Amount in yen (must be positive)")
+    category: str = Field(default="支出", description="Category/type of expense")
+
+    @field_validator('amount')
+    @classmethod
+    def validate_positive_amount(cls, v: int) -> int:
+        """Ensure amount is a positive integer"""
+        if v <= 0:
+            raise ValueError('Amount must be a positive integer')
+        return v
+
+
+class ExpenseResponse(BaseModel):
+    """Response model for expense operations"""
+    success: bool
+    message: str
+    page_url: Optional[str] = None
+    page_id: Optional[str] = None
+
+
 # =========================
 # API エンドポイント
 # =========================
@@ -307,11 +344,15 @@ async def root():
 @app.get("/health")
 async def health_check():
     """ヘルスチェック（API用）"""
+    notion_service = get_notion_service()
     return {
         "status": "ok",
         "app": "Crystal Agent API",
-        "gemini": "connected",
-        "notion": "connected" if is_notion_active else "disconnected"
+        "version": "1.0.0",
+        "services": {
+            "gemini": "connected",
+            "notion": "connected" if notion_service.is_active else "disconnected"
+        }
     }
 
 
@@ -320,6 +361,52 @@ async def get_stats():
     """Notionから統計データを取得"""
     stats = get_notion_stats()
     return stats
+
+
+@app.post("/api/notion/expense", response_model=ExpenseResponse)
+async def add_expense(request: ExpenseRequest):
+    """
+    Add an expense entry to Notion database
+
+    Args:
+        request: ExpenseRequest with item, amount, and category
+
+    Returns:
+        ExpenseResponse with success status and Notion page URL
+
+    Raises:
+        HTTPException: If validation fails or Notion service is unavailable
+    """
+    # Get Notion service instance (Singleton)
+    notion_service = get_notion_service()
+
+    # Check if Notion service is active
+    if not notion_service.is_active:
+        raise HTTPException(
+            status_code=503,
+            detail="Notion service is not available. Please check NOTION_API_KEY and NOTION_DATABASE_ID environment variables."
+        )
+
+    # Add expense to Notion
+    result = await notion_service.add_expense(
+        item=request.item,
+        amount=request.amount,
+        category=request.category
+    )
+
+    # Handle result
+    if result["success"]:
+        return ExpenseResponse(
+            success=True,
+            message=f"Expense added successfully: {request.item} (¥{request.amount:,})",
+            page_url=result.get("page_url"),
+            page_id=result.get("page_id")
+        )
+    else:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to add expense: {result.get('error', 'Unknown error')}"
+        )
 
 
 @app.post("/chat", response_model=ChatResponse)

@@ -401,12 +401,17 @@ body {
 .message-text h3 { font-size: 1.1rem; }
 
 .message-text p {
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
+}
+
+.message-text p:last-child {
+    margin-bottom: 0;
 }
 
 .message-text ul, .message-text ol {
-    margin-left: 24px;
-    margin-bottom: 12px;
+    margin-left: 1.5rem;
+    padding-left: 0;
+    margin-bottom: 0.75rem;
 }
 
 .message-text li {
@@ -414,50 +419,110 @@ body {
 }
 
 .message-text code {
-    background: rgba(0, 0, 0, 0.1);
-    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 0.15rem 0.4rem;
     border-radius: 4px;
-    font-family: 'Monaco', 'Courier New', monospace;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
     font-size: 0.9em;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .agent-message .message-text code {
     background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .message-text pre {
-    background: #282c34;
-    padding: 16px;
-    border-radius: 12px;
+    background: #2d2d2d;
+    padding: 1rem;
+    border-radius: 8px;
     overflow-x: auto;
-    margin: 12px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin: 0.75rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .message-text pre code {
     background: transparent;
     padding: 0;
-    color: #abb2bf;
-    font-size: 0.9rem;
-    line-height: 1.5;
+    border: none;
+    color: #ccc;
+    font-size: 0.875rem;
+    line-height: 1.6;
 }
 
 .message-text blockquote {
-    border-left: 4px solid rgba(255, 255, 255, 0.4);
-    padding-left: 16px;
-    margin: 12px 0;
+    border-left: 3px solid rgba(255, 255, 255, 0.4);
+    padding-left: 1rem;
+    margin: 0.75rem 0;
     font-style: italic;
     opacity: 0.9;
+}
+
+.agent-message .message-text blockquote {
+    border-left-color: rgba(255, 255, 255, 0.5);
+}
+
+.message-text hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+}
+
+.agent-message .message-text hr {
+    border-top-color: rgba(255, 255, 255, 0.2);
 }
 
 .message-text a {
     color: inherit;
     text-decoration: underline;
     font-weight: 600;
+    transition: opacity 0.2s ease;
+}
+
+.message-text a:hover {
+    opacity: 0.7;
 }
 
 .agent-message .message-text a {
     color: white;
+}
+
+/* ==================== Markdown Tables ==================== */
+.message-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.9rem;
+}
+
+.message-text th,
+.message-text td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.message-text th {
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+}
+
+.agent-message .message-text th,
+.agent-message .message-text td {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.agent-message .message-text th {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.message-text tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.agent-message .message-text tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* ==================== Typing Indicator ==================== */

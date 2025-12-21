@@ -190,6 +190,31 @@ def extract_amount(text: str) -> Optional[float]:
     return None
 
 
+def detect_incomplete_expense_intent(text: str) -> bool:
+    """
+    支出の意図はあるが金額が不足している入力を検出
+
+    Args:
+        text: ユーザーメッセージ
+
+    Returns:
+        True if expense keywords found but no amount
+    """
+    # 金額があれば不完全ではない
+    if extract_amount(text):
+        return False
+
+    # 支出関連キーワードの検出
+    expense_keywords = [
+        'ランチ', '食事', '飲み会', '食費', 'カフェ', 'コーヒー', '朝食', '夕食',
+        '電車', 'バス', '交通', 'タクシー', '移動', '交通費',
+        '買い物', '購入', 'ショッピング', '買った', '支払',
+        '使った', '払った', 'お金', '支出'
+    ]
+
+    return any(kw in text for kw in expense_keywords)
+
+
 def parse_expense_intent(text: str) -> Optional[Dict[str, any]]:
     """
     支出インテントを解析し、構造化データを抽出
@@ -364,15 +389,22 @@ class StatsResponse(BaseModel):
 class ExpenseRequest(BaseModel):
     """Request model for adding expense to Notion"""
     item: str = Field(..., min_length=1, max_length=200, description="Description of the expense item")
-    amount: int = Field(..., gt=0, description="Amount in yen (must be positive)")
+    amount: int = Field(..., description="Amount in yen")
     category: str = Field(default="支出", description="Category/type of expense")
 
     @field_validator('amount')
     @classmethod
     def validate_positive_amount(cls, v: int) -> int:
-        """Ensure amount is a positive integer"""
-        if v <= 0:
-            raise ValueError('Amount must be a positive integer')
+        """
+        Scenario B: 負の数値の検証
+        Ensure amount is a positive integer for expenses
+        """
+        if v < 0:
+            raise ValueError('支出金額は負の値にできません。収入の場合は「収入」カテゴリを使用してください。')
+        if v == 0:
+            raise ValueError('金額は1円以上である必要があります。')
+        if v > 10_000_000:
+            raise ValueError('金額が大きすぎます（上限: 10,000,000円）。入力を確認してください。')
         return v
 
 
@@ -478,12 +510,21 @@ async def chat(request: ChatRequest):
         expense_data = parse_expense_intent(user_message)
         expense_saved = False
         expense_confirmation = ""
+        expense_error = None
+
+        # Scenario A: 不完全な支出インテント（金額なし）の検出
+        if not expense_data and detect_incomplete_expense_intent(user_message):
+            # 金額なしの支出意図を検出 → AIに金額を尋ねるよう指示
+            context_message = user_message + "\n(システム: ユーザーは支出について話していますが、金額が不足しています。丁寧に金額を尋ねてください。)"
+        else:
+            context_message = user_message
 
         if expense_data and notion_service.is_active:
             # 支出インテント検出！NotionServiceを使用して自動保存
             print(f"💰 支出インテント検出: {expense_data}")
 
             try:
+                # Scenario C: Notion API障害への対応（Graceful Degradation）
                 result = await notion_service.add_expense(
                     item=expense_data["item"],
                     amount=expense_data["amount"],
@@ -495,10 +536,18 @@ async def chat(request: ChatRequest):
                     expense_confirmation = f"\n\n✓ {expense_data['item']} (¥{expense_data['amount']:,}) を{expense_data['category']}として記録しました。"
                     print(f"✓ 支出をNotionに自動保存: {expense_data['item']} ¥{expense_data['amount']:,}")
                 else:
+                    # Notion APIエラー（サービス側で処理済み）
                     print(f"⚠️ 支出保存失敗: {result.get('error')}")
+                    expense_error = "Notion保存に失敗しました。後ほど再度お試しください。"
 
             except Exception as e:
+                # 予期しない例外（ネットワークエラー、タイムアウトなど）
                 print(f"⚠️ 支出保存エラー: {e}")
+                expense_error = "接続エラーが発生しました。ネットワークを確認してください。"
+                # エラーをクライアントに通知するためにcontextに追加
+                if not context_message.endswith(user_message):
+                    context_message = user_message
+                context_message += f"\n(システム: Notion保存中にエラーが発生しました: {str(e)[:50]}。ユーザーに簡潔にエラーを伝えてください。)"
 
         # ===== タイプと金額を判定（従来ロジック） =====
         detected_type = detect_type(user_message)
@@ -513,9 +562,9 @@ async def chat(request: ChatRequest):
 
         # ===== AI応答生成 =====
         # 支出が保存された場合、AIに通知してコンテキストを提供
-        context_message = user_message
+        # context_messageは既に設定済み（不完全な支出インテントの場合）
         if expense_saved:
-            context_message += f"\n(システム: ユーザーの支出 {expense_data['item']} ¥{expense_data['amount']:,} を記録しました。簡潔に確認してください。)"
+            context_message = user_message + f"\n(システム: ユーザーの支出 {expense_data['item']} ¥{expense_data['amount']:,} を記録しました。簡潔に確認してください。)"
 
         full_prompt = rag_context + f"\n\nユーザー: {context_message}"
         response = model.generate_content(full_prompt)

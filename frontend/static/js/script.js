@@ -9,6 +9,9 @@
 
 const API_BASE_URL = 'http://localhost:8000';
 
+// Scenario D: 連打防止フラグ（Debouncing）
+let isSendingMessage = false;
+
 // ============================================
 // Initialization
 // ============================================
@@ -44,6 +47,12 @@ function setupEventListeners() {
  * メッセージ送信 (Expense Detection & API Integration)
  */
 window.sendMessage = async function() {
+    // Scenario D: 連打防止（Debouncing）
+    if (isSendingMessage) {
+        console.log('⚠️ 送信処理中です。しばらくお待ちください。');
+        return;
+    }
+
     const input = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const message = input.value.trim();
@@ -53,6 +62,9 @@ window.sendMessage = async function() {
         setTimeout(() => input.classList.remove('ring-2', 'ring-red-500'), 500);
         return;
     }
+
+    // 送信フラグをセット（連打防止）
+    isSendingMessage = true;
 
     // ウェルカムスクリーンを非表示（初回のみ）
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -112,6 +124,8 @@ window.sendMessage = async function() {
             sendButton.disabled = false;
             sendButton.style.opacity = '1';
         }
+        // Scenario D: 送信フラグをリセット（次のメッセージを許可）
+        isSendingMessage = false;
     }
 }
 

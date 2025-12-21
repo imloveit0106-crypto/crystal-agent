@@ -1,0 +1,342 @@
+/* ============================================
+   Crystal Agent - Minimal CSS
+   Tailwind CSS完全移行により、最小限のスタイルのみ
+   ============================================ */
+
+/* ============================================
+   Physics Constants (商用レベル物理演算)
+   ============================================ */
+
+/* 定数定義: iOSライクな「Expo Ease Out」を採用 */
+:root {
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-enter: 800ms;
+    --duration-exit: 600ms;
+}
+
+/* Base Motion Class: GPUアクセラレーションを有効化 */
+.motion-base {
+    transition-property: opacity, transform;
+    transition-timing-function: var(--ease-expo);
+    will-change: opacity, transform;
+}
+
+/* State: Exit (退場) - 上方へ浮遊しながら消失 */
+.motion-exit-up {
+    opacity: 0;
+    transform: translateY(-1.5rem) scale(0.98);
+    transition-duration: var(--duration-exit);
+    pointer-events: none;
+}
+
+/* State: Enter (入場準備) - 下方に待機 */
+.motion-enter-down {
+    opacity: 0;
+    transform: translateY(1.5rem);
+}
+
+/* State: Active (表示) - 定位置 */
+.motion-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-duration: var(--duration-enter);
+}
+
+/* ============================================
+   Custom Scrollbar (Minimal Esthetics)
+   ============================================ */
+#chatContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#chatContainer::-webkit-scrollbar-thumb {
+    background: rgba(55, 53, 47, 0.2);
+    border-radius: 3px;
+}
+
+#chatContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(55, 53, 47, 0.3);
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* ============================================
+   Message Dynamics (High-Fidelity Motion)
+   ============================================ */
+
+/* Entry Animation: slideUpFade with Apple-style Easing */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-fade-in {
+    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Welcome Screen Fade-out Animation */
+.welcome-screen {
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    will-change: opacity, transform;
+}
+
+.welcome-screen.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+.welcome-screen.gone {
+    display: none;
+}
+
+/* Loading Indicator: 呼吸するような波打ちアニメーション */
+@keyframes breathing-dot {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translateY(-0.25rem);
+        opacity: 1;
+    }
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(55, 53, 47, 0.35);
+    display: inline-block;
+    margin: 0 2px;
+    animation: breathing-dot 1.4s infinite ease-in-out both;
+}
+
+/* スタッガリング（遅延）設定 */
+.typing-dot:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 150ms;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 300ms;
+}
+
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Text Selection */
+::selection {
+    background: rgba(0, 0, 0, 0.1);
+    color: inherit;
+}
+
+/* Focus Outline Reset */
+*:focus {
+    outline: none;
+}
+
+/* ============================================
+   Input Experience (Command Center)
+   ============================================ */
+
+/* Floating Card: Input Container */
+.input-container {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(55, 53, 47, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+    background: white;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Focus State: Container gets subtle glow when input is focused */
+.input-container:focus-within {
+    border-color: rgba(55, 53, 47, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Focus State: Enhanced Border */
+#messageInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(55, 53, 47, 0.08);
+    transition: box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Remove default Tailwind ring on focus */
+#messageInput:focus {
+    --tw-ring-shadow: none !important;
+}
+
+/* ============================================
+   Tactile Feedback (Buttons & Chips)
+   ============================================ */
+
+/* Base Interactive Element */
+.btn-tactile,
+button {
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+    user-select: none;
+}
+
+/* Hover: Subtle Lift */
+.btn-tactile:hover,
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Active: Tactile Press */
+.btn-tactile:active,
+button:active:not(:disabled) {
+    transform: scale(0.98);
+    transition-duration: 0.05s;
+}
+
+/* Disabled State */
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Suggest Chips: Enhanced Interaction */
+.suggest-chip {
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.suggest-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.suggest-chip:active {
+    transform: scale(0.98);
+}
+
+/* ============================================
+   Help Modal (Glassmorphism Overlay)
+   ============================================ */
+
+/* Backdrop: Frosted Glass Effect */
+.help-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+/* Hidden State: Fade Out */
+.help-modal-backdrop.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Modal Container: White Card with Shadow */
+.help-modal-container {
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 480px;
+    width: 100%;
+    padding: 2rem;
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Modal Enter Animation */
+.help-modal-backdrop:not(.hidden) .help-modal-container {
+    animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Close Button */
+.help-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: rgba(55, 53, 47, 0.6);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.help-modal-close:hover {
+    background: rgba(55, 53, 47, 0.08);
+    color: rgba(55, 53, 47, 1);
+}
+
+.help-modal-close:active {
+    transform: scale(0.95);
+}
+
+/* Help List Styling */
+.help-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.help-list code {
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 0;
+}
+
+/* Japanese Font Support */
+.help-modal-container h3,
+.help-modal-container p,
+.help-modal-container li {
+    font-family: 'Noto Sans JP', 'Noto Serif JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+}

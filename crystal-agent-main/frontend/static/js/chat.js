@@ -34,6 +34,25 @@ const quickActionButtons = document.querySelectorAll('.quick-action-btn');
 let isStreaming = false;
 let currentMessageElement = null;
 
+// ==================== Error Toast Setup ====================
+let toastElement = document.getElementById('error-toast');
+if (!toastElement) {
+    toastElement = document.createElement('div');
+    toastElement.id = 'error-toast';
+    document.body.appendChild(toastElement);
+}
+
+/**
+ * Show error toast notification
+ */
+function showToast(message) {
+    toastElement.textContent = message;
+    toastElement.className = "show";
+    setTimeout(() => {
+        toastElement.className = toastElement.className.replace("show", "");
+    }, 3000);
+}
+
 // ==================== Markdown Configuration ====================
 // Configure Marked.js for safe HTML rendering
 marked.setOptions({
@@ -97,11 +116,11 @@ function renderMarkdown(text) {
 // ==================== Message Creation ====================
 
 /**
- * Create user message element
+ * Create user message element with Zero Latency animation
  */
 function createUserMessage(text) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message';
+    messageDiv.className = 'message user-message animate-entry';
     messageDiv.innerHTML = `
         <div class="message-avatar">👤</div>
         <div class="message-content">
@@ -116,11 +135,11 @@ function createUserMessage(text) {
 }
 
 /**
- * Create agent message element (empty, to be filled by streaming)
+ * Create agent message element (empty, to be filled by streaming) with animation
  */
 function createAgentMessage(metadata = {}) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message agent-message';
+    messageDiv.className = 'message agent-message animate-entry';
 
     const badge = metadata.detected_type
         ? `<span class="message-badge">${metadata.detected_type}</span>`
@@ -294,18 +313,13 @@ async function streamChatResponse(message) {
     } catch (error) {
         console.error('Streaming error:', error);
 
-        // Show error message
+        // Hide typing indicator
         if (typingIndicator.style.display !== 'none') {
             typingIndicator.style.display = 'none';
         }
 
-        const errorMessage = createAgentMessage();
-        errorMessage.querySelector('.message-text').innerHTML = `
-            <p style="color: #ff6b6b;">❌ Error: ${error.message}</p>
-            <p style="font-size: 0.9em; opacity: 0.8;">Please check your connection and try again.</p>
-        `;
-        chatMessages.appendChild(errorMessage);
-        scrollToBottom();
+        // Show error toast (non-intrusive)
+        showToast("Unable to reach the agent. Please try again.");
 
     } finally {
         isStreaming = false;
@@ -372,7 +386,12 @@ function animateValue(element, start, end, duration, formatter = null) {
 // ==================== Event Handlers ====================
 
 /**
- * Handle form submission
+ * Handle form submission with Zero Latency UX
+ *
+ * Optimistic UI approach:
+ * 1. INSTANTLY show user's message (before network request)
+ * 2. INSTANTLY clear input and restore focus
+ * 3. THEN initiate streaming API call
  */
 chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -380,15 +399,22 @@ chatForm.addEventListener('submit', async (e) => {
     const message = messageInput.value.trim();
     if (!message || isStreaming) return;
 
-    // Create and append user message
+    // ========== IMMEDIATE USER ACTIONS (Zero Latency) ==========
+
+    // Step 1: Append user message INSTANTLY with animation
     const userMessage = createUserMessage(message);
     chatMessages.appendChild(userMessage);
-    scrollToBottom();
 
-    // Clear input
+    // Step 2: Clear input and force focus IMMEDIATELY
     messageInput.value = '';
+    messageInput.focus();
 
-    // Stream AI response
+    // Step 3: Scroll to bottom smoothly
+    scrollToBottom(true);
+
+    // ========== BACKGROUND STREAMING (Network) ==========
+
+    // Step 4: Initiate API request (SSE streaming)
     await streamChatResponse(message);
 });
 
@@ -478,4 +504,5 @@ if (window.location.hostname === 'localhost') {
 }
 
 console.log('🔮 Crystal Agent Streaming Chat - Ready');
-console.log('Features: SSE Streaming | Markdown | Syntax Highlighting | 60fps');
+console.log('Features: SSE Streaming | Zero Latency UX | Markdown | Syntax Highlighting | 60fps');
+console.log('✨ Optimistic UI: Instant user feedback with real-time AI streaming');

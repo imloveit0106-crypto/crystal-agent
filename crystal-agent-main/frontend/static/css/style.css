@@ -613,3 +613,70 @@ body {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
+
+/* ==================== Zero Latency Animations ==================== */
+
+/* Slide-up fade animation for messages */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-entry {
+    animation: slideUpFade 0.3s var(--smooth-timing);
+}
+
+/* ==================== Error Toast ==================== */
+#error-toast {
+    visibility: hidden;
+    min-width: 300px;
+    background-color: rgba(239, 68, 68, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 16px;
+    padding: 16px 24px;
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s var(--spring-timing);
+}
+
+#error-toast.show {
+    visibility: visible;
+    animation: toastSlideIn 0.3s var(--spring-timing), toastSlideOut 0.3s var(--spring-timing) 2.7s;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+}

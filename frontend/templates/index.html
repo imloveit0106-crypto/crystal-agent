@@ -66,6 +66,13 @@
                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
                 </div>
+
+                <!-- Help Button -->
+                <button onclick="toggleHelpModal()"
+                        class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                        aria-label="使い方ガイド">
+                    <i data-lucide="circle-help" class="w-5 h-5 text-gray-600"></i>
+                </button>
             </div>
         </header>
 
@@ -189,6 +196,73 @@
             </div>
         </footer>
 
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="help-modal-backdrop hidden">
+        <div class="help-modal-container">
+            <!-- Close Button -->
+            <button onclick="toggleHelpModal()" class="help-modal-close" aria-label="閉じる">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Illustration -->
+            <div class="text-center mb-6">
+                <img src="https://i.imgur.com/Pl5KbPL.png"
+                     alt="使い方ガイド"
+                     class="mx-auto opacity-70 grayscale"
+                     style="max-width: 160px; filter: grayscale(100%);">
+            </div>
+
+            <!-- Header -->
+            <h3 class="text-xl font-bold text-notion-text mb-4 text-center font-serif">
+                使い方ガイド
+            </h3>
+
+            <!-- Content -->
+            <div class="mb-6">
+                <p class="text-sm text-gray-600 mb-4">
+                    メッセージ入力欄に品目と金額を入力して送信すると、自動的にNotionに記録されます。
+                </p>
+
+                <ul class="help-list space-y-3">
+                    <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-green-600"></i>
+                        </div>
+                        <div>
+                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">ランチ 1000</code>
+                            <p class="text-xs text-gray-500 mt-1">→ 食費として記録</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">給料 250000</code>
+                            <p class="text-xs text-gray-500 mt-1">→ 収入として記録</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center mt-0.5">
+                            <i data-lucide="check" class="w-3.5 h-3.5 text-purple-600"></i>
+                        </div>
+                        <div>
+                            <code class="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-notion-text">タクシー 2000</code>
+                            <p class="text-xs text-gray-500 mt-1">→ 交通費として記録</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Note -->
+            <div class="text-center">
+                <p class="text-xs text-gray-500">
+                    ※品目と金額を入力して送信してください。
+                </p>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->

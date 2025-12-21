@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadStats();
     await checkConnection();
     setupEventListeners();
+
+    // 初回訪問時のヘルプモーダル自動表示
+    checkFirstVisit();
 });
 
 // ============================================
@@ -525,4 +528,50 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// ============================================
+// Help Modal Functions
+// ============================================
+
+/**
+ * ヘルプモーダルの表示/非表示を切り替え
+ */
+window.toggleHelpModal = function() {
+    const modal = document.getElementById('helpModal');
+    if (!modal) return;
+
+    const isHidden = modal.classList.contains('hidden');
+
+    if (isHidden) {
+        // 表示
+        modal.classList.remove('hidden');
+        // Lucide Icons を再初期化（モーダル内のアイコン用）
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    } else {
+        // 非表示
+        modal.classList.add('hidden');
+    }
+}
+
+/**
+ * 初回訪問チェック & ヘルプモーダル自動表示
+ */
+function checkFirstVisit() {
+    const hasVisited = localStorage.getItem('crystal_agent_visited');
+
+    if (!hasVisited) {
+        // 初回訪問
+        console.log('初回訪問を検出 - ヘルプモーダルを自動表示');
+
+        // 1秒後にヘルプモーダルを表示（ページ読み込み後の自然なタイミング）
+        setTimeout(() => {
+            toggleHelpModal();
+        }, 1000);
+
+        // 訪問済みフラグをセット
+        localStorage.setItem('crystal_agent_visited', 'true');
+    }
 }

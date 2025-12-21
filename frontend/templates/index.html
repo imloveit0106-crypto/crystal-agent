@@ -90,22 +90,22 @@
                 <!-- Suggest Chips -->
                 <div class="flex flex-wrap justify-center gap-2">
                     <button onclick="sendSuggest('支出を記録したいので、金額と内容を聞いてください。')"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
                         <i data-lucide="wallet" class="w-4.5 h-4.5 text-gray-400"></i>
                         <span>支出を記録</span>
                     </button>
                     <button onclick="sendSuggest('今日の日記を書きたいです。出来事を聞いてください。')"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
                         <i data-lucide="book-open" class="w-4.5 h-4.5 text-gray-400"></i>
                         <span>日記を書く</span>
                     </button>
                     <button onclick="sendSuggest('今日の運勢と、ラッキーカラーを教えてください。')"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
                         <i data-lucide="sparkles" class="w-4.5 h-4.5 text-gray-400"></i>
                         <span>今日の運勢</span>
                     </button>
                     <button onclick="sendSuggest('未完了のタスクをNotionから探して教えてください。')"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
+                            class="suggest-chip inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors duration-200">
                         <i data-lucide="list-todo" class="w-4.5 h-4.5 text-gray-400"></i>
                         <span>タスク確認</span>
                     </button>
@@ -168,19 +168,19 @@
                     </button>
                 </div>
 
-                <!-- Input Box -->
-                <div class="flex gap-3">
+                <!-- Input Box: Floating Card -->
+                <div class="input-container flex gap-3">
                     <input
                         type="text"
                         id="messageInput"
                         placeholder="メッセージを入力..."
-                        class="flex-1 bg-gray-100 border-0 text-notion-text placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-notion-text transition-shadow duration-200 text-base"
+                        class="flex-1 bg-gray-100 border-0 text-notion-text placeholder-gray-500 rounded-xl px-5 py-3.5 focus:outline-none text-base"
                         onkeypress="if(event.key === 'Enter') sendMessage()"
                     >
                     <button
                         onclick="sendMessage()"
                         id="sendButton"
-                        class="bg-notion-text hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-colors duration-200 text-base flex items-center gap-2">
+                        class="bg-notion-text hover:bg-gray-800 text-white px-6 py-3.5 rounded-xl font-semibold text-base flex items-center gap-2">
                         <span>送信</span>
                         <i data-lucide="arrow-up" class="w-4.5 h-4.5"></i>
                     </button>

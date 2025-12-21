@@ -42,7 +42,9 @@
     transition-duration: var(--duration-enter);
 }
 
-/* Custom Scrollbar */
+/* ============================================
+   Custom Scrollbar (Minimal Esthetics)
+   ============================================ */
 #chatContainer::-webkit-scrollbar {
     width: 6px;
 }
@@ -52,12 +54,12 @@
 }
 
 #chatContainer::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    background: rgba(55, 53, 47, 0.2);
+    border-radius: 3px;
 }
 
 #chatContainer::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(55, 53, 47, 0.3);
 }
 
 /* Scrollbar Hide Utility */
@@ -70,8 +72,12 @@
     display: none;
 }
 
-/* Message Fade-in Animation */
-@keyframes messageFadeIn {
+/* ============================================
+   Message Dynamics (High-Fidelity Motion)
+   ============================================ */
+
+/* Entry Animation: slideUpFade with Apple-style Easing */
+@keyframes slideUpFade {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -83,7 +89,7 @@
 }
 
 .message-fade-in {
-    animation: messageFadeIn 0.3s ease-out;
+    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Welcome Screen Fade-out Animation */
@@ -151,4 +157,82 @@ html {
 /* Focus Outline Reset */
 *:focus {
     outline: none;
+}
+
+/* ============================================
+   Input Experience (Command Center)
+   ============================================ */
+
+/* Floating Card: Input Container */
+.input-container {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(55, 53, 47, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+    background: white;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Focus State: Container gets subtle glow when input is focused */
+.input-container:focus-within {
+    border-color: rgba(55, 53, 47, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Focus State: Enhanced Border */
+#messageInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(55, 53, 47, 0.08);
+    transition: box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Remove default Tailwind ring on focus */
+#messageInput:focus {
+    --tw-ring-shadow: none !important;
+}
+
+/* ============================================
+   Tactile Feedback (Buttons & Chips)
+   ============================================ */
+
+/* Base Interactive Element */
+.btn-tactile,
+button {
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+    user-select: none;
+}
+
+/* Hover: Subtle Lift */
+.btn-tactile:hover,
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Active: Tactile Press */
+.btn-tactile:active,
+button:active:not(:disabled) {
+    transform: scale(0.98);
+    transition-duration: 0.05s;
+}
+
+/* Disabled State */
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Suggest Chips: Enhanced Interaction */
+.suggest-chip {
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.suggest-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.suggest-chip:active {
+    transform: scale(0.98);
 }

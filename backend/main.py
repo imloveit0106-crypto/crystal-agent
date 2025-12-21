@@ -132,6 +132,12 @@ SYSTEM_INSTRUCTION = """
 - あなたの役割は、ユーザーのアイデアを否定せず、それを「構造化」し「実行可能」な形に整えることです。
 - ユーザーの目標（月収100万、音楽分析AI、恋愛科学など）を常に意識し、それに関連づけて回答してください。
 
+## 4. 機能統合 (Functional Capabilities)
+- **支出記録:** ユーザーが金額を含む支出を報告した場合、システムが自動的にNotionに記録します。
+- **自然な確認:** システムから「支出を記録しました」という通知が来た場合、それを自然に確認してください。
+  - 例: 「記録しました。今月の食費管理を意識されていますね。」
+  - 避ける: 「記録完了しました！」（過剰な感嘆符は不要）
+
 これより、あなたは上記の人格になりきって対話を行ってください。
 """
 
@@ -170,11 +176,59 @@ def detect_type(text: str) -> str:
 
 def extract_amount(text: str) -> Optional[float]:
     """テキストから金額を抽出"""
-    pattern = r'(\d+(?:,\d{3})*(?:\.\d+)?)円'
-    match = re.search(pattern, text)
-    if match:
-        return float(match.group(1).replace(',', ''))
+    # 複数のパターンに対応: "800円", "¥800", "800yen"
+    patterns = [
+        r'(\d+(?:,\d{3})*(?:\.\d+)?)\s*円',
+        r'¥\s*(\d+(?:,\d{3})*(?:\.\d+)?)',
+        r'(\d+(?:,\d{3})*(?:\.\d+)?)\s*yen'
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return float(match.group(1).replace(',', ''))
     return None
+
+
+def parse_expense_intent(text: str) -> Optional[Dict[str, any]]:
+    """
+    支出インテントを解析し、構造化データを抽出
+
+    Args:
+        text: ユーザーメッセージ
+
+    Returns:
+        {item: str, amount: int, category: str} または None
+    """
+    # 金額を検出
+    amount = extract_amount(text)
+    if not amount:
+        return None
+
+    # カテゴリー推測（キーワードベース）
+    category = "支出"
+    if any(kw in text for kw in ['ランチ', '食事', '飲み会', '食費', 'カフェ', 'コーヒー', '朝食', '夕食']):
+        category = "食費"
+    elif any(kw in text for kw in ['電車', 'バス', '交通', 'タクシー', '移動']):
+        category = "交通費"
+    elif any(kw in text for kw in ['買い物', '購入', 'ショッピング']):
+        category = "買い物"
+
+    # 項目説明を抽出（金額部分を除く）
+    # 金額パターンをすべて除去
+    item_text = text
+    for pattern in [r'\d+(?:,\d{3})*(?:\.\d+)?\s*円', r'¥\s*\d+(?:,\d{3})*(?:\.\d+)?', r'\d+(?:,\d{3})*(?:\.\d+)?\s*yen']:
+        item_text = re.sub(pattern, '', item_text, flags=re.IGNORECASE)
+
+    item = item_text.strip()
+    if not item:
+        item = f"{category} (詳細なし)"
+
+    return {
+        "item": item,
+        "amount": int(amount),
+        "category": category
+    }
 
 
 def get_notion_stats() -> Dict:
@@ -412,32 +466,69 @@ async def add_expense(request: ExpenseRequest):
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """
-    チャットエンドポイント
+    チャットエンドポイント（Intent Recognition搭載）
+    支出インテントを自動検出し、Notionに保存
     RAG機能により、Notionのデータをコンテキストとして使用
     """
     try:
         user_message = request.message
+        notion_service = get_notion_service()
 
-        # タイプと金額を判定
+        # ===== Intent Recognition: 支出検出 =====
+        expense_data = parse_expense_intent(user_message)
+        expense_saved = False
+        expense_confirmation = ""
+
+        if expense_data and notion_service.is_active:
+            # 支出インテント検出！NotionServiceを使用して自動保存
+            print(f"💰 支出インテント検出: {expense_data}")
+
+            try:
+                result = await notion_service.add_expense(
+                    item=expense_data["item"],
+                    amount=expense_data["amount"],
+                    category=expense_data["category"]
+                )
+
+                if result["success"]:
+                    expense_saved = True
+                    expense_confirmation = f"\n\n✓ {expense_data['item']} (¥{expense_data['amount']:,}) を{expense_data['category']}として記録しました。"
+                    print(f"✓ 支出をNotionに自動保存: {expense_data['item']} ¥{expense_data['amount']:,}")
+                else:
+                    print(f"⚠️ 支出保存失敗: {result.get('error')}")
+
+            except Exception as e:
+                print(f"⚠️ 支出保存エラー: {e}")
+
+        # ===== タイプと金額を判定（従来ロジック） =====
         detected_type = detect_type(user_message)
         detected_amount = extract_amount(user_message)
 
-        # RAG: Notionからコンテキストを取得
+        # ===== RAG: Notionからコンテキストを取得 =====
         rag_context = ""
         if request.use_rag and is_notion_active:
             stats = get_notion_stats()
             rag_context = build_rag_context(stats)
             print(f"RAGコンテキスト生成: {len(rag_context)} 文字")
 
-        # AI応答生成（RAGコンテキスト付き）
-        # system_instructionは既にモデル初期化時に設定済み
-        full_prompt = rag_context + f"\n\nユーザー: {user_message}"
+        # ===== AI応答生成 =====
+        # 支出が保存された場合、AIに通知してコンテキストを提供
+        context_message = user_message
+        if expense_saved:
+            context_message += f"\n(システム: ユーザーの支出 {expense_data['item']} ¥{expense_data['amount']:,} を記録しました。簡潔に確認してください。)"
+
+        full_prompt = rag_context + f"\n\nユーザー: {context_message}"
         response = model.generate_content(full_prompt)
         ai_response = response.text
 
-        # Notionに保存
-        saved_to_notion = False
-        if is_notion_active:
+        # 支出確認メッセージを追加（Minimal Styleに準拠）
+        if expense_confirmation:
+            ai_response = ai_response + expense_confirmation
+
+        # ===== 従来の保存処理（支出以外のエントリー） =====
+        saved_to_notion = expense_saved
+        if is_notion_active and not expense_saved:
+            # 支出以外のエントリー（日記、タスクなど）は従来通り保存
             try:
                 now = datetime.now()
                 properties = {
@@ -447,7 +538,6 @@ async def chat(request: ChatRequest):
                     "Content": {"rich_text": [{"text": {"content": user_message}}]}
                 }
 
-                # 金額があれば追加
                 if detected_amount:
                     properties["Amount"] = {"number": detected_amount}
 

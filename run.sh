@@ -6,7 +6,7 @@ echo "🔮 Crystal Agent - Starting Server..."
 echo "============================================================"
 
 # Navigate to project directory
-cd "$(dirname "$0")/crystal-agent-main"
+cd "$(dirname "$0")"
 
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then

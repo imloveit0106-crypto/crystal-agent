@@ -1,89 +1,201 @@
-# Crystal Agent
+# 🔮 Crystal Agent
 
-**AI Personal Assistant with Notion Integration**
+**あなた専用のマルチモーダルAIエージェント**
 
-Notion/Claude風のミニマルで洗練されたAIアシスタント
+Python + Gemini + Notion で作る、パーソナライズされたAI秘書
 
-![Status](https://img.shields.io/badge/Status-Production-success)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
+![Status](https://img.shields.io/badge/Status-Beta-green)
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+## 📢 最新情報（2025-12-18）
+
+### ✨ v0.2.0 リリース！
+
+Crystal Agentが大幅にパワーアップしました！
+
+**新機能:**
+- 🤖 **AIプロンプト強化** - 親しみやすい友達のような口調で応答
+- 🔍 **テキスト分析改善** - キーワードを3倍以上に拡充
+- 💰 **金額抽出機能** - 複数パターンに対応（円、¥、数字のみ）
+- 🛡️ **エラーハンドリング強化** - Notion未接続でも正常動作
+- 📊 **接続状態表示** - Gemini/Notionの状態を個別表示
+
+**重要:** Gemini APIだけで動作するようになりました！Notionはオプションです。
 
 ---
 
 ## 📖 概要
 
-Crystal Agentは、日々の行動・思考・目標を記録し、
-Google Gemini AIとNotion データベースを連携させることで、
-パーソナライズされたサポートを提供するAIアシスタントです。
+Crystal Agent は、あなたの日々の行動・思考・目標を記録し、
+Gemini AI と Notion データベースを連携させることで、
+パーソナライズされたアドバイスを提供するAIエージェントです。
 
 ### ✨ 主な機能
 
-- 💬 **自然な会話**: Gemini 1.5 Flash による高速AI応答
-- 📝 **自動分類**: 日記・支出・タスク・メモを自動判定
-- 💰 **金額抽出**: テキストから金額を自動で検出
-- 🔄 **Notion連携**: すべてのログをNotionに自動保存
-- 📊 **統計表示**: Total / Diary / Tasks のカウント
-- ⚡ **クイック入力**: ワンクリックで定型文を入力
-- 🎨 **ミニマルUI**: Notion/Claudeのような洗練されたデザイン
+- 💬 **自然な会話インターフェース**: LINE風のモダンなチャットUI
+- 📝 **自動分類ログ**: 日記・支出・タスク・悩みを自動判定
+- 🧠 **パーソナライズAI**: あなたの過去データから最適な助言
+- 📊 **データ可視化**: 統計情報・進捗管理
+- 🔄 **Notion連携**: データは全てNotionに自動保存
 
-### 🎯 デザインコンセプト
+### 🎯 こんな方におすすめ
 
-**"Intellectual Minimalism（知的なミニマリズム）"**
-
-- 白背景・ダークグレー文字のみ
-- タイポグラフィ重視
-- 絵文字排除、Lucide Iconsのみ使用
-- フェード・スライドなど微細なアニメーション
+- 📔 日記を続けたいけど、三日坊主になってしまう
+- 💰 支出を管理したいけど、家計簿アプリは面倒
+- ✅ タスクを忘れがち
+- 🤔 悩みを整理したい
+- 🚀 自己成長を記録したい
 
 ---
 
 ## 🛠️ 技術スタック
 
-| 役割 | 技術 | 備考 |
+| 役割 | 技術 | 理由 |
 |------|------|------|
-| **Backend** | FastAPI + Uvicorn | 高速・モダンなWeb API |
-| **Frontend** | HTML + Tailwind CSS (CDN) | ビルド不要 |
-| **JavaScript** | Vanilla JS (ES6+) | フレームワーク不使用 |
-| **AI** | Google Gemini 1.5 Flash | 高性能・高速 |
-| **Database** | Notion API | 柔軟で拡張性が高い |
-| **Design** | Lucide Icons (CDN) | 軽量アイコンライブラリ |
+| **言語** | Python 3.10+ | シンプルで初心者にも優しい |
+| **UI** | Streamlit | コード数行で美しいUIが作れる |
+| **AI** | Google Gemini 1.5 Flash | 高性能で無料枠が大きい |
+| **DB** | Notion API | 柔軟で拡張性が高い |
+| **環境管理** | python-dotenv | APIキーを安全に管理 |
 
 ---
 
 ## 🚀 クイックスタート
 
-### 1. 必要なもの
+### 必要要件
 
-- Python 3.8以上
-- Google Gemini APIキー
-- Notion Integration Token + Database ID
+- Python 3.10 以上
+- インターネット接続
+- Gemini API Key（無料）
+- Notion API Key（無料）
 
-### 2. インストール
+### 5分で始める！
 
 ```bash
-# リポジトリをクローン
-git clone https://github.com/yourusername/crystal-agent.git
+# 1. リポジトリをクローン
+git clone https://github.com/imloveit0106-crypto/crystal-agent.git
 cd crystal-agent
 
-# 環境変数を設定（.envファイルを作成）
+# 2. ライブラリをインストール
+pip install -r requirements.txt
+
+# 3. 環境変数ファイルを作成
 cp .env.example .env
-# .envを編集してAPIキーを設定
+
+# 4. .env ファイルを編集（後述）
+# エディタで .env を開いて、APIキーを入力
+
+# 5. API接続テスト
+python test_api.py
+
+# 6. アプリを起動！
+streamlit run app.py
 ```
 
-### 3. 起動
+ブラウザで `http://localhost:8501` を開く → **完了！** 🎉
+
+---
+
+## 🔑 APIキーの取得方法
+
+### 1️⃣ Gemini API Key（所要時間: 2分）
+
+1. [Google AI Studio](https://aistudio.google.com/api-keys) にアクセス
+2. Googleアカウントでログイン
+3. 「Get API Key」→「Create API Key」をクリック
+4. 生成されたキーをコピー
+5. `.env` ファイルの `GEMINI_API_KEY=` の後に貼り付け
+
+**無料枠**: 1日あたり1,500リクエスト（個人利用なら十分！）
+
+### 2️⃣ Notion API Key（所要時間: 3分）
+
+1. [Notion Integrations](https://www.notion.so/my-integrations) にアクセス
+2. 「+ New integration」をクリック
+3. 名前を「**Crystal Agent**」に設定
+4. 「Submit」をクリック
+5. 「Internal Integration Token」をコピー
+6. `.env` ファイルの `NOTION_API_KEY=` の後に貼り付け
+
+### 3️⃣ Notion データベース作成（所要時間: 5分）
+
+#### データベース1: User Profile（あなたの基本情報）
+
+1. Notionで新しいページを作成
+2. `/database` と入力して「Table Database」を選択
+3. タイトルを「**User_Profile**」に変更
+4. 以下のプロパティを追加:
+   - `Name`（テキスト）: あなたの名前
+   - `Age`（数値）: 年齢
+   - `Goals`（テキスト）: 目標
+   - `Values`（テキスト）: 大切にしていること
+
+5. データベースページで右上の「**...**」→「**Add connections**」→「**Crystal Agent**」を選択
+6. URLから32文字のIDをコピー（例: `https://notion.so/xxxxx?v=yyyyy` の `xxxxx` 部分）
+7. `.env` ファイルの `NOTION_USER_PROFILE_DB_ID=` の後に貼り付け
+
+#### データベース2: Life Log（日々の行動ログ）
+
+1. Notionで新しいページを作成
+2. `/database` と入力して「Table Database」を選択
+3. タイトルを「**Life_Log**」に変更
+4. 以下のプロパティを追加:
+   - `Date`（日付）: 日付
+   - `Type`（セレクト）: 日記/支出/タスク/悩み
+   - `Content`（テキスト）: 内容
+   - `Amount`（数値）: 金額（支出の場合）
+   - `Status`（セレクト）: 完了/未完了
+
+5. データベースページで右上の「**...**」→「**Add connections**」→「**Crystal Agent**」を選択
+6. URLから32文字のIDをコピー
+7. `.env` ファイルの `NOTION_LIFE_LOG_DB_ID=` の後に貼り付け
+
+### ✅ .env ファイルの完成例
+
+```env
+GEMINI_API_KEY=AIzaSyABC123...（あなたのキー）
+NOTION_API_KEY=secret_ABC123...（あなたのキー）
+NOTION_USER_PROFILE_DB_ID=abc123def456...（32文字）
+NOTION_LIFE_LOG_DB_ID=xyz789ghi012...（32文字）
+```
+
+---
+
+## 📱 使い方
+
+### Streamlit版（推奨）- イケてるUI ✨
 
 ```bash
-# 自動インストール＆起動（推奨）
-python start.py
-
-# または手動起動
-pip install -r requirements.txt
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+streamlit run app.py
 ```
 
-### 4. アクセス
+**特徴:**
+- 📱 LINE風のモダンなチャットUI
+- 📊 リアルタイム統計表示
+- ⚡ クイックアクションボタン
+- 🎨 グラデーション背景
 
-ブラウザで `http://localhost:8000` を開く
+**使い方:**
+1. メッセージを入力して送信
+2. サイドバーのクイックアクションを使用
+3. 統計情報を確認
+
+### ターミナル版 - シンプル 💻
+
+```bash
+python simple_agent.py
+```
+
+**特徴:**
+- 🖥️ コマンドラインで動作
+- 🚀 軽量・高速
+- 📝 シンプルな対話
+
+**使い方:**
+1. メッセージを入力してEnter
+2. `help` でヘルプ表示
+3. `quit` で終了
 
 ---
 
@@ -91,107 +203,189 @@ uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 
 ```
 crystal-agent/
-├── backend/
-│   └── main.py              # FastAPI サーバー
-├── frontend/
-│   ├── templates/
-│   │   └── index.html       # メインUI
-│   └── static/
-│       ├── js/
-│       │   └── script.js    # フロントエンドロジック
-│       └── css/
-│           └── style.css    # ミニマルCSS
-├── start.py                 # 起動スクリプト
-├── requirements.txt         # 依存パッケージ
-├── design_doc.md            # 設計仕様書
-└── .env                     # 環境変数（要作成）
+├── app.py                          # 🎨 Streamlit UI（メインアプリ）
+├── simple_agent.py                 # 💻 ターミナル版
+├── test_api.py                     # 🧪 API接続テスト
+├── requirements.txt                # 📦 必要なライブラリ
+├── .env.example                    # 🔑 環境変数テンプレート
+├── .env                            # 🔒 環境変数（自分で作成）
+├── .gitignore                      # 🚫 Git除外設定
+├── README.md                       # 📖 このファイル
+└── Crystal_Agent_完全版設計書_v2.md # 📚 詳細設計書
 ```
 
 ---
 
-## 🎨 UI/UX
+## 🎯 開発ロードマップ
 
-### ウェルカムスクリーン（Notion/Claudeスタイル）
+### Phase 0: 事前準備 ✅
+- ✅ APIキー取得
+- ✅ Notion DB作成
+- ✅ プロジェクト構造設計
 
-- ランダムアートワーク（4種類）
-- サジェストチップ（4つ）
-  - 家計簿をつける
-  - 日記を書く
-  - 今日の運勢
-  - タスク確認
-- メッセージ送信時に自動フェードアウト
+### Phase 1: プロトタイプ ✅
+- ✅ UI作成（Streamlit）
+- ✅ モックデータで動作確認
+- ✅ GitHub セットアップ
 
-### チャットUI
+### Phase 2: 基本機能 ✅
+- ✅ Gemini API 接続
+- ✅ 自動分類機能（支出・タスク・悩み・日記）
+- ✅ 感情分析機能
+- ✅ AIプロンプト強化（Crystal Agentの性格付け）
+- ✅ エラーハンドリング強化
+- 🔧 Notion API 接続（オプション・設定中）
 
-- **ユーザーメッセージ**: 右揃え、黒背景・白文字
-- **AIメッセージ**: 左揃え、薄グレー背景・黒文字
-- **アバター**: Lucide Iconsの `user` と `sparkles`
-- **最大幅**: 75%（可読性重視）
+### Phase 3: 高度な機能（予定 📅）
+- ⏳ コンテキスト検索
+- ⏳ パーソナライズ助言
+- ⏳ データ分析・可視化
+- ⏳ 週次・月次レポート
 
-### 統計バー
-
-- Total / Diary / Tasks の3カラム
-- リアルタイム更新
+### Phase 4: 最適化（予定 🚀）
+- ⏳ パフォーマンス改善
+- ⏳ UI/UX向上
+- ⏳ モバイル対応
 
 ---
 
-## ⚙️ 設定
+## 🐛 トラブルシューティング
 
-### 環境変数（.env）
+### ❌ Gemini接続失敗: 403 Forbidden
 
-```env
-GEMINI_API_KEY=your_gemini_api_key
-NOTION_API_KEY=your_notion_integration_token
-NOTION_LIFE_LOG_DB_ID=your_notion_database_id
+**原因**: APIキーが無効または未設定
+
+**解決策**:
+```bash
+# 1. APIキーを再確認
+cat .env | grep GEMINI_API_KEY
+
+# 2. キーが正しいか確認（Google AI Studioで再生成）
+
+# 3. テストを再実行
+python test_api.py
 ```
 
-### Notion データベース構造
+### ❌ Notion接続失敗: 403 Forbidden
 
-以下のプロパティが必要です：
+**原因**: Integrationの権限がない
 
-- **タイプ**: Select（日記/タスク/支出/メモ）
-- **内容**: Text
-- **日付**: Date
-- **金額**: Number（オプション）
-- **タグ**: Multi-select（オプション）
+**解決策**:
+1. Notionデータベースを開く
+2. 右上の「...」→「Add connections」→「Crystal Agent」を選択
+3. テストを再実行
+
+### ❌ ModuleNotFoundError: No module named 'streamlit'
+
+**原因**: ライブラリがインストールされていない
+
+**解決策**:
+```bash
+# 仮想環境を使用（推奨）
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# ライブラリをインストール
+pip install -r requirements.txt
+```
+
+### ❌ Streamlitが起動しない
+
+**原因**: ポートが使用中
+
+**解決策**:
+```bash
+# 別のポートで起動
+streamlit run app.py --server.port 8502
+```
 
 ---
 
-## 📚 ドキュメント
+## 💡 よくある質問（FAQ）
 
-詳細な設計仕様は `design_doc.md` を参照してください。
+### Q1: APIキーは有料ですか？
 
-- プロジェクト概要
-- 機能要件（実装する/しない機能）
-- 技術スタック
-- デザインシステム
-- 実装ルール
-- 禁止事項
+**A**: いいえ、どちらも無料枠があります！
+- **Gemini**: 1日1,500リクエスト（個人利用なら十分）
+- **Notion**: 無制限（API利用は無料）
+
+### Q2: データはどこに保存されますか？
+
+**A**: すべてあなたのNotion Workspaceに保存されます。外部サーバーには保存されません。
+
+### Q3: プログラミング初心者でも使えますか？
+
+**A**: はい！このREADMEの手順通りに進めれば、初心者でも5-10分で起動できます。
+
+### Q4: スマホで使えますか？
+
+**A**: Streamlit版はスマホブラウザでも表示できますが、PCでの利用を推奨します。
+
+### Q5: カスタマイズできますか？
+
+**A**: はい！Pythonコードを編集すれば、自由にカスタマイズできます。
 
 ---
 
 ## 🤝 コントリビューション
 
-プルリクエストを歓迎します。
+プルリクエスト大歓迎です！
 
-大きな変更を行う場合は、まず issue を開いて変更内容を議論してください。
+1. このリポジトリをフォーク
+2. 新しいブランチを作成（`git checkout -b feature/amazing-feature`）
+3. 変更をコミット（`git commit -m 'Add amazing feature'`）
+4. ブランチにプッシュ（`git push origin feature/amazing-feature`）
+5. プルリクエストを作成
 
 ---
 
-## 📄 ライセンス
+## 📝 ライセンス
 
-MIT License
+MIT License - 詳細は [LICENSE](LICENSE) を参照
+
+---
+
+## 👤 作者
+
+**ゆうや**
+
+- GitHub: [@imloveit0106-crypto](https://github.com/imloveit0106-crypto)
+- プロジェクト: Crystal Agent
+- Email: your-email@example.com（オプション）
 
 ---
 
 ## 🙏 謝辞
 
-デザイン参考：
+このプロジェクトは以下の素晴らしい技術で作られています：
 
-- [Notion](https://notion.so) - ミニマルUI、タイポグラフィ
-- [Claude](https://claude.ai) - ウェルカム画面、チャットUI
-- [Linear](https://linear.app) - クリーンなデザイン
+- [Streamlit](https://streamlit.io/) - 美しいUIフレームワーク
+- [Google Gemini](https://ai.google.dev/) - 高性能AIモデル
+- [Notion](https://www.notion.so/) - 柔軟なデータベース
+- Python コミュニティの皆様
 
 ---
 
-**Made with ❤️ and Minimal Design**
+## 🎬 次のステップ
+
+1. ✅ セットアップを完了させる
+2. 📝 毎日ログを記録する習慣をつける
+3. 📊 1週間後に統計データを確認
+4. 🚀 自分好みにカスタマイズ
+5. 🌟 友達にシェア！
+
+---
+
+**Crystal Agent で、あなたの人生を整理しましょう！** 🚀
+
+質問や問題があれば、[Issues](https://github.com/imloveit0106-crypto/crystal-agent/issues) で報告してください。
+
+---
+
+<div align="center">
+
+Made with ❤️ by Crystal Agent Team
+
+[⭐ Star this repo](https://github.com/imloveit0106-crypto/crystal-agent) | [🐛 Report Bug](https://github.com/imloveit0106-crypto/crystal-agent/issues) | [💡 Request Feature](https://github.com/imloveit0106-crypto/crystal-agent/issues)
+
+</div>

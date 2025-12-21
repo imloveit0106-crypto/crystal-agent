@@ -5,8 +5,6 @@ echo ============================================================
 echo 🔮 Crystal Agent - Starting Server...
 echo ============================================================
 
-cd crystal-agent-main
-
 REM Check if dependencies are installed
 python -c "import fastapi" 2>nul
 if errorlevel 1 (

@@ -1,20 +1,18 @@
-/* ==================== Crystal Agent - Premium Notion/Claude Aesthetic ==================== */
-
-/* Golden Rule #3: Pro Typography - Import Inter Font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* ==================== Crystal Agent - Intellectual Minimalism ==================== */
 
 :root {
-    /* Notion Color Palette */
-    --bg-color: #ffffff;
+    /* Intellectual Minimalism Color Palette */
+    --bg-color: #ffffff; /* Pure White */
     --sidebar-bg: #f7f7f5;
-    --text-primary: #37352f;
-    --text-secondary: #9b9a97;
+    --text-primary: #37352f; /* Ink Black - NOT #000000 */
+    --text-secondary: rgba(55, 53, 47, 0.65); /* Transparent Grey */
     --border-color: #e0e0e0;
     --user-bubble: #f1f1f0; /* Notion Gray Highlight */
-    --accent-color: #37352f; /* Golden Rule #1: NO PURE BLACK */
+    --accent-color: #37352f; /* Monochrome Accent */
 
     /* Typography */
-    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-serif-jp: 'Noto Serif JP', serif;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,7 +22,9 @@ body {
     color: var(--text-primary);
     font-family: var(--font-stack);
     line-height: 1.7; /* Golden Rule #2: Luxurious Readability */
-    letter-spacing: -0.01em;
+    letter-spacing: -0.01em; /* Tighten slightly for professional look */
+    -webkit-font-smoothing: antialiased; /* Critical for "Retina" crispness */
+    -moz-osx-font-smoothing: grayscale;
     height: 100vh;
     overflow: hidden;
 }
@@ -35,6 +35,17 @@ body {
     height: 100vh;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* ==================== Intellectual Minimalism Typography ==================== */
+
+/* Japanese Headings: Sophisticated Serif */
+h1, h2, h3,
+.brand-title,
+.sidebar-title {
+    font-family: var(--font-serif-jp);
+    font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
 /* Sidebar */

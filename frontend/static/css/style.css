@@ -392,19 +392,13 @@ body {
     transform: translateX(-4px) scale(1.01);
 }
 
-/* ==================== Markdown Rendering in Messages ==================== */
-.message-text h1, .message-text h2, .message-text h3 {
-    margin-top: 16px;
-    margin-bottom: 8px;
-    font-weight: 600;  /* Refined: 600 instead of 700 for better flow */
-    letter-spacing: -0.02em;  /* Slightly tighter for headers */
-}
+/* ==================== Markdown Rendering in Messages (Notion-Grade Typography) ==================== */
 
-.message-text h1 { font-size: 1.5rem; }
-.message-text h2 { font-size: 1.25rem; }
-.message-text h3 { font-size: 1.1rem; }
-
+/* Paragraphs - Notion-style readability */
 .message-text p {
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    color: #37352f;
     margin-bottom: 0.75rem;
 }
 
@@ -412,64 +406,126 @@ body {
     margin-bottom: 0;
 }
 
-.message-text ul, .message-text ol {
-    margin-left: 1.5rem;
-    padding-left: 0;
+/* Agent message paragraphs - white text override */
+.agent-message .message-text p {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Headings - Notion-style hierarchy */
+.message-text h1,
+.message-text h2,
+.message-text h3 {
+    font-weight: 600;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    color: #37352f;
+    letter-spacing: -0.015em;
+}
+
+.message-text h1 { font-size: 1.5rem; }
+.message-text h2 { font-size: 1.25rem; }
+.message-text h3 { font-size: 1.1rem; }
+
+/* Agent message headings - white text */
+.agent-message .message-text h1,
+.agent-message .message-text h2,
+.agent-message .message-text h3 {
+    color: white;
+}
+
+/* Lists - Notion-style spacing */
+.message-text ul,
+.message-text ol {
+    padding-left: 1.5rem;
     margin-bottom: 0.75rem;
+    color: #37352f;
 }
 
 .message-text li {
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
+    line-height: 1.6;
 }
 
+.agent-message .message-text ul,
+.agent-message .message-text ol,
+.agent-message .message-text li {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Strong/Bold - Notion semi-bold */
+.message-text strong {
+    font-weight: 600;
+    color: #37352f;
+}
+
+.agent-message .message-text strong {
+    color: white;
+}
+
+/* Inline code - Notion-style red accent */
 .message-text code {
-    background: rgba(0, 0, 0, 0.08);
-    padding: 0.15rem 0.4rem;
+    background: #e3e2e050;
+    color: #EB5757;
+    padding: 0.2em 0.4em;
     border-radius: 4px;
     font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
-    font-size: 0.9em;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.85em;
+    font-weight: 500;
 }
 
 .agent-message .message-text code {
     background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
+    color: #ffcccb;
 }
 
+/* Code blocks - Notion light grey theme */
 .message-text pre {
-    background: #2d2d2d;
+    background: #f7f7f5;
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: 4px;
     overflow-x: auto;
     margin: 0.75rem 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid #e3e2e0;
 }
 
 .message-text pre code {
     background: transparent;
+    color: #37352f;
     padding: 0;
     border: none;
-    color: #ccc;
     font-size: 0.875rem;
     line-height: 1.6;
+    font-weight: 400;
 }
 
+/* Agent message code blocks - keep dark theme for contrast */
+.agent-message .message-text pre {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.agent-message .message-text pre code {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Blockquotes - Notion-style border and grey text */
 .message-text blockquote {
-    border-left: 3px solid rgba(255, 255, 255, 0.4);
+    border-left: 3px solid #37352f;
     padding-left: 1rem;
     margin: 0.75rem 0;
+    color: #787774;
     font-style: italic;
-    opacity: 0.9;
 }
 
 .agent-message .message-text blockquote {
-    border-left-color: rgba(255, 255, 255, 0.5);
+    border-left-color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.8);
 }
 
+/* Horizontal rules */
 .message-text hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #e3e2e0;
     margin: 1rem 0;
 }
 
@@ -477,10 +533,11 @@ body {
     border-top-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Links - Notion-style subtle underline */
 .message-text a {
-    color: inherit;
+    color: #37352f;
     text-decoration: underline;
-    font-weight: 600;
+    font-weight: 500;
     transition: opacity 0.2s ease;
 }
 
@@ -490,26 +547,33 @@ body {
 
 .agent-message .message-text a {
     color: white;
+    font-weight: 600;
 }
 
-/* ==================== Markdown Tables ==================== */
+/* ==================== Markdown Tables (Notion-Style) ==================== */
 .message-text table {
     width: 100%;
     border-collapse: collapse;
     margin: 0.75rem 0;
     font-size: 0.9rem;
+    color: #37352f;
 }
 
 .message-text th,
 .message-text td {
     padding: 0.5rem 0.75rem;
     text-align: left;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid #e3e2e0;
 }
 
 .message-text th {
-    background: rgba(0, 0, 0, 0.05);
+    background: #f7f7f5;
     font-weight: 600;
+    color: #37352f;
+}
+
+.agent-message .message-text table {
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .agent-message .message-text th,
@@ -519,6 +583,7 @@ body {
 
 .agent-message .message-text th {
     background: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 .message-text tr:nth-child(even) {

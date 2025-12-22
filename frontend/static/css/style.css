@@ -1,321 +1,342 @@
-/* ==================== Crystal Agent - Intellectual Minimalism ==================== */
+/* ==================== Crystal Agent - Streaming Chat UI ====================
+ * Commercial-grade chat interface with Glassmorphism 2.0 and streaming support
+ *
+ * Typography Philosophy: "Optical Perfection"
+ * - System Native Font Stack (OS-specific sharpness)
+ * - Reading Rhythm: line-height 1.65 (Notion standard)
+ * - Micro-tightening: letter-spacing -0.015em (visual cohesion)
+ * - Soft Contrast: Off-black #1A1A1A (no eye strain)
+ * - Optimal Line Length: max-width 70ch (readability science)
+ * - Font Weights: 400 body, 600 headers (seamless flow)
+ * ========================================================================== */
 
+/* ==================== Design Token System ==================== */
 :root {
-    /* Intellectual Minimalism Color Palette */
-    --bg-color: #ffffff; /* Pure White */
-    --sidebar-bg: #f7f7f5;
-    --text-primary: #37352f; /* Ink Black - NOT #000000 */
-    --text-secondary: rgba(55, 53, 47, 0.65); /* Transparent Grey */
-    --border-color: #e0e0e0;
-    --user-bubble: #f1f1f0; /* Notion Gray Highlight */
-    --accent-color: #37352f; /* Monochrome Accent */
+    /* 🎨 BASE COLORS (The Only Allowed Colors) */
+    --c-white: #ffffff;
+    --c-ink-black: #37352f;         /* Notion Black */
+    --c-ink-light: rgba(55, 53, 47, 0.65); /* Secondary Text */
+    --c-bg-sidebar: #f7f7f5;        /* Warm Grey */
+    --c-bg-code: #F6F8FA;           /* GitHub Code Block */
+    --c-border-code: #E1E4E8;       /* GitHub Border */
+    --c-border: rgba(55, 53, 47, 0.09);
+    --c-shadow: rgba(0, 0, 0, 0.04);
+    --c-shadow-hover: rgba(0, 0, 0, 0.08);
+    --c-glass-white-5: rgba(255, 255, 255, 0.05);
+    --c-glass-white-8: rgba(255, 255, 255, 0.08);
+    --c-glass-white-10: rgba(255, 255, 255, 0.1);
+    --c-glass-white-12: rgba(255, 255, 255, 0.12);
+    --c-glass-white-15: rgba(255, 255, 255, 0.15);
+    --c-glass-white-20: rgba(255, 255, 255, 0.2);
+    --c-glass-white-25: rgba(255, 255, 255, 0.25);
+    --c-glass-white-30: rgba(255, 255, 255, 0.3);
+    --c-glass-white-85: rgba(255, 255, 255, 0.85);
+    --c-glass-white-95: rgba(255, 255, 255, 0.95);
+    --c-glass-black-2: rgba(0, 0, 0, 0.02);
+    --c-glass-black-5: rgba(0, 0, 0, 0.05);
+    --c-glass-black-8: rgba(0, 0, 0, 0.08);
+    --c-glass-black-10: rgba(0, 0, 0, 0.1);
+    --c-glass-black-12: rgba(0, 0, 0, 0.12);
+    --c-glass-black-15: rgba(0, 0, 0, 0.15);
+    --c-glass-black-20: rgba(0, 0, 0, 0.2);
 
-    /* Typography */
-    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    --font-serif-jp: 'Noto Serif JP', serif;
+    /* 🏷️ SEMANTIC TOKENS (Use these in code) */
+    --bg-main: var(--c-white);
+    --bg-sidebar: var(--c-bg-sidebar);
+    --text-primary: var(--c-ink-black);
+    --text-secondary: var(--c-ink-light);
+    --text-inverse: var(--c-white);
+    --border-subtle: var(--c-border);
+    --accent-color: var(--c-ink-black);     /* Enforce Monochrome */
 
-    /* Optical Spacing System: 8pt Grid */
-    --space-xs: 4px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 40px;
-    --space-2xl: 64px; /* Grand whitespace */
+    /* 📐 SPACING TOKENS (8pt Grid) */
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 40px;
+    --sp-2xl: 64px;
+
+    /* 🎭 SHADOW TOKENS */
+    --shadow-soft: 0 4px 16px var(--c-shadow);
+    --shadow-hover: 0 8px 24px var(--c-shadow-hover);
+    --shadow-card: 0 12px 28px var(--c-shadow-hover);
+    --shadow-button: 0 4px 12px var(--c-shadow);
+    --shadow-toast: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* ⏱️ TIMING TOKENS */
+    --spring-timing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --smooth-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* 📝 TYPOGRAPHY TOKENS */
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    --line-height-body: 1.65;       /* Notion standard for reading rhythm */
+    --letter-spacing-tight: -0.015em; /* Micro-tightening for cohesion */
+    --letter-spacing-header: -0.02em;
+    --letter-spacing-caps: 0.05em;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* ==================== Reset & Base Styles ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--text-primary);
+    font-weight: 400;
+}
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: var(--font-stack);
-    line-height: 1.7; /* Golden Rule #2: Luxurious Readability */
-    letter-spacing: -0.01em; /* Tighten slightly for professional look */
-    -webkit-font-smoothing: antialiased; /* Critical for "Retina" crispness */
-    -moz-osx-font-smoothing: grayscale;
-    height: 100vh;
-    overflow: hidden;
+    background: var(--bg-sidebar);
+    position: relative;
 }
 
-/* Layout */
-#app-container {
-    display: flex;
-    height: 100vh;
-    max-width: 1200px;
-    margin: 0 auto;
+/* ==================== Background Gradient ==================== */
+.background-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-sidebar);
+    z-index: -1;
 }
 
-/* ==================== Intellectual Minimalism Typography ==================== */
-
-/* Japanese Headings: Sophisticated Serif */
-h1, h2, h3,
-.brand-title,
-.sidebar-title {
-    font-family: var(--font-serif-jp);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 260px;
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--border-color);
-    padding: var(--space-lg);
+/* ==================== Main Container ==================== */
+.container {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
+    height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--sp-lg);
+    gap: var(--sp-lg);
 }
 
-.sidebar-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-sm);
-}
-
-.stat-item {
-    font-size: 0.9rem;
+/* ==================== Header ==================== */
+.header {
     display: flex;
     justify-content: space-between;
-    padding: var(--space-xs) 0;
+    align-items: center;
+    background: var(--c-glass-white-5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
+    padding: var(--sp-lg) 32px;
+    transition: all 0.3s var(--smooth-timing);
+}
+
+.header:hover {
+    background: var(--c-glass-white-8);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+}
+
+.header-content {
+    flex: 1;
+}
+
+.header-title {
+    font-size: 2rem;
+    font-weight: 600;  /* Refined: 600 for better optical balance */
     color: var(--text-primary);
+    margin-bottom: var(--sp-xs);
+    text-shadow: 0 2px 8px var(--c-shadow);
+    letter-spacing: var(--letter-spacing-header);
 }
 
-/* Chat Area */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-color);
-    position: relative;
+.header-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 
-#chat-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-2xl) var(--space-lg); /* Luxurious breathing room */
-    max-width: 800px; /* Optimal reading width */
-    margin: 0 auto; /* Center alignment */
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    position: relative; /* Ensure overlapping animations work */
-    min-height: 100vh; /* Full height for smooth transitions */
-    width: 100%; /* Ensure it doesn't collapse */
-}
-
-/* Custom Scrollbar Esthetics */
-#chat-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-#chat-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-#chat-container::-webkit-scrollbar-thumb {
-    background-color: rgba(55, 53, 47, 0.2);
-    border-radius: 3px;
-}
-
-#chat-container::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(55, 53, 47, 0.3);
-}
-
-/* Messages */
-.message {
-    display: flex;
-    gap: var(--space-md);
-    margin-bottom: var(--space-lg); /* Vertical rhythm: 24px separation */
-    width: 100%;
-    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.message-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
+.header-status {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.message-content {
-    flex: 1;
-    padding: 0; /* Pure text layout - natural alignment */
-}
-
-.message-name {
-    font-weight: 600;
-    font-size: 0.85rem;
-    margin-bottom: var(--space-xs);
-    color: var(--text-primary);
-}
-
-.message-text {
-    font-size: 1rem;
-    white-space: pre-wrap;
-    color: var(--text-primary);
-    max-width: 72ch;
-    line-height: 1.7; /* Golden Rule #2: Absolute Readability */
-}
-
-/* User Message specific */
-.message.user .message-text {
-    color: var(--text-primary);
-}
-
-/* ==================== Premium Input Area: "Command Center" ==================== */
-
-/* Floating Container with Glass Morphism */
-.input-area {
-    padding: var(--space-lg) var(--space-2xl) var(--space-xl);
-    background: rgba(255, 255, 255, 0.9); /* Floating glass effect */
-    backdrop-filter: blur(10px); /* Premium blur */
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
-    border-top: 1px solid rgba(55, 53, 47, 0.08); /* Subtle separation */
-}
-
-.input-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-}
-
-/* Premium Card Input */
-#user-input {
-    width: 100%;
-    background: #ffffff;
-    border: 1px solid rgba(55, 53, 47, 0.15); /* Defined border */
+    gap: var(--sp-sm);
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--c-glass-white-10);
     border-radius: 12px;
-    font-family: var(--font-stack);
-    font-size: 1rem;
-    padding: 12px 16px; /* Precise spacing */
-    outline: none; /* Remove default outline */
-    resize: none;
-    max-height: 150px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Subtle elevation */
-    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth transitions */
-    cursor: text;
+    border: 1px solid var(--c-glass-white-20);
 }
 
-/* Focus State: Glow Effect */
-#user-input:focus {
-    border-color: rgba(55, 53, 47, 0.4); /* Stronger border on focus */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Enhanced glow */
-}
-
-#user-input::placeholder {
-    color: var(--text-secondary);
-}
-
-/* ==================== Motion Physics: Seamless Transitions ==================== */
-
-/* Luxury Easing - Physics-based motion */
-.smooth-transition {
-    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* Cinematic easing */
-}
-
-/* State: Fade Out (Upward movement with shrink) */
-.fade-out-up {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.98); /* Shrink slightly while moving up */
-    pointer-events: none; /* Disable interactions during exit */
-}
-
-/* State: Fade In (Start from below) */
-.fade-in-up {
-    opacity: 0;
-    transform: translateY(20px); /* Start from slightly below */
-}
-
-/* State: Visible (Settle into place) */
-.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1); /* Natural position */
-}
-
-/* Keyframes */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ==================== High-Fidelity Physics ==================== */
-
-/* Constants: iOS-like Expo Ease Out */
-:root {
-    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --duration-enter: 800ms;
-    --duration-exit: 600ms;
-}
-
-/* Base Motion Class: Enable GPU Acceleration */
-.motion-base {
-    transition-property: opacity, transform;
-    transition-timing-function: var(--ease-expo);
-    will-change: opacity, transform;
-}
-
-/* State: Exit (Float up and vanish) */
-.motion-exit-up {
-    opacity: 0;
-    transform: translateY(-1.5rem) scale(0.98);
-    transition-duration: var(--duration-exit);
-    pointer-events: none;
-}
-
-/* State: Enter (Wait below) */
-.motion-enter-down {
-    opacity: 0;
-    transform: translateY(1.5rem);
-}
-
-/* State: Active (Settle in place) */
-.motion-active {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    transition-duration: var(--duration-enter);
-}
-
-/* Loading Indicator: Breathing Animation */
-@keyframes breathing-dot {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-0.25rem); opacity: 1; }
-}
-
-/* Ensure the typing indicator container handles these dots */
-.typing-indicator-container {
-    display: flex;
-    gap: 4px;
-    padding: 8px 0;
-}
-
-.typing-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--text-secondary); /* Use existing variable */
+.status-indicator {
+    width: var(--sp-sm);
+    height: var(--sp-sm);
     border-radius: 50%;
-    animation: breathing-dot 1.4s infinite ease-in-out both;
+    background: var(--text-primary);
+    box-shadow: 0 0 12px var(--c-shadow);
+    animation: pulse 2s infinite;
 }
-.typing-dot:nth-child(1) { animation-delay: 0ms; }
-.typing-dot:nth-child(2) { animation-delay: 150ms; }
-.typing-dot:nth-child(3) { animation-delay: 300ms; }
 
-/* ==================== Micro-Interactions & Tactile Feedback ==================== */
+.status-text {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
 
-/* Message Entry Animation: Apple-style Slide Up Fade */
-@keyframes slideUpFade {
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ==================== Main Content Layout ==================== */
+.main-content {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--sp-lg);
+    flex: 1;
+    min-height: 0;
+}
+
+/* ==================== Sidebar ==================== */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-lg);
+    overflow-y: auto;
+}
+
+.sidebar-section {
+    background: var(--c-glass-white-8);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
+    padding: var(--sp-lg);
+    transition: all 0.3s var(--smooth-timing);
+}
+
+.sidebar-section:hover {
+    background: var(--c-glass-white-12);
+    border-color: var(--c-glass-white-20);
+}
+
+.sidebar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-caps);
+}
+
+/* ==================== Stat Cards ==================== */
+.stat-card {
+    background: var(--c-glass-white-95);
+    backdrop-filter: blur(10px);
+    padding: var(--sp-lg);
+    border-radius: var(--sp-md);
+    text-align: center;
+    margin-bottom: 12px;
+    transition: all 0.4s var(--spring-timing);
+    border: 1px solid var(--c-glass-white-30);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: var(--shadow-card);
+    background: var(--c-white);
+}
+
+.stat-card:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 600;  /* Refined: 600 for better optical balance */
+    color: var(--text-primary);
+    margin-bottom: var(--sp-xs);
+    letter-spacing: var(--letter-spacing-header);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== Quick Actions ==================== */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.quick-action-btn {
+    background: var(--text-primary);
+    color: var(--c-white);
+    border: none;
+    border-radius: 12px;
+    padding: 12px var(--sp-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s var(--spring-timing);
+    box-shadow: var(--shadow-button);
+    border: 1px solid var(--c-glass-white-20);
+}
+
+.quick-action-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--shadow-hover);
+}
+
+.quick-action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ==================== Chat Container ==================== */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-glass-white-5);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
+    overflow: hidden;
+    position: relative;
+}
+
+/* ==================== Chat Messages Area ==================== */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--sp-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-md);
+    scroll-behavior: smooth;
+}
+
+/* ==================== Message Styles ==================== */
+.message {
+    display: flex;
+    gap: 12px;
+    animation: fadeInUp 0.4s var(--smooth-timing);
+}
+
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -323,41 +344,495 @@ h1, h2, h3,
     }
 }
 
-/* ==================== Physics-Based Tactile Buttons ==================== */
+.user-message {
+    flex-direction: row-reverse;
+    align-self: flex-end;
+    max-width: 70%;
+}
 
-/* Base Button Style */
-button,
-.button,
-.interactive,
-[role="button"] {
+.agent-message {
+    flex-direction: row;
+    align-self: flex-start;
+    max-width: 85%;
+}
+
+.message-avatar {
+    width: var(--sp-xl);
+    height: var(--sp-xl);
+    border-radius: 50%;
+    background: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-button);
+}
+
+.user-message .message-avatar {
+    background: var(--c-glass-white-20);
+}
+
+.message-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
+}
+
+.message-author {
+    font-weight: 600;  /* Refined: 600 instead of 700 */
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.message-badge {
+    background: var(--c-glass-white-20);
+    color: var(--text-primary);
+    padding: 2px var(--sp-sm);
+    border-radius: var(--sp-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-caps);
+}
+
+.message-text {
+    background: var(--c-glass-white-95);
+    backdrop-filter: blur(10px);
+    padding: 1.25rem;  /* Increased for "room to breathe" */
+    border-radius: var(--sp-md) var(--sp-md) var(--sp-xs) var(--sp-md);
+    color: var(--text-primary);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    max-width: 70ch;  /* Optimal line length for readability */
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s var(--smooth-timing);
+    border: 1px solid var(--c-glass-white-30);
+    font-weight: 400;
+}
+
+.agent-message .message-text {
+    background: var(--text-primary);
+    color: var(--text-inverse);
+    border-radius: var(--sp-md) var(--sp-md) var(--sp-md) var(--sp-xs);
+}
+
+.message-text:hover {
+    transform: translateX(4px) scale(1.01);
+    box-shadow: var(--shadow-hover);
+}
+
+.user-message .message-text:hover {
+    transform: translateX(-4px) scale(1.01);
+}
+
+/* ==================== Markdown Rendering in Messages ==================== */
+.message-text h1, .message-text h2, .message-text h3 {
+    margin-top: var(--sp-md);
+    margin-bottom: var(--sp-sm);
+    font-weight: 600;  /* Refined: 600 instead of 700 for better flow */
+    letter-spacing: var(--letter-spacing-header);
+}
+
+.message-text h1 { font-size: 1.5rem; }
+.message-text h2 { font-size: 1.25rem; }
+.message-text h3 { font-size: 1.1rem; }
+
+.message-text p {
+    margin-bottom: 0.6em;
+}
+
+.message-text p:last-child {
+    margin-bottom: 0;
+}
+
+.message-text strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.agent-message .message-text strong {
+    color: var(--text-inverse);
+}
+
+.message-text ul, .message-text ol {
+    margin-left: 0;
+    padding-left: var(--sp-lg);
+    margin-bottom: 0.6em;
+}
+
+.message-text li {
+    margin-bottom: var(--sp-xs);
+}
+
+.message-text code {
+    background: var(--c-glass-black-8);
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--sp-xs);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    border: 1px solid var(--c-glass-black-5);
+}
+
+.agent-message .message-text code {
+    background: var(--c-glass-white-20);
+    border-color: var(--c-glass-white-10);
+}
+
+.message-text pre {
+    background: var(--c-bg-code);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0.6em 0;
+    border: 1px solid var(--c-border-code);
+}
+
+.agent-message .message-text pre {
+    background: var(--c-glass-white-15);
+    border-color: var(--c-glass-white-25);
+}
+
+.message-text pre code {
+    background: transparent;
+    padding: 0;
+    border: none;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.message-text blockquote {
+    border-left: 3px solid var(--c-glass-black-10);
+    padding-left: 1rem;
+    margin: 0.75rem 0;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.agent-message .message-text blockquote {
+    border-left-color: var(--c-glass-white-30);
+}
+
+.message-text hr {
+    border: none;
+    border-top: 1px solid var(--c-glass-black-10);
+    margin: 1rem 0;
+}
+
+.agent-message .message-text hr {
+    border-top-color: var(--c-glass-white-20);
+}
+
+.message-text a {
+    color: inherit;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: opacity 0.2s ease;
+}
+
+.message-text a:hover {
+    opacity: 0.7;
+}
+
+.agent-message .message-text a {
+    color: var(--text-inverse);
+}
+
+/* ==================== Markdown Tables ==================== */
+.message-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.75rem 0;
+    font-size: 0.9rem;
+}
+
+.message-text th,
+.message-text td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border: 1px solid var(--c-glass-black-10);
+}
+
+.message-text th {
+    background: var(--c-glass-black-5);
+    font-weight: 600;
+}
+
+.agent-message .message-text th,
+.agent-message .message-text td {
+    border-color: var(--c-glass-white-20);
+}
+
+.agent-message .message-text th {
+    background: var(--c-glass-white-15);
+}
+
+.message-text tr:nth-child(even) {
+    background: var(--c-glass-black-2);
+}
+
+.agent-message .message-text tr:nth-child(even) {
+    background: var(--c-glass-white-5);
+}
+
+/* ==================== Typing Indicator ==================== */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: var(--sp-md) var(--sp-lg);
+}
+
+.typing-dot {
+    width: var(--sp-xs);
+    height: var(--sp-xs);
+    border-radius: 50%;
+    background: var(--text-primary);
+    opacity: 0.4;
+    animation: breathingDots 1.4s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Breathing Dots Animation - Subtle wave pattern */
+@keyframes breathingDots {
+    0%, 60%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translateY(-6px) scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+/* ==================== Chat Input ==================== */
+.chat-input-container {
+    padding: var(--sp-lg) var(--sp-lg);
+    background: var(--c-glass-white-5);
+    border-top: 1px solid var(--c-glass-white-10);
+}
+
+.chat-input-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.chat-input {
+    flex: 1;
+    background: var(--c-glass-white-95);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--sp-md);
+    padding: 1rem 1.25rem;  /* Increased for better breathing room */
+    font-size: 0.95rem;
+    font-family: var(--font-family);
+    color: var(--text-primary);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-tight);
+    font-weight: 400;
+    transition: all 0.3s var(--smooth-timing);
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 4px var(--c-shadow);
+    transform: scale(1.01);
+    background: var(--c-white);
+}
+
+.chat-input::placeholder {
+    color: var(--text-secondary);
+    letter-spacing: 0;  /* Reset for placeholder */
+}
+
+.send-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    border: none;
+    color: var(--text-inverse);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--spring-timing);
+    box-shadow: var(--shadow-button);
+    border: 1px solid var(--c-glass-white-20);
+}
+
+.send-button:hover {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: var(--shadow-hover);
+}
+
+.send-button:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ==================== Scrollbar Styling ==================== */
+.chat-messages::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+    width: var(--sp-sm);
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track {
+    background: var(--c-glass-white-5);
+    border-radius: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--c-glass-white-20);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--c-glass-white-30);
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        order: 2;
+    }
+
+    .chat-container {
+        order: 1;
+        height: 60vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: var(--sp-md);
+        padding: var(--sp-lg);
+    }
+
+    .header-title {
+        font-size: 1.5rem;
+    }
+
+    .user-message,
+    .agent-message {
+        max-width: 90%;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==================== Loading Animation ==================== */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--c-glass-white-10) 0%,
+        var(--c-glass-white-30) 50%,
+        var(--c-glass-white-10) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite linear;
+    border-radius: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ==================== Zero Latency Animations ==================== */
+
+/* Slide-up fade animation for messages with soft friction physics */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-entry,
+.message-enter {
+    animation: slideUpFade 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.0);
+}
+
+/* ==================== Error Toast ==================== */
+#error-toast {
+    visibility: hidden;
+    min-width: 300px;
+    background-color: var(--text-primary);
+    color: var(--text-inverse);
+    text-align: center;
+    border-radius: var(--sp-md);
+    padding: var(--sp-md) var(--sp-lg);
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%);
+    font-size: 15px;
     font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1); /* Fast, tactile */
+    box-shadow: var(--shadow-toast);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s var(--spring-timing);
 }
 
-/* Hover: Subtle Lift */
-button:hover,
-.button:hover,
-.interactive:hover,
-[role="button"]:hover {
-    transform: translateY(-1px); /* Lift effect */
+#error-toast.show {
+    visibility: visible;
+    animation: toastSlideIn 0.3s var(--spring-timing), toastSlideOut 0.3s var(--spring-timing) 2.7s;
 }
 
-/* Active: Tactile Press Feedback */
-button:active,
-.button:active,
-.interactive:active,
-[role="button"]:active {
-    transform: scale(0.97); /* Physical press */
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
-/* Ensure all clickable elements have pointer cursor */
-a,
-button,
-.button,
-.clickable,
-[role="button"],
-[onclick] {
-    cursor: pointer;
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
 }

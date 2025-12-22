@@ -85,6 +85,24 @@ body {
     min-height: 100vh; /* Full height for smooth transitions */
 }
 
+/* Custom Scrollbar Esthetics */
+#chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#chat-container::-webkit-scrollbar-thumb {
+    background-color: rgba(55, 53, 47, 0.2);
+    border-radius: 3px;
+}
+
+#chat-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(55, 53, 47, 0.3);
+}
+
 /* Messages */
 .message {
     display: flex;
@@ -92,7 +110,7 @@ body {
     max-width: 800px;
     margin: 0 auto 24px; /* Golden Rule #2: Breathing Room */
     width: 100%;
-    animation: fadeIn 0.3s ease-out;
+    animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .message-avatar {
@@ -143,9 +161,10 @@ body {
     align-items: flex-end;
 }
 
+/* Command Center: Floating Card Input */
 #user-input {
     width: 100%;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(55, 53, 47, 0.08);
     border-radius: 12px;
     background: #ffffff;
     font-family: var(--font-stack);
@@ -154,13 +173,14 @@ body {
     outline: none;
     resize: none;
     max-height: 150px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: text;
 }
 
 #user-input:focus {
-    border-color: var(--accent-color);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba(55, 53, 47, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 #user-input::placeholder { color: var(--text-secondary); }
@@ -257,3 +277,50 @@ body {
 .typing-dot:nth-child(1) { animation-delay: 0ms; }
 .typing-dot:nth-child(2) { animation-delay: 150ms; }
 .typing-dot:nth-child(3) { animation-delay: 300ms; }
+
+/* ==================== Micro-Interactions & Tactile Feedback ==================== */
+
+/* Message Entry Animation: Apple-style Slide Up Fade */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tactile Feedback: Interactive Elements */
+button,
+.button,
+.interactive,
+[role="button"] {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+button:hover,
+.button:hover,
+.interactive:hover,
+[role="button"]:hover {
+    transform: translateY(-1px);
+}
+
+button:active,
+.button:active,
+.interactive:active,
+[role="button"]:active {
+    transform: scale(0.98);
+}
+
+/* Ensure all clickable elements have pointer cursor */
+a,
+button,
+.button,
+.clickable,
+[role="button"],
+[onclick] {
+    cursor: pointer;
+}

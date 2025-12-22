@@ -81,6 +81,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 28px;
+    position: relative; /* Ensure overlapping animations work */
+    min-height: 100vh; /* Full height for smooth transitions */
 }
 
 /* Messages */
@@ -162,6 +164,32 @@ body {
 }
 
 #user-input::placeholder { color: var(--text-secondary); }
+
+/* ==================== Motion Physics: Seamless Transitions ==================== */
+
+/* Luxury Easing - Physics-based motion */
+.smooth-transition {
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* Cinematic easing */
+}
+
+/* State: Fade Out (Upward movement with shrink) */
+.fade-out-up {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98); /* Shrink slightly while moving up */
+    pointer-events: none; /* Disable interactions during exit */
+}
+
+/* State: Fade In (Start from below) */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(20px); /* Start from slightly below */
+}
+
+/* State: Visible (Settle into place) */
+.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1); /* Natural position */
+}
 
 /* Keyframes */
 @keyframes fadeIn {

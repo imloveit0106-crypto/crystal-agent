@@ -10,23 +10,71 @@
  * - Font Weights: 400 body, 600 headers (seamless flow)
  * ========================================================================== */
 
-/* ==================== CSS Variables ==================== */
+/* ==================== Design Token System ==================== */
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+    /* 🎨 BASE COLORS (The Only Allowed Colors) */
+    --c-white: #ffffff;
+    --c-ink-black: #37352f;         /* Notion Black */
+    --c-ink-light: rgba(55, 53, 47, 0.65); /* Secondary Text */
+    --c-bg-sidebar: #f7f7f5;        /* Warm Grey */
+    --c-bg-code: #F6F8FA;           /* GitHub Code Block */
+    --c-border-code: #E1E4E8;       /* GitHub Border */
+    --c-border: rgba(55, 53, 47, 0.09);
+    --c-shadow: rgba(0, 0, 0, 0.04);
+    --c-shadow-hover: rgba(0, 0, 0, 0.08);
+    --c-glass-white-5: rgba(255, 255, 255, 0.05);
+    --c-glass-white-8: rgba(255, 255, 255, 0.08);
+    --c-glass-white-10: rgba(255, 255, 255, 0.1);
+    --c-glass-white-12: rgba(255, 255, 255, 0.12);
+    --c-glass-white-15: rgba(255, 255, 255, 0.15);
+    --c-glass-white-20: rgba(255, 255, 255, 0.2);
+    --c-glass-white-25: rgba(255, 255, 255, 0.25);
+    --c-glass-white-30: rgba(255, 255, 255, 0.3);
+    --c-glass-white-85: rgba(255, 255, 255, 0.85);
+    --c-glass-white-95: rgba(255, 255, 255, 0.95);
+    --c-glass-black-2: rgba(0, 0, 0, 0.02);
+    --c-glass-black-5: rgba(0, 0, 0, 0.05);
+    --c-glass-black-8: rgba(0, 0, 0, 0.08);
+    --c-glass-black-10: rgba(0, 0, 0, 0.1);
+    --c-glass-black-12: rgba(0, 0, 0, 0.12);
+    --c-glass-black-15: rgba(0, 0, 0, 0.15);
+    --c-glass-black-20: rgba(0, 0, 0, 0.2);
+
+    /* 🏷️ SEMANTIC TOKENS (Use these in code) */
+    --bg-main: var(--c-white);
+    --bg-sidebar: var(--c-bg-sidebar);
+    --text-primary: var(--c-ink-black);
+    --text-secondary: var(--c-ink-light);
+    --text-inverse: var(--c-white);
+    --border-subtle: var(--c-border);
+    --accent-color: var(--c-ink-black);     /* Enforce Monochrome */
+
+    /* 📐 SPACING TOKENS (8pt Grid) */
+    --sp-xs: 4px;
+    --sp-sm: 8px;
+    --sp-md: 16px;
+    --sp-lg: 24px;
+    --sp-xl: 40px;
+    --sp-2xl: 64px;
+
+    /* 🎭 SHADOW TOKENS */
+    --shadow-soft: 0 4px 16px var(--c-shadow);
+    --shadow-hover: 0 8px 24px var(--c-shadow-hover);
+    --shadow-card: 0 12px 28px var(--c-shadow-hover);
+    --shadow-button: 0 4px 12px var(--c-shadow);
+    --shadow-toast: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* ⏱️ TIMING TOKENS */
     --spring-timing: cubic-bezier(0.34, 1.56, 0.64, 1);
     --smooth-timing: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Typography System (System Native Stack) */
+    /* 📝 TYPOGRAPHY TOKENS */
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --text-primary: #1A1A1A;        /* Off-black for primary text */
-    --text-secondary: #6B7280;      /* Slate gray for secondary text */
-    --text-inverse: #FFFFFF;        /* Pure white for dark backgrounds */
+    --font-mono: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
     --line-height-body: 1.65;       /* Notion standard for reading rhythm */
     --letter-spacing-tight: -0.015em; /* Micro-tightening for cohesion */
+    --letter-spacing-header: -0.02em;
+    --letter-spacing-caps: 0.05em;
 }
 
 /* ==================== Reset & Base Styles ==================== */
@@ -49,7 +97,7 @@ html, body {
 }
 
 body {
-    background: #667eea;
+    background: var(--bg-sidebar);
     position: relative;
 }
 
@@ -60,7 +108,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-sidebar);
     z-index: -1;
 }
 
@@ -71,8 +119,8 @@ body {
     height: 100vh;
     max-width: 1600px;
     margin: 0 auto;
-    padding: 20px;
-    gap: 20px;
+    padding: var(--sp-lg);
+    gap: var(--sp-lg);
 }
 
 /* ==================== Header ==================== */
@@ -80,19 +128,19 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--c-glass-white-5);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 24px 32px;
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
+    padding: var(--sp-lg) 32px;
     transition: all 0.3s var(--smooth-timing);
 }
 
 .header:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--c-glass-white-8);
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-card);
 }
 
 .header-content {
@@ -102,15 +150,15 @@ body {
 .header-title {
     font-size: 2rem;
     font-weight: 600;  /* Refined: 600 for better optical balance */
-    color: white;
-    margin-bottom: 4px;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-xs);
+    text-shadow: 0 2px 8px var(--c-shadow);
+    letter-spacing: var(--letter-spacing-header);
 }
 
 .header-subtitle {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--text-secondary);
     font-weight: 400;
     letter-spacing: -0.01em;
 }
@@ -118,24 +166,24 @@ body {
 .header-status {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.1);
+    gap: var(--sp-sm);
+    padding: var(--sp-sm) var(--sp-md);
+    background: var(--c-glass-white-10);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--c-glass-white-20);
 }
 
 .status-indicator {
-    width: 8px;
-    height: 8px;
+    width: var(--sp-sm);
+    height: var(--sp-sm);
     border-radius: 50%;
-    background: #10b981;
-    box-shadow: 0 0 12px #10b981;
+    background: var(--text-primary);
+    box-shadow: 0 0 12px var(--c-shadow);
     animation: pulse 2s infinite;
 }
 
 .status-text {
-    color: white;
+    color: var(--text-primary);
     font-size: 0.85rem;
     font-weight: 600;
 }
@@ -149,7 +197,7 @@ body {
 .main-content {
     display: grid;
     grid-template-columns: 320px 1fr;
-    gap: 20px;
+    gap: var(--sp-lg);
     flex: 1;
     min-height: 0;
 }
@@ -158,50 +206,50 @@ body {
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--sp-lg);
     overflow-y: auto;
 }
 
 .sidebar-section {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--c-glass-white-8);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 24px;
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
+    padding: var(--sp-lg);
     transition: all 0.3s var(--smooth-timing);
 }
 
 .sidebar-section:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--c-glass-white-12);
+    border-color: var(--c-glass-white-20);
 }
 
 .sidebar-title {
     font-size: 1rem;
     font-weight: 600;
-    color: white;
-    margin-bottom: 16px;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-md);
     text-transform: uppercase;
-    letter-spacing: 0.05em;  /* Uppercase benefits from wider spacing */
+    letter-spacing: var(--letter-spacing-caps);
 }
 
 /* ==================== Stat Cards ==================== */
 .stat-card {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--c-glass-white-95);
     backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 16px;
+    padding: var(--sp-lg);
+    border-radius: var(--sp-md);
     text-align: center;
     margin-bottom: 12px;
     transition: all 0.4s var(--spring-timing);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--c-glass-white-30);
 }
 
 .stat-card:hover {
     transform: translateY(-4px) scale(1.03);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 1);
+    box-shadow: var(--shadow-card);
+    background: var(--c-white);
 }
 
 .stat-card:active {
@@ -211,12 +259,9 @@ body {
 .stat-number {
     font-size: 2.5rem;
     font-weight: 600;  /* Refined: 600 for better optical balance */
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 4px;
-    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-xs);
+    letter-spacing: var(--letter-spacing-header);
 }
 
 .stat-label {
@@ -235,22 +280,22 @@ body {
 }
 
 .quick-action-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--text-primary);
+    color: var(--c-white);
     border: none;
     border-radius: 12px;
-    padding: 12px 16px;
+    padding: 12px var(--sp-md);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s var(--spring-timing);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-button);
+    border: 1px solid var(--c-glass-white-20);
 }
 
 .quick-action-btn:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: var(--shadow-hover);
 }
 
 .quick-action-btn:active {
@@ -261,11 +306,11 @@ body {
 .chat-container {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--c-glass-white-5);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
+    border: 1px solid var(--c-glass-white-10);
+    border-radius: var(--sp-lg);
     overflow: hidden;
     position: relative;
 }
@@ -274,10 +319,10 @@ body {
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 24px;
+    padding: var(--sp-lg);
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--sp-md);
     scroll-behavior: smooth;
 }
 
@@ -312,20 +357,20 @@ body {
 }
 
 .message-avatar {
-    width: 40px;
-    height: 40px;
+    width: var(--sp-xl);
+    height: var(--sp-xl);
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-button);
 }
 
 .user-message .message-avatar {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--c-glass-white-20);
 }
 
 .message-content {
@@ -336,52 +381,52 @@ body {
 .message-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
 }
 
 .message-author {
     font-weight: 600;  /* Refined: 600 instead of 700 */
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
     letter-spacing: -0.01em;
 }
 
 .message-badge {
-    background: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.9);
-    padding: 2px 8px;
-    border-radius: 8px;
+    background: var(--c-glass-white-20);
+    color: var(--text-primary);
+    padding: 2px var(--sp-sm);
+    border-radius: var(--sp-sm);
     font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;  /* Uppercase benefits from wider spacing */
+    letter-spacing: var(--letter-spacing-caps);
 }
 
 .message-text {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--c-glass-white-95);
     backdrop-filter: blur(10px);
     padding: 1.25rem;  /* Increased for "room to breathe" */
-    border-radius: 16px 16px 4px 16px;
+    border-radius: var(--sp-md) var(--sp-md) var(--sp-xs) var(--sp-md);
     color: var(--text-primary);
     line-height: var(--line-height-body);
     letter-spacing: var(--letter-spacing-tight);
     max-width: 70ch;  /* Optimal line length for readability */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-soft);
     transition: all 0.3s var(--smooth-timing);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--c-glass-white-30);
     font-weight: 400;
 }
 
 .agent-message .message-text {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+    background: var(--text-primary);
     color: var(--text-inverse);
-    border-radius: 16px 16px 16px 4px;
+    border-radius: var(--sp-md) var(--sp-md) var(--sp-md) var(--sp-xs);
 }
 
 .message-text:hover {
     transform: translateX(4px) scale(1.01);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--shadow-hover);
 }
 
 .user-message .message-text:hover {
@@ -390,10 +435,10 @@ body {
 
 /* ==================== Markdown Rendering in Messages ==================== */
 .message-text h1, .message-text h2, .message-text h3 {
-    margin-top: 16px;
-    margin-bottom: 8px;
+    margin-top: var(--sp-md);
+    margin-bottom: var(--sp-sm);
     font-weight: 600;  /* Refined: 600 instead of 700 for better flow */
-    letter-spacing: -0.02em;  /* Slightly tighter for headers */
+    letter-spacing: var(--letter-spacing-header);
 }
 
 .message-text h1 { font-size: 1.5rem; }
@@ -410,49 +455,49 @@ body {
 
 .message-text strong {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .agent-message .message-text strong {
-    color: white;
+    color: var(--text-inverse);
 }
 
 .message-text ul, .message-text ol {
     margin-left: 0;
-    padding-left: 20px;
+    padding-left: var(--sp-lg);
     margin-bottom: 0.6em;
 }
 
 .message-text li {
-    margin-bottom: 4px;
+    margin-bottom: var(--sp-xs);
 }
 
 .message-text code {
-    background: rgba(0, 0, 0, 0.08);
+    background: var(--c-glass-black-8);
     padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    border-radius: var(--sp-xs);
+    font-family: var(--font-mono);
     font-size: 0.9em;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--c-glass-black-5);
 }
 
 .agent-message .message-text code {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: var(--c-glass-white-20);
+    border-color: var(--c-glass-white-10);
 }
 
 .message-text pre {
-    background: #F6F8FA;
+    background: var(--c-bg-code);
     padding: 12px;
     border-radius: 6px;
     overflow-x: auto;
     margin: 0.6em 0;
-    border: 1px solid #E1E4E8;
+    border: 1px solid var(--c-border-code);
 }
 
 .agent-message .message-text pre {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: var(--c-glass-white-15);
+    border-color: var(--c-glass-white-25);
 }
 
 .message-text pre code {
@@ -464,7 +509,7 @@ body {
 }
 
 .message-text blockquote {
-    border-left: 3px solid rgba(255, 255, 255, 0.4);
+    border-left: 3px solid var(--c-glass-black-10);
     padding-left: 1rem;
     margin: 0.75rem 0;
     font-style: italic;
@@ -472,17 +517,17 @@ body {
 }
 
 .agent-message .message-text blockquote {
-    border-left-color: rgba(255, 255, 255, 0.5);
+    border-left-color: var(--c-glass-white-30);
 }
 
 .message-text hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--c-glass-black-10);
     margin: 1rem 0;
 }
 
 .agent-message .message-text hr {
-    border-top-color: rgba(255, 255, 255, 0.2);
+    border-top-color: var(--c-glass-white-20);
 }
 
 .message-text a {
@@ -497,7 +542,7 @@ body {
 }
 
 .agent-message .message-text a {
-    color: white;
+    color: var(--text-inverse);
 }
 
 /* ==================== Markdown Tables ==================== */
@@ -512,29 +557,29 @@ body {
 .message-text td {
     padding: 0.5rem 0.75rem;
     text-align: left;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--c-glass-black-10);
 }
 
 .message-text th {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--c-glass-black-5);
     font-weight: 600;
 }
 
 .agent-message .message-text th,
 .agent-message .message-text td {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--c-glass-white-20);
 }
 
 .agent-message .message-text th {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--c-glass-white-15);
 }
 
 .message-text tr:nth-child(even) {
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--c-glass-black-2);
 }
 
 .agent-message .message-text tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--c-glass-white-5);
 }
 
 /* ==================== Typing Indicator ==================== */
@@ -542,14 +587,14 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 16px 24px;
+    padding: var(--sp-md) var(--sp-lg);
 }
 
 .typing-dot {
-    width: 4px;
-    height: 4px;
+    width: var(--sp-xs);
+    height: var(--sp-xs);
     border-radius: 50%;
-    background: #37352f;
+    background: var(--text-primary);
     opacity: 0.4;
     animation: breathingDots 1.4s ease-in-out infinite;
 }
@@ -571,9 +616,9 @@ body {
 
 /* ==================== Chat Input ==================== */
 .chat-input-container {
-    padding: 20px 24px;
-    background: rgba(255, 255, 255, 0.05);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--sp-lg) var(--sp-lg);
+    background: var(--c-glass-white-5);
+    border-top: 1px solid var(--c-glass-white-10);
 }
 
 .chat-input-form {
@@ -584,9 +629,9 @@ body {
 
 .chat-input {
     flex: 1;
-    background: rgba(255, 255, 255, 0.95);
-    border: 2px solid rgba(102, 126, 234, 0.3);
-    border-radius: 16px;
+    background: var(--c-glass-white-95);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--sp-md);
     padding: 1rem 1.25rem;  /* Increased for better breathing room */
     font-size: 0.95rem;
     font-family: var(--font-family);
@@ -599,10 +644,10 @@ body {
 }
 
 .chat-input:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 4px var(--c-shadow);
     transform: scale(1.01);
-    background: white;
+    background: var(--c-white);
 }
 
 .chat-input::placeholder {
@@ -614,21 +659,21 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--text-primary);
     border: none;
-    color: white;
+    color: var(--text-inverse);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s var(--spring-timing);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-button);
+    border: 1px solid var(--c-glass-white-20);
 }
 
 .send-button:hover {
     transform: translateY(-2px) scale(1.1);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+    box-shadow: var(--shadow-hover);
 }
 
 .send-button:active {
@@ -644,25 +689,25 @@ body {
 /* ==================== Scrollbar Styling ==================== */
 .chat-messages::-webkit-scrollbar,
 .sidebar::-webkit-scrollbar {
-    width: 8px;
+    width: var(--sp-sm);
 }
 
 .chat-messages::-webkit-scrollbar-track,
 .sidebar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--c-glass-white-5);
     border-radius: 10px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb,
 .sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--c-glass-white-20);
     border-radius: 10px;
     transition: all 0.3s ease;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover,
 .sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--c-glass-white-30);
 }
 
 /* ==================== Responsive Design ==================== */
@@ -688,8 +733,8 @@ body {
 
     .header {
         flex-direction: column;
-        gap: 16px;
-        padding: 20px;
+        gap: var(--sp-md);
+        padding: var(--sp-lg);
     }
 
     .header-title {
@@ -710,9 +755,9 @@ body {
 .skeleton {
     background: linear-gradient(
         90deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.3) 50%,
-        rgba(255, 255, 255, 0.1) 100%
+        var(--c-glass-white-10) 0%,
+        var(--c-glass-white-30) 50%,
+        var(--c-glass-white-10) 100%
     );
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
@@ -747,11 +792,11 @@ body {
 #error-toast {
     visibility: hidden;
     min-width: 300px;
-    background-color: rgba(239, 68, 68, 0.95);
-    color: #fff;
+    background-color: var(--text-primary);
+    color: var(--text-inverse);
     text-align: center;
-    border-radius: 16px;
-    padding: 16px 24px;
+    border-radius: var(--sp-md);
+    padding: var(--sp-md) var(--sp-lg);
     position: fixed;
     z-index: 9999;
     left: 50%;
@@ -759,7 +804,7 @@ body {
     transform: translateX(-50%);
     font-size: 15px;
     font-weight: 500;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-toast);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     transition: all 0.3s var(--spring-timing);

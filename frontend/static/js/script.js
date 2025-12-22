@@ -1,6 +1,6 @@
 /**
- * Crystal Agent - Frontend JavaScript
- * Purple Glassmorphism Theme with Full Backend Integration
+ * Crystal Agent - Magazine Style Frontend
+ * Clean, minimalist implementation with Optimistic UI
  */
 
 // ==================== Configuration ====================
@@ -10,10 +10,10 @@ const API_BASE_URL = 'http://localhost:8000';
 let isSendingMessage = false;
 
 // ==================== Initialization ====================
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🔮 Crystal Agent initialized');
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔮 Crystal Agent - Magazine Style initialized');
 
-    // Initialize marked.js options
+    // Configure marked.js
     if (typeof marked !== 'undefined') {
         marked.setOptions({
             breaks: true,
@@ -21,21 +21,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Initialize Lucide icons if available
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    await loadStats();
-    await checkConnection();
     setupEventListeners();
-    checkFirstVisit();
+    checkBackendConnection();
 });
 
 // ==================== Event Listeners ====================
 function setupEventListeners() {
-    // Chat form submission
     const chatForm = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+
     if (chatForm) {
         chatForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -43,80 +37,32 @@ function setupEventListeners() {
         });
     }
 
-    // Quick action buttons
-    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
-    quickActionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const action = btn.getAttribute('data-action');
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.value = action;
-                messageInput.focus();
+    // Optional: Send on Enter key
+    if (messageInput) {
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
         });
-    });
-
-    // Help modal
-    const helpButton = document.getElementById('helpButton');
-    const helpModal = document.getElementById('helpModal');
-    const helpModalClose = document.getElementById('helpModalClose');
-    const helpModalOverlay = helpModal?.querySelector('.help-modal-overlay');
-
-    if (helpButton && helpModal) {
-        helpButton.addEventListener('click', () => {
-            helpModal.classList.add('active');
-        });
-    }
-
-    if (helpModalClose && helpModal) {
-        helpModalClose.addEventListener('click', () => {
-            helpModal.classList.remove('active');
-        });
-    }
-
-    if (helpModalOverlay && helpModal) {
-        helpModalOverlay.addEventListener('click', () => {
-            helpModal.classList.remove('active');
-        });
-    }
-
-    // ESC key to close modal
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && helpModal?.classList.contains('active')) {
-            helpModal.classList.remove('active');
-        }
-    });
-}
-
-// ==================== Help Modal Functions ====================
-function checkFirstVisit() {
-    const hasVisited = localStorage.getItem('crystal_agent_visited');
-    if (!hasVisited) {
-        setTimeout(() => {
-            const helpModal = document.getElementById('helpModal');
-            if (helpModal) {
-                helpModal.classList.add('active');
-            }
-        }, 1000);
-        localStorage.setItem('crystal_agent_visited', 'true');
     }
 }
 
 // ==================== Message Functions ====================
 
 /**
- * Send message to backend
+ * Send message to backend with Optimistic UI
  */
 async function sendMessage() {
-    // Debouncing
+    // Debouncing: Prevent rapid-fire clicks
     if (isSendingMessage) {
-        console.log('⚠️ 送信処理中です。しばらくお待ちください。');
+        console.log('⚠️ Message already sending...');
         return;
     }
 
-    const input = document.getElementById('messageInput');
+    const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
-    const message = input.value.trim();
+    const message = messageInput.value.trim();
 
     if (!message) {
         return;
@@ -128,15 +74,21 @@ async function sendMessage() {
     // Disable send button
     if (sendButton) {
         sendButton.disabled = true;
-        sendButton.style.opacity = '0.7';
     }
 
-    // Add user message
+    // ========== OPTIMISTIC UI: Instant User Feedback ==========
+    // Step 1: Show user message immediately
     addUserMessage(message);
-    input.value = '';
-    input.focus();
 
-    // Show typing indicator
+    // Step 2: Clear input and refocus
+    messageInput.value = '';
+    messageInput.focus();
+
+    // Step 3: Scroll to bottom
+    scrollToBottom();
+
+    // ========== BACKGROUND: Network Request ==========
+    // Step 4: Show typing indicator
     showTypingIndicator();
 
     try {
@@ -149,25 +101,30 @@ async function sendMessage() {
             body: JSON.stringify({ message: message }),
         });
 
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const data = await response.json();
 
         // Hide typing indicator
         hideTypingIndicator();
 
-        // Add agent message
+        // Show agent response
         if (data.response) {
-            addAgentMessage(data.response, data);
+            addAgentMessage(data.response);
+        } else {
+            addAgentMessage('エラーが発生しました。もう一度お試しください。');
         }
 
     } catch (error) {
         console.error('Error sending message:', error);
         hideTypingIndicator();
-        addAgentMessage('申し訳ございません。エラーが発生しました。もう一度お試しください。');
+        addAgentMessage('申し訳ございません。接続エラーが発生しました。');
     } finally {
         // Re-enable send button
         if (sendButton) {
             sendButton.disabled = false;
-            sendButton.style.opacity = '1';
         }
         // Reset debouncing flag
         isSendingMessage = false;
@@ -175,7 +132,7 @@ async function sendMessage() {
 }
 
 /**
- * Add user message to chat
+ * Add user message to chat (instant, no network delay)
  */
 function addUserMessage(text) {
     const chatMessages = document.getElementById('chatMessages');
@@ -184,60 +141,46 @@ function addUserMessage(text) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message user-message message-enter';
 
-    messageDiv.innerHTML = `
-        <div class="message-avatar">👤</div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="message-author">You</span>
-            </div>
-            <div class="message-text">
-                ${escapeHtml(text)}
-            </div>
-        </div>
-    `;
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
 
+    const textDiv = document.createElement('div');
+    textDiv.className = 'message-text';
+    textDiv.textContent = text;
+
+    contentDiv.appendChild(textDiv);
+    messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
+
     scrollToBottom();
 }
 
 /**
- * Add agent message to chat
+ * Add agent message to chat with markdown rendering
  */
-function addAgentMessage(text, metadata = {}) {
+function addAgentMessage(text) {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
 
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message agent-message message-enter';
 
-    const badge = metadata.detected_type
-        ? `<span class="message-badge">${metadata.detected_type}</span>`
-        : '<span class="message-badge">AI</span>';
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'message-text';
 
     // Render markdown
-    const renderedText = renderMarkdown(text);
+    if (typeof marked !== 'undefined') {
+        textDiv.innerHTML = marked.parse(text);
+    } else {
+        textDiv.textContent = text;
+    }
 
-    messageDiv.innerHTML = `
-        <div class="message-avatar">🔮</div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="message-author">Crystal Agent</span>
-                ${badge}
-            </div>
-            <div class="message-text">
-                ${renderedText}
-            </div>
-        </div>
-    `;
-
+    contentDiv.appendChild(textDiv);
+    messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
-
-    // Apply syntax highlighting
-    messageDiv.querySelectorAll('pre code').forEach((block) => {
-        if (typeof hljs !== 'undefined') {
-            hljs.highlightElement(block);
-        }
-    });
 
     scrollToBottom();
 }
@@ -264,7 +207,7 @@ function hideTypingIndicator() {
 }
 
 /**
- * Scroll chat to bottom
+ * Scroll chat to bottom smoothly
  */
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
@@ -278,80 +221,26 @@ function scrollToBottom() {
     }
 }
 
-/**
- * Render markdown to HTML
- */
-function renderMarkdown(text) {
-    if (typeof marked !== 'undefined') {
-        return marked.parse(text);
-    }
-    return escapeHtml(text).replace(/\n/g, '<br>');
-}
+// ==================== Backend Connection ====================
 
 /**
- * Escape HTML to prevent XSS
+ * Check if backend is accessible
  */
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-// ==================== Stats Functions ====================
-
-/**
- * Load statistics from backend
- */
-async function loadStats() {
+async function checkBackendConnection() {
     try {
-        const response = await fetch(`${API_BASE_URL}/stats`);
+        const response = await fetch(`${API_BASE_URL}/health`, {
+            method: 'GET',
+        });
+
         if (response.ok) {
-            const stats = await response.json();
-
-            // Update stat cards
-            const totalLogsEl = document.getElementById('statTotalLogs');
-            const tasksEl = document.getElementById('statTasks');
-            const spendingEl = document.getElementById('statSpending');
-
-            if (totalLogsEl) totalLogsEl.textContent = stats.total_logs || 0;
-            if (tasksEl) tasksEl.textContent = stats.tasks || 0;
-            if (spendingEl) spendingEl.textContent = `¥${stats.total_spending || 0}`;
-        }
-    } catch (error) {
-        console.error('Failed to load stats:', error);
-    }
-}
-
-/**
- * Check backend connection
- */
-async function checkConnection() {
-    const statusIndicator = document.querySelector('.status-indicator');
-    const statusText = document.querySelector('.status-text');
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/health`);
-        if (response.ok) {
-            if (statusIndicator) {
-                statusIndicator.style.backgroundColor = '#10b981';
-            }
-            if (statusText) {
-                statusText.textContent = 'Connected';
-            }
+            console.log('✅ Backend connected');
         } else {
-            throw new Error('Connection failed');
+            console.warn('⚠️ Backend connection issue');
         }
     } catch (error) {
-        if (statusIndicator) {
-            statusIndicator.style.backgroundColor = '#ef4444';
-        }
-        if (statusText) {
-            statusText.textContent = 'Disconnected';
-        }
-        console.error('Backend connection failed:', error);
+        console.error('❌ Backend not accessible:', error);
     }
 }
 
-// ==================== Console Log ====================
-console.log('🔮 Crystal Agent - Ready');
-console.log('Features: Purple Glassmorphism | Markdown | Syntax Highlighting | Real-time Stats');
+// ==================== Console Ready Message ====================
+console.log('Features: Magazine Style | Optimistic UI | Markdown | Zero Latency');

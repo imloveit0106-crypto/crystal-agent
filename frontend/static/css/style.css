@@ -281,21 +281,21 @@ body {
     scroll-behavior: smooth;
 }
 
-/* ==================== Message Styles - "Soft Landing" Animation ==================== */
+/* ==================== Message Styles - "Ghost Frame" Animation ==================== */
 .message {
     display: flex;
     gap: 12px;
 }
 
-/* Calm Zero-Latency: "Drift" effect - like a leaf settling on water */
+/* Zero Perceived Latency: "driftIn" effect - silky smooth deceleration */
 .message-enter {
-    animation: softLanding 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    animation: driftIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes softLanding {
+@keyframes driftIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(12px);
     }
     to {
         opacity: 1;

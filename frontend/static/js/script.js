@@ -27,23 +27,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ==================== Event Listeners ====================
 function setupEventListeners() {
-    const chatForm = document.getElementById('chatForm');
-    const messageInput = document.getElementById('messageInput');
+    const messageInput = document.getElementById('user-input');
 
-    if (chatForm) {
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            sendMessage();
-        });
-    }
-
-    // Optional: Send on Enter key
+    // Send on Enter key (without Shift)
     if (messageInput) {
         messageInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', () => {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = messageInput.scrollHeight + 'px';
         });
     }
 }
@@ -60,8 +58,7 @@ async function sendMessage() {
         return;
     }
 
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
+    const messageInput = document.getElementById('user-input');
     const message = messageInput.value.trim();
 
     if (!message) {
@@ -71,25 +68,17 @@ async function sendMessage() {
     // Set debouncing flag
     isSendingMessage = true;
 
-    // Disable send button
-    if (sendButton) {
-        sendButton.disabled = true;
-    }
-
     // ========== OPTIMISTIC UI: Instant User Feedback ==========
     // Step 1: Show user message immediately
     addUserMessage(message);
 
     // Step 2: Clear input and refocus
     messageInput.value = '';
+    messageInput.style.height = 'auto';
     messageInput.focus();
 
     // Step 3: Scroll to bottom
     scrollToBottom();
-
-    // ========== BACKGROUND: Network Request ==========
-    // Step 4: Show typing indicator
-    showTypingIndicator();
 
     try {
         // Send to backend
@@ -107,9 +96,6 @@ async function sendMessage() {
 
         const data = await response.json();
 
-        // Hide typing indicator
-        hideTypingIndicator();
-
         // Show agent response
         if (data.response) {
             addAgentMessage(data.response);
@@ -119,13 +105,8 @@ async function sendMessage() {
 
     } catch (error) {
         console.error('Error sending message:', error);
-        hideTypingIndicator();
         addAgentMessage('申し訳ございません。接続エラーが発生しました。');
     } finally {
-        // Re-enable send button
-        if (sendButton) {
-            sendButton.disabled = false;
-        }
         // Reset debouncing flag
         isSendingMessage = false;
     }
@@ -135,22 +116,32 @@ async function sendMessage() {
  * Add user message to chat (instant, no network delay)
  */
 function addUserMessage(text) {
-    const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
+    const chatContainer = document.getElementById('chat-container');
+    if (!chatContainer) return;
 
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message message-enter';
+    messageDiv.className = 'message user';
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'message-avatar';
+    avatarDiv.textContent = '👤';
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'message-name';
+    nameDiv.textContent = 'You';
 
     const textDiv = document.createElement('div');
     textDiv.className = 'message-text';
     textDiv.textContent = text;
 
+    contentDiv.appendChild(nameDiv);
     contentDiv.appendChild(textDiv);
+    messageDiv.appendChild(avatarDiv);
     messageDiv.appendChild(contentDiv);
-    chatMessages.appendChild(messageDiv);
+    chatContainer.appendChild(messageDiv);
 
     scrollToBottom();
 }
@@ -159,14 +150,22 @@ function addUserMessage(text) {
  * Add agent message to chat with markdown rendering
  */
 function addAgentMessage(text) {
-    const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
+    const chatContainer = document.getElementById('chat-container');
+    if (!chatContainer) return;
 
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message agent-message message-enter';
+    messageDiv.className = 'message agent';
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'message-avatar';
+    avatarDiv.textContent = '🔮';
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'message-name';
+    nameDiv.textContent = 'Crystal';
 
     const textDiv = document.createElement('div');
     textDiv.className = 'message-text';
@@ -178,43 +177,24 @@ function addAgentMessage(text) {
         textDiv.textContent = text;
     }
 
+    contentDiv.appendChild(nameDiv);
     contentDiv.appendChild(textDiv);
+    messageDiv.appendChild(avatarDiv);
     messageDiv.appendChild(contentDiv);
-    chatMessages.appendChild(messageDiv);
+    chatContainer.appendChild(messageDiv);
 
     scrollToBottom();
-}
-
-/**
- * Show typing indicator
- */
-function showTypingIndicator() {
-    const typingIndicator = document.getElementById('typingIndicator');
-    if (typingIndicator) {
-        typingIndicator.style.display = 'flex';
-        scrollToBottom();
-    }
-}
-
-/**
- * Hide typing indicator
- */
-function hideTypingIndicator() {
-    const typingIndicator = document.getElementById('typingIndicator');
-    if (typingIndicator) {
-        typingIndicator.style.display = 'none';
-    }
 }
 
 /**
  * Scroll chat to bottom smoothly
  */
 function scrollToBottom() {
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
+    const chatContainer = document.getElementById('chat-container');
+    if (chatContainer) {
         setTimeout(() => {
-            chatMessages.scrollTo({
-                top: chatMessages.scrollHeight,
+            chatContainer.scrollTo({
+                top: chatContainer.scrollHeight,
                 behavior: 'smooth'
             });
         }, 100);

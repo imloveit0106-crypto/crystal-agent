@@ -18,55 +18,43 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-title">Crystal Agent</div>
-            <div class="header-subtitle">PERSONAL KNOWLEDGE BASE</div>
-        </header>
+    <div id="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Crystal Agent</div>
+                <div class="stat-item">
+                    <span>Status</span>
+                    <span>Active</span>
+                </div>
+            </div>
+        </aside>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <main class="chat-container">
-                <!-- Chat Messages -->
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Welcome Message -->
-                    <div class="message agent-message">
-                        <div class="message-content">
-                            <div class="message-text">
-                                <p>準備が整いました。思考の整理を始めましょう。</p>
-                            </div>
-                        </div>
+        <main class="main-content">
+            <!-- Chat Messages -->
+            <div id="chat-container">
+                <!-- Welcome Message -->
+                <div class="message">
+                    <div class="message-avatar">🔮</div>
+                    <div class="message-content">
+                        <div class="message-name">Crystal</div>
+                        <div class="message-text">準備が整いました。思考の整理を始めましょう。</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Typing Indicator -->
-                <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea
+                        id="user-input"
+                        placeholder="Type your message..."
+                        rows="1"
+                    ></textarea>
                 </div>
-
-                <!-- Chat Input -->
-                <div class="chat-input-container">
-                    <form class="chat-input-form" id="chatForm">
-                        <input
-                            type="text"
-                            class="chat-input"
-                            id="messageInput"
-                            placeholder="Type to think..."
-                            autocomplete="off"
-                            required
-                        />
-                        <button type="submit" class="send-button" id="sendButton">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 
     <!-- Main JavaScript -->

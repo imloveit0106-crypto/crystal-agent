@@ -170,11 +170,15 @@ h1, h2, h3,
     color: var(--text-primary);
 }
 
-/* Input Area */
+/* ==================== Premium Input Area: "Command Center" ==================== */
+
+/* Floating Container with Glass Morphism */
 .input-area {
     padding: var(--space-lg) var(--space-2xl) var(--space-xl);
-    background: rgba(255,255,255, 0.95);
-    border-top: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.9); /* Floating glass effect */
+    backdrop-filter: blur(10px); /* Premium blur */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border-top: 1px solid rgba(55, 53, 47, 0.08); /* Subtle separation */
 }
 
 .input-wrapper {
@@ -185,29 +189,32 @@ h1, h2, h3,
     align-items: flex-end;
 }
 
-/* Command Center: Floating Card Input */
+/* Premium Card Input */
 #user-input {
     width: 100%;
-    border: 1px solid rgba(55, 53, 47, 0.08);
-    border-radius: 12px;
     background: #ffffff;
+    border: 1px solid rgba(55, 53, 47, 0.15); /* Defined border */
+    border-radius: 12px;
     font-family: var(--font-stack);
     font-size: 1rem;
-    padding: var(--space-md) var(--space-lg);
-    outline: none;
+    padding: 12px 16px; /* Precise spacing */
+    outline: none; /* Remove default outline */
     resize: none;
     max-height: 150px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Subtle elevation */
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth transitions */
     cursor: text;
 }
 
+/* Focus State: Glow Effect */
 #user-input:focus {
-    border-color: rgba(55, 53, 47, 0.3);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-color: rgba(55, 53, 47, 0.4); /* Stronger border on focus */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Enhanced glow */
 }
 
-#user-input::placeholder { color: var(--text-secondary); }
+#user-input::placeholder {
+    color: var(--text-secondary);
+}
 
 /* ==================== Motion Physics: Seamless Transitions ==================== */
 
@@ -316,27 +323,33 @@ h1, h2, h3,
     }
 }
 
-/* Tactile Feedback: Interactive Elements */
+/* ==================== Physics-Based Tactile Buttons ==================== */
+
+/* Base Button Style */
 button,
 .button,
 .interactive,
 [role="button"] {
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1); /* Fast, tactile */
 }
 
+/* Hover: Subtle Lift */
 button:hover,
 .button:hover,
 .interactive:hover,
 [role="button"]:hover {
-    transform: translateY(-1px);
+    transform: translateY(-1px); /* Lift effect */
 }
 
+/* Active: Tactile Press Feedback */
 button:active,
 .button:active,
 .interactive:active,
 [role="button"]:active {
-    transform: scale(0.98);
+    transform: scale(0.97); /* Physical press */
 }
 
 /* Ensure all clickable elements have pointer cursor */

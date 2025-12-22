@@ -13,6 +13,14 @@
     /* Typography */
     --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-serif-jp: 'Noto Serif JP', serif;
+
+    /* Optical Spacing System: 8pt Grid */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px; /* Grand whitespace */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,10 +61,10 @@ h1, h2, h3,
     width: 260px;
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
-    padding: 24px 16px;
+    padding: var(--space-lg);
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-lg);
 }
 
 .sidebar-title {
@@ -65,14 +73,14 @@ h1, h2, h3,
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-sm);
 }
 
 .stat-item {
     font-size: 0.9rem;
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
+    padding: var(--space-xs) 0;
     color: var(--text-primary);
 }
 
@@ -88,12 +96,15 @@ h1, h2, h3,
 #chat-container {
     flex: 1;
     overflow-y: auto;
-    padding: 60px 80px; /* Golden Rule #2: Luxurious Whitespace */
+    padding: var(--space-2xl) var(--space-lg); /* Luxurious breathing room */
+    max-width: 800px; /* Optimal reading width */
+    margin: 0 auto; /* Center alignment */
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: var(--space-lg);
     position: relative; /* Ensure overlapping animations work */
     min-height: 100vh; /* Full height for smooth transitions */
+    width: 100%; /* Ensure it doesn't collapse */
 }
 
 /* Custom Scrollbar Esthetics */
@@ -117,9 +128,8 @@ h1, h2, h3,
 /* Messages */
 .message {
     display: flex;
-    gap: 16px;
-    max-width: 800px;
-    margin: 0 auto 24px; /* Golden Rule #2: Breathing Room */
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg); /* Vertical rhythm: 24px separation */
     width: 100%;
     animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -135,12 +145,15 @@ h1, h2, h3,
     flex-shrink: 0;
 }
 
-.message-content { flex: 1; padding-top: 2px; }
+.message-content {
+    flex: 1;
+    padding: 0; /* Pure text layout - natural alignment */
+}
 
 .message-name {
     font-weight: 600;
     font-size: 0.85rem;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-xs);
     color: var(--text-primary);
 }
 
@@ -159,7 +172,7 @@ h1, h2, h3,
 
 /* Input Area */
 .input-area {
-    padding: 24px 60px 32px;
+    padding: var(--space-lg) var(--space-2xl) var(--space-xl);
     background: rgba(255,255,255, 0.95);
     border-top: 1px solid var(--border-color);
 }
@@ -180,7 +193,7 @@ h1, h2, h3,
     background: #ffffff;
     font-family: var(--font-stack);
     font-size: 1rem;
-    padding: 14px 18px;
+    padding: var(--space-md) var(--space-lg);
     outline: none;
     resize: none;
     max-height: 150px;

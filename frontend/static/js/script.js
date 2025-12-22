@@ -1,56 +1,114 @@
 /**
  * Crystal Agent - Frontend JavaScript
- * Minimal & Clean Implementation
+ * Purple Glassmorphism Theme with Full Backend Integration
  */
 
-// ============================================
-// Configuration
-// ============================================
-
+// ==================== Configuration ====================
 const API_BASE_URL = 'http://localhost:8000';
 
-// Scenario D: 連打防止フラグ（Debouncing）
+// Debouncing flag
 let isSendingMessage = false;
 
-// ============================================
-// Initialization
-// ============================================
-
+// ==================== Initialization ====================
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Crystal Agent initialized');
+    console.log('🔮 Crystal Agent initialized');
+
+    // Initialize marked.js options
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+    }
+
+    // Initialize Lucide icons if available
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+
     await loadStats();
     await checkConnection();
     setupEventListeners();
-
-    // 初回訪問時のヘルプモーダル自動表示
     checkFirstVisit();
 });
 
-// ============================================
-// Event Listeners
-// ============================================
-
+// ==================== Event Listeners ====================
 function setupEventListeners() {
-    const messageInput = document.getElementById('messageInput');
-    if (messageInput) {
-        messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
+    // Chat form submission
+    const chatForm = document.getElementById('chatForm');
+    if (chatForm) {
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendMessage();
+        });
+    }
+
+    // Quick action buttons
+    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+    quickActionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-action');
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = action;
+                messageInput.focus();
             }
         });
+    });
+
+    // Help modal
+    const helpButton = document.getElementById('helpButton');
+    const helpModal = document.getElementById('helpModal');
+    const helpModalClose = document.getElementById('helpModalClose');
+    const helpModalOverlay = helpModal?.querySelector('.help-modal-overlay');
+
+    if (helpButton && helpModal) {
+        helpButton.addEventListener('click', () => {
+            helpModal.classList.add('active');
+        });
+    }
+
+    if (helpModalClose && helpModal) {
+        helpModalClose.addEventListener('click', () => {
+            helpModal.classList.remove('active');
+        });
+    }
+
+    if (helpModalOverlay && helpModal) {
+        helpModalOverlay.addEventListener('click', () => {
+            helpModal.classList.remove('active');
+        });
+    }
+
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && helpModal?.classList.contains('active')) {
+            helpModal.classList.remove('active');
+        }
+    });
+}
+
+// ==================== Help Modal Functions ====================
+function checkFirstVisit() {
+    const hasVisited = localStorage.getItem('crystal_agent_visited');
+    if (!hasVisited) {
+        setTimeout(() => {
+            const helpModal = document.getElementById('helpModal');
+            if (helpModal) {
+                helpModal.classList.add('active');
+            }
+        }, 1000);
+        localStorage.setItem('crystal_agent_visited', 'true');
     }
 }
 
-// ============================================
-// Core Functions
-// ============================================
+// ==================== Message Functions ====================
 
 /**
- * メッセージ送信 (Expense Detection & API Integration)
+ * Send message to backend
  */
-window.sendMessage = async function() {
-    // Scenario D: 連打防止（Debouncing）
+async function sendMessage() {
+    // Debouncing
     if (isSendingMessage) {
         console.log('⚠️ 送信処理中です。しばらくお待ちください。');
         return;
@@ -61,468 +119,177 @@ window.sendMessage = async function() {
     const message = input.value.trim();
 
     if (!message) {
-        input.classList.add('ring-2', 'ring-red-500');
-        setTimeout(() => input.classList.remove('ring-2', 'ring-red-500'), 500);
         return;
     }
 
-    // 送信フラグをセット（連打防止）
+    // Set debouncing flag
     isSendingMessage = true;
 
-    // ウェルカムスクリーンを非表示（初回のみ）
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    if (welcomeScreen && welcomeScreen.style.display !== 'none') {
-        // サジェストと同じオーケストレーション実行
-        await hideWelcomeScreenWithAnimation();
-    }
-
-    // Loading State: 送信ボタンを無効化
+    // Disable send button
     if (sendButton) {
         sendButton.disabled = true;
         sendButton.style.opacity = '0.7';
     }
 
-    addMessage(message, 'user');
+    // Add user message
+    addUserMessage(message);
     input.value = '';
+    input.focus();
+
+    // Show typing indicator
     showTypingIndicator();
 
     try {
-        // 支出情報を検出
-        const expenseData = parseExpenseFromMessage(message);
+        // Send to backend
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message }),
+        });
 
-        // 支出データがあればNotionに送信
-        if (expenseData) {
-            try {
-                const expenseResult = await sendExpenseToBackend(
-                    expenseData.item,
-                    expenseData.amount,
-                    expenseData.category
-                );
-                console.log('Expense saved to Notion:', expenseResult);
-                showToast('Saved to Notion', 'success');
-            } catch (expenseError) {
-                console.error('Expense save error:', expenseError);
-                showToast('Failed to save expense', 'error');
-            }
+        const data = await response.json();
+
+        // Hide typing indicator
+        hideTypingIndicator();
+
+        // Add agent message
+        if (data.response) {
+            addAgentMessage(data.response, data);
         }
 
-        // AIチャット応答を取得（既存フロー）
-        const data = await sendChatMessage(message);
-        hideTypingIndicator();
-        addMessage(data.response, 'assistant', {
-            type: data.detected_type,
-            amount: data.detected_amount,
-            saved: data.saved_to_notion
-        });
-        await loadStats();
-
     } catch (error) {
+        console.error('Error sending message:', error);
         hideTypingIndicator();
-        addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
-        console.error('Send message error:', error);
-        showToast('Error occurred', 'error');
+        addAgentMessage('申し訳ございません。エラーが発生しました。もう一度お試しください。');
     } finally {
-        // Loading State: 送信ボタンを再有効化
+        // Re-enable send button
         if (sendButton) {
             sendButton.disabled = false;
             sendButton.style.opacity = '1';
         }
-        // Scenario D: 送信フラグをリセット（次のメッセージを許可）
+        // Reset debouncing flag
         isSendingMessage = false;
     }
 }
 
 /**
- * クイック入力
+ * Add user message to chat
  */
-window.quickInput = function(text) {
-    const input = document.getElementById('messageInput');
-    input.value = text;
-    input.focus();
-}
+function addUserMessage(text) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
 
-/**
- * サジェストチップから送信
- * 画面遷移とAPI通信を並行処理するオーケストレーター
- */
-window.sendSuggest = async function(prompt) {
-    // Step 1-4: Welcome Screen Exit & Chat Area Enter
-    // 高精細アニメーションでウェルカムスクリーンを非表示
-    await hideWelcomeScreenWithAnimation();
-
-    // Step 5: Interaction Feedback (Optimistic UI)
-    // ユーザー入力を即時反映し、ローディングを開始
-    addMessage(prompt, 'user');
-    showTypingIndicator();
-
-    // Step 6: API Request
-    try {
-        const data = await sendChatMessage(prompt);
-        hideTypingIndicator();
-        addMessage(data.response, 'assistant', {
-            type: data.detected_type,
-            amount: data.detected_amount,
-            saved: data.saved_to_notion
-        });
-        await loadStats();
-    } catch (error) {
-        hideTypingIndicator();
-        addMessage('エラーが発生しました。もう一度お試しください。', 'assistant');
-        console.error('Send message error:', error);
-    }
-}
-
-// ============================================
-// API Functions
-// ============================================
-
-/**
- * 接続チェック (Updated for new API structure)
- */
-async function checkConnection() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/health`);
-        const data = await response.json();
-        const statusIndicator = document.getElementById('statusIndicator');
-
-        // New API structure: data.services.notion, data.services.gemini
-        const services = data.services || data;
-        const notionStatus = services.notion || data.notion;
-        const geminiStatus = services.gemini || data.gemini;
-
-        if (notionStatus === 'connected' && geminiStatus === 'connected') {
-            statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span class="text-xs font-medium text-gray-600 hidden sm:inline">Online</span>
-            `;
-        } else {
-            statusIndicator.innerHTML = `
-                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-xs font-medium text-gray-600 hidden sm:inline">Limited</span>
-            `;
-        }
-    } catch (error) {
-        console.error('Connection check failed:', error);
-        const statusIndicator = document.getElementById('statusIndicator');
-        statusIndicator.innerHTML = `
-            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-            <span class="text-xs font-medium text-gray-600 hidden sm:inline">Offline</span>
-        `;
-    }
-}
-
-/**
- * 統計データ読み込み
- */
-async function loadStats() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/stats`);
-        const stats = await response.json();
-
-        updateNumber('totalCount', stats.total);
-        updateNumber('diaryCount', stats.types['日記'] || 0);
-        updateNumber('taskCount', stats.types['タスク'] || 0);
-    } catch (error) {
-        console.error('Stats load failed:', error);
-    }
-}
-
-/**
- * チャットメッセージ送信
- */
-async function sendChatMessage(message) {
-    const response = await fetch(`${API_BASE_URL}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message, use_rag: true })
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-}
-
-/**
- * 支出データをNotionバックエンドに送信 (Fetch API)
- * @param {string} item - 支出項目の説明
- * @param {number} amount - 金額（正の整数）
- * @param {string} category - カテゴリー（デフォルト: "支出"）
- * @returns {Promise<Object>} APIレスポンス
- */
-async function sendExpenseToBackend(item, amount, category = "支出") {
-    const response = await fetch(`${API_BASE_URL}/api/notion/expense`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            item: String(item),
-            amount: parseInt(amount, 10),
-            category: String(category)
-        })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.detail || `HTTP error! status: ${response.status}`);
-    }
-
-    return data;
-}
-
-/**
- * メッセージから支出情報を抽出
- * @param {string} text - ユーザーメッセージ
- * @returns {Object|null} {item, amount, category} または null
- */
-function parseExpenseFromMessage(text) {
-    // 金額パターン: "800円", "¥800", "800yen"
-    const amountPattern = /(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:円|¥|yen)/i;
-    const amountMatch = text.match(amountPattern);
-
-    if (!amountMatch) {
-        return null; // 金額が見つからない
-    }
-
-    const amount = parseInt(amountMatch[1].replace(/,/g, ''), 10);
-
-    // カテゴリー推測
-    let category = "支出";
-    if (text.includes('ランチ') || text.includes('食事') || text.includes('飲み会') || text.includes('食費')) {
-        category = "食費";
-    } else if (text.includes('電車') || text.includes('バス') || text.includes('交通')) {
-        category = "交通費";
-    } else if (text.includes('買い物') || text.includes('購入')) {
-        category = "買い物";
-    }
-
-    // 項目説明を抽出（金額部分を除く）
-    const item = text.replace(amountPattern, '').trim() || `${category} (詳細なし)`;
-
-    return { item, amount, category };
-}
-
-// ============================================
-// UI Functions
-// ============================================
-
-/**
- * メッセージを追加
- */
-function addMessage(text, role, meta = {}) {
-    const container = document.getElementById('chatContainer').querySelector('.max-w-3xl');
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message-fade-in';
+    messageDiv.className = 'message user-message message-enter';
 
-    if (role === 'user') {
-        messageDiv.innerHTML = `
-            <div class="flex justify-end items-start gap-3">
-                <div class="bg-gray-800 text-white rounded-xl px-5 py-3.5 max-w-[75%]">
-                    <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
-                </div>
-                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                    <i data-lucide="user" class="w-4.5 h-4.5 text-gray-400"></i>
-                </div>
+    messageDiv.innerHTML = `
+        <div class="message-avatar">👤</div>
+        <div class="message-content">
+            <div class="message-header">
+                <span class="message-author">You</span>
             </div>
-        `;
-    } else {
-        const metaInfo = meta.saved ? `
-            <div class="flex gap-2 mt-2">
-                <span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">${meta.type}</span>
-                ${meta.amount ? `<span class="text-xs px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">¥${meta.amount.toLocaleString()}</span>` : ''}
-            </div>
-        ` : '';
-
-        messageDiv.innerHTML = `
-            <div class="flex justify-start items-start gap-3">
-                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                    <i data-lucide="sparkles" class="w-4.5 h-4.5 text-gray-400"></i>
-                </div>
-                <div class="bg-gray-50 text-gray-800 rounded-xl px-5 py-3.5 max-w-[75%]">
-                    <p class="text-base leading-relaxed">${escapeHtml(text)}</p>
-                    ${metaInfo}
-                </div>
-            </div>
-        `;
-    }
-
-    container.appendChild(messageDiv);
-
-    // Lucideアイコンを初期化
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    // スクロール
-    const chatContainer = document.getElementById('chatContainer');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-/**
- * タイピングインジケーター表示
- */
-function showTypingIndicator() {
-    const container = document.getElementById('chatContainer').querySelector('.max-w-3xl');
-    const indicator = document.createElement('div');
-    indicator.id = 'typingIndicator';
-    indicator.className = 'message-fade-in';
-    indicator.innerHTML = `
-        <div class="flex justify-start items-start gap-3">
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                <i data-lucide="sparkles" class="w-4 h-4 text-gray-400"></i>
-            </div>
-            <div class="bg-gray-50 text-gray-800 rounded-xl px-5 py-3.5">
-                <div class="flex gap-1">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
+            <div class="message-text">
+                ${escapeHtml(text)}
             </div>
         </div>
     `;
-    container.appendChild(indicator);
 
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    const chatContainer = document.getElementById('chatContainer');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    chatMessages.appendChild(messageDiv);
+    scrollToBottom();
 }
 
 /**
- * タイピングインジケーター非表示
+ * Add agent message to chat
  */
-function hideTypingIndicator() {
-    const indicator = document.getElementById('typingIndicator');
-    if (indicator) {
-        indicator.remove();
-    }
-}
+function addAgentMessage(text, metadata = {}) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
 
-/**
- * Toast通知を表示 (Success/Error Feedback)
- * @param {string} message - 表示メッセージ
- * @param {string} type - 'success' または 'error'
- */
-function showToast(message, type = 'success') {
-    // 既存のtoastがあれば削除
-    const existingToast = document.getElementById('toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message agent-message message-enter';
 
-    // Toast要素を作成
-    const toast = document.createElement('div');
-    toast.id = 'toast';
-    toast.className = `fixed bottom-6 right-6 px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 motion-base motion-enter-down z-50 ${
-        type === 'success' ? 'bg-gray-800 text-white' : 'bg-red-600 text-white'
-    }`;
+    const badge = metadata.detected_type
+        ? `<span class="message-badge">${metadata.detected_type}</span>`
+        : '<span class="message-badge">AI</span>';
 
-    // アイコンとメッセージ
-    const icon = type === 'success' ? 'check' : 'alert-circle';
-    toast.innerHTML = `
-        <i data-lucide="${icon}" class="w-4.5 h-4.5"></i>
-        <span class="text-sm font-medium">${message}</span>
+    // Render markdown
+    const renderedText = renderMarkdown(text);
+
+    messageDiv.innerHTML = `
+        <div class="message-avatar">🔮</div>
+        <div class="message-content">
+            <div class="message-header">
+                <span class="message-author">Crystal Agent</span>
+                ${badge}
+            </div>
+            <div class="message-text">
+                ${renderedText}
+            </div>
+        </div>
     `;
 
-    document.body.appendChild(toast);
+    chatMessages.appendChild(messageDiv);
 
-    // Lucideアイコンを初期化
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-
-    // アニメーション: Enter
-    requestAnimationFrame(() => {
-        toast.classList.remove('motion-enter-down');
-        toast.classList.add('motion-active');
+    // Apply syntax highlighting
+    messageDiv.querySelectorAll('pre code').forEach((block) => {
+        if (typeof hljs !== 'undefined') {
+            hljs.highlightElement(block);
+        }
     });
 
-    // 3秒後に自動削除
-    setTimeout(() => {
-        toast.classList.remove('motion-active');
-        toast.classList.add('motion-exit-up');
-        setTimeout(() => toast.remove(), 600);
-    }, 3000);
+    scrollToBottom();
 }
 
-// ============================================
-// Utility Functions
-// ============================================
+/**
+ * Show typing indicator
+ */
+function showTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.style.display = 'flex';
+        scrollToBottom();
+    }
+}
 
 /**
- * ウェルカムスクリーンを非表示（旧バージョン・互換性用）
+ * Hide typing indicator
  */
-function hideWelcomeScreen() {
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    if (welcomeScreen && !welcomeScreen.classList.contains('hidden')) {
-        welcomeScreen.classList.add('hidden');
-        // アニメーション完了後に完全に削除
+function hideTypingIndicator() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    if (typingIndicator) {
+        typingIndicator.style.display = 'none';
+    }
+}
+
+/**
+ * Scroll chat to bottom
+ */
+function scrollToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
         setTimeout(() => {
-            welcomeScreen.classList.add('gone');
-        }, 500);
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
     }
 }
 
 /**
- * ウェルカムスクリーンを高精細アニメーションで非表示
- * 商用プロダクトレベルのオーケストレーション
+ * Render markdown to HTML
  */
-async function hideWelcomeScreenWithAnimation() {
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const chatContainer = document.getElementById('chatContainer');
-
-    if (!welcomeScreen || welcomeScreen.style.display === 'none') {
-        return; // 既に非表示なら何もしない
+function renderMarkdown(text) {
+    if (typeof marked !== 'undefined') {
+        return marked.parse(text);
     }
-
-    // UI Lock
-    document.body.style.pointerEvents = 'none';
-
-    // Exit Animation
-    welcomeScreen.classList.add('motion-base');
-    welcomeScreen.classList.remove('motion-active');
-    welcomeScreen.classList.add('motion-exit-up');
-
-    // 600msのアニメーション完了を待機
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    // DOM Swapping
-    welcomeScreen.style.display = 'none';
-
-    // Enter Animation for Chat Area
-    const messageContainer = chatContainer.querySelector('.max-w-3xl');
-    if (messageContainer) {
-        messageContainer.classList.add('motion-base', 'motion-enter-down');
-
-        // 強制リフロー
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-        // Active State
-        messageContainer.classList.remove('motion-enter-down');
-        messageContainer.classList.add('motion-active');
-    }
-
-    // UIロック解除
-    document.body.style.pointerEvents = 'auto';
+    return escapeHtml(text).replace(/\n/g, '<br>');
 }
 
 /**
- * 数値を更新
- */
-function updateNumber(elementId, value) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.textContent = value;
-    }
-}
-
-/**
- * HTML エスケープ
+ * Escape HTML to prevent XSS
  */
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -530,48 +297,61 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ============================================
-// Help Modal Functions
-// ============================================
+// ==================== Stats Functions ====================
 
 /**
- * ヘルプモーダルの表示/非表示を切り替え
+ * Load statistics from backend
  */
-window.toggleHelpModal = function() {
-    const modal = document.getElementById('helpModal');
-    if (!modal) return;
+async function loadStats() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/stats`);
+        if (response.ok) {
+            const stats = await response.json();
 
-    const isHidden = modal.classList.contains('hidden');
+            // Update stat cards
+            const totalLogsEl = document.getElementById('statTotalLogs');
+            const tasksEl = document.getElementById('statTasks');
+            const spendingEl = document.getElementById('statSpending');
 
-    if (isHidden) {
-        // 表示
-        modal.classList.remove('hidden');
-        // Lucide Icons を再初期化（モーダル内のアイコン用）
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+            if (totalLogsEl) totalLogsEl.textContent = stats.total_logs || 0;
+            if (tasksEl) tasksEl.textContent = stats.tasks || 0;
+            if (spendingEl) spendingEl.textContent = `¥${stats.total_spending || 0}`;
         }
-    } else {
-        // 非表示
-        modal.classList.add('hidden');
+    } catch (error) {
+        console.error('Failed to load stats:', error);
     }
 }
 
 /**
- * 初回訪問チェック & ヘルプモーダル自動表示
+ * Check backend connection
  */
-function checkFirstVisit() {
-    const hasVisited = localStorage.getItem('crystal_agent_visited');
+async function checkConnection() {
+    const statusIndicator = document.querySelector('.status-indicator');
+    const statusText = document.querySelector('.status-text');
 
-    if (!hasVisited) {
-        // 初回訪問
-        console.log('初回訪問を検出 - ヘルプモーダルを自動表示');
-
-        // 1秒後にヘルプモーダルを表示（ページ読み込み後の自然なタイミング）
-        setTimeout(() => {
-            toggleHelpModal();
-        }, 1000);
-
-        // 訪問済みフラグをセット
-        localStorage.setItem('crystal_agent_visited', 'true');
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        if (response.ok) {
+            if (statusIndicator) {
+                statusIndicator.style.backgroundColor = '#10b981';
+            }
+            if (statusText) {
+                statusText.textContent = 'Connected';
+            }
+        } else {
+            throw new Error('Connection failed');
+        }
+    } catch (error) {
+        if (statusIndicator) {
+            statusIndicator.style.backgroundColor = '#ef4444';
+        }
+        if (statusText) {
+            statusText.textContent = 'Disconnected';
+        }
+        console.error('Backend connection failed:', error);
     }
 }
+
+// ==================== Console Log ====================
+console.log('🔮 Crystal Agent - Ready');
+console.log('Features: Purple Glassmorphism | Markdown | Syntax Highlighting | Real-time Stats');

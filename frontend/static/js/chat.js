@@ -506,6 +506,35 @@ if (window.location.hostname === 'localhost') {
     // measureFPS(); // Uncomment to enable FPS monitoring
 }
 
+// ==================== Help Modal ====================
+
+const helpButton = document.getElementById('helpButton');
+const helpModal = document.getElementById('helpModal');
+const helpModalClose = document.getElementById('helpModalClose');
+const helpModalOverlay = helpModal.querySelector('.help-modal-overlay');
+
+// Open modal
+helpButton.addEventListener('click', () => {
+    helpModal.classList.add('active');
+});
+
+// Close modal - Close button
+helpModalClose.addEventListener('click', () => {
+    helpModal.classList.remove('active');
+});
+
+// Close modal - Click outside (on overlay)
+helpModalOverlay.addEventListener('click', () => {
+    helpModal.classList.remove('active');
+});
+
+// Close modal - ESC key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && helpModal.classList.contains('active')) {
+        helpModal.classList.remove('active');
+    }
+});
+
 console.log('🔮 Crystal Agent Streaming Chat - Ready');
 console.log('Features: SSE Streaming | Zero Latency UX | Markdown | Syntax Highlighting | 60fps');
 console.log('✨ Optimistic UI: Instant user feedback with real-time AI streaming');

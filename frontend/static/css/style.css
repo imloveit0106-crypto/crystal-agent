@@ -781,3 +781,190 @@ body {
         transform: translateX(-50%) translateY(20px);
     }
 }
+
+/* ==================== Help Button ==================== */
+.help-button {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--smooth-timing);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.help-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.35);
+    background: white;
+}
+
+.help-button:active {
+    transform: scale(0.95);
+}
+
+/* ==================== Help Modal ==================== */
+.help-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.help-modal.active {
+    display: flex;
+}
+
+/* Glassmorphism Overlay */
+.help-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Modal Content */
+.help-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+    animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+/* Close Button */
+.help-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.help-modal-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(90deg);
+}
+
+/* Hero Image */
+.help-modal-image {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.help-modal-image img {
+    width: 80%;
+    max-width: 320px;
+    border-radius: 16px;
+    opacity: 0.9;
+}
+
+/* Title - "Design Your Future" */
+.help-modal-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #333;
+    text-align: center;
+    margin: 0 0 32px 0;
+    line-height: 1.4;
+}
+
+/* Instructions */
+.help-modal-instructions {
+    text-align: center;
+    color: #666;
+}
+
+.help-modal-instructions p {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin: 16px 0;
+    line-height: 1.6;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .help-button {
+        bottom: 24px;
+        right: 24px;
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+
+    .help-modal-content {
+        padding: 36px 28px;
+        max-width: 90%;
+    }
+
+    .help-modal-title {
+        font-size: 22px;
+        letter-spacing: 1.2px;
+    }
+
+    .help-modal-instructions p {
+        font-size: 16px;
+    }
+}

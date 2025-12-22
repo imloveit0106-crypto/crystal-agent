@@ -3,154 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔮 Crystal Agent - Streaming Chat</title>
+    <title>Crystal Agent</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- Markdown Parser - Marked.js -->
-    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <!-- Syntax Highlighting - Highlight.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-    <!-- Custom Styles -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <!-- Background Gradient -->
-    <div class="background-gradient"></div>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Header -->
+
         <header class="header">
-            <div class="header-content">
-                <h1 class="header-title">🔮 Crystal Agent</h1>
-                <p class="header-subtitle">Your Personal AI Assistant with Real-Time Streaming</p>
-            </div>
-            <div class="header-status" id="connectionStatus">
-                <span class="status-indicator"></span>
-                <span class="status-text">Connected</span>
-            </div>
+            <div class="header-title">Crystal Agent</div>
+            <div class="header-subtitle">PERSONAL KNOWLEDGE BASE</div>
         </header>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <h2 class="sidebar-title">📊 Statistics</h2>
-
-                    <div class="stat-card">
-                        <div class="stat-number" id="statTotalLogs">0</div>
-                        <div class="stat-label">Total Logs</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-number" id="statTasks">0</div>
-                        <div class="stat-label">Tasks</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-number" id="statSpending">¥0</div>
-                        <div class="stat-label">Total Spending</div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <h2 class="sidebar-title">⚡ Quick Actions</h2>
-                    <div class="quick-actions">
-                        <button class="quick-action-btn" data-action="📝 日記を書きたい">📝 Diary</button>
-                        <button class="quick-action-btn" data-action="💰 支出を記録したい">💰 Expense</button>
-                        <button class="quick-action-btn" data-action="✅ タスクを追加したい">✅ Task</button>
-                        <button class="quick-action-btn" data-action="💭 悩みを相談したい">💭 Concern</button>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Chat Area -->
             <main class="chat-container">
-                <!-- Chat Messages -->
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Welcome Message -->
+
+                <div id="chat-history" class="chat-messages">
                     <div class="message agent-message">
-                        <div class="message-avatar">🔮</div>
-                        <div class="message-content">
-                            <div class="message-header">
-                                <span class="message-author">Crystal Agent</span>
-                                <span class="message-badge">AI</span>
-                            </div>
-                            <div class="message-text">
-                                こんにちは！私はあなた専用のAIアシスタントです。<br><br>
-                                日記、支出、タスク、悩み...何でも話してください。<br>
-                                あなたの人生をもっと豊かにするお手伝いをします！✨
-                            </div>
+                        <div class="message-header">
+                            <span class="message-author">CRYSTAL</span>
+                        </div>
+                        <div class="message-text">
+                            <p>準備が整いました。思考の整理を始めましょう。</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Typing Indicator -->
-                <div class="typing-indicator" id="typingIndicator" style="display: none;">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-
-                <!-- Chat Input -->
                 <div class="chat-input-container">
-                    <form class="chat-input-form" id="chatForm">
-                        <input
-                            type="text"
-                            class="chat-input"
-                            id="messageInput"
-                            placeholder="Type your message..."
-                            autocomplete="off"
-                            required
-                        />
-                        <button type="submit" class="send-button" id="sendButton">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                    <form id="chat-form" class="chat-input-form">
+                        <input type="text" id="user-input" class="chat-input" placeholder="Type to think..." autocomplete="off">
+                        <button type="submit" class="send-button">
+                            <i data-lucide="arrow-up"></i>
                         </button>
                     </form>
                 </div>
+
             </main>
         </div>
     </div>
 
-    <!-- Help Button (Bottom-Right) -->
-    <button class="help-button" id="helpButton" aria-label="Help">
-        ❓
-    </button>
-
-    <!-- Help Modal -->
-    <div class="help-modal" id="helpModal">
-        <div class="help-modal-overlay"></div>
-        <div class="help-modal-content">
-            <button class="help-modal-close" id="helpModalClose" aria-label="Close">×</button>
-
-            <!-- Hero Image -->
-            <div class="help-modal-image">
-                <img src="/static/images/manual.png" alt="Manual Illustration" />
-            </div>
-
-            <!-- Title -->
-            <h2 class="help-modal-title">Design Your Future</h2>
-
-            <!-- Instructions -->
-            <div class="help-modal-instructions">
-                <p>1. Visualize.</p>
-                <p>2. Type.</p>
-                <p>3. Create.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main JavaScript -->
-    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/script.js"></script>
 </body>
 </html>

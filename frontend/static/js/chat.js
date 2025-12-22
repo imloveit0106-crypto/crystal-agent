@@ -76,15 +76,18 @@ marked.setOptions({
 // ==================== Utility Functions ====================
 
 /**
- * Smooth scroll to bottom of chat
+ * Gentle scroll to bottom of chat
+ * Calm Zero-Latency: Small delay for organic, non-aggressive feel
  */
-function scrollToBottom(smooth = true) {
-    requestAnimationFrame(() => {
-        chatMessages.scrollTo({
-            top: chatMessages.scrollHeight,
-            behavior: smooth ? 'smooth' : 'auto'
+function scrollToBottom(smooth = true, delay = 100) {
+    setTimeout(() => {
+        requestAnimationFrame(() => {
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: smooth ? 'smooth' : 'auto'
+            });
         });
-    });
+    }, delay);
 }
 
 /**
@@ -116,11 +119,11 @@ function renderMarkdown(text) {
 // ==================== Message Creation ====================
 
 /**
- * Create user message element with Zero Latency animation
+ * Create user message element with Calm Zero-Latency animation
  */
 function createUserMessage(text) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message user-message animate-entry';
+    messageDiv.className = 'message user-message message-enter';
     messageDiv.innerHTML = `
         <div class="message-avatar">👤</div>
         <div class="message-content">
@@ -135,11 +138,11 @@ function createUserMessage(text) {
 }
 
 /**
- * Create agent message element (empty, to be filled by streaming) with animation
+ * Create agent message element (empty, to be filled by streaming) with Calm animation
  */
 function createAgentMessage(metadata = {}) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = 'message agent-message animate-entry';
+    messageDiv.className = 'message agent-message message-enter';
 
     const badge = metadata.detected_type
         ? `<span class="message-badge">${metadata.detected_type}</span>`

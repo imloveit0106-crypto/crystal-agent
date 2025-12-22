@@ -196,3 +196,64 @@ body {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ==================== High-Fidelity Physics ==================== */
+
+/* Constants: iOS-like Expo Ease Out */
+:root {
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-enter: 800ms;
+    --duration-exit: 600ms;
+}
+
+/* Base Motion Class: Enable GPU Acceleration */
+.motion-base {
+    transition-property: opacity, transform;
+    transition-timing-function: var(--ease-expo);
+    will-change: opacity, transform;
+}
+
+/* State: Exit (Float up and vanish) */
+.motion-exit-up {
+    opacity: 0;
+    transform: translateY(-1.5rem) scale(0.98);
+    transition-duration: var(--duration-exit);
+    pointer-events: none;
+}
+
+/* State: Enter (Wait below) */
+.motion-enter-down {
+    opacity: 0;
+    transform: translateY(1.5rem);
+}
+
+/* State: Active (Settle in place) */
+.motion-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-duration: var(--duration-enter);
+}
+
+/* Loading Indicator: Breathing Animation */
+@keyframes breathing-dot {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-0.25rem); opacity: 1; }
+}
+
+/* Ensure the typing indicator container handles these dots */
+.typing-indicator-container {
+    display: flex;
+    gap: 4px;
+    padding: 8px 0;
+}
+
+.typing-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--text-secondary); /* Use existing variable */
+    border-radius: 50%;
+    animation: breathing-dot 1.4s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: 0ms; }
+.typing-dot:nth-child(2) { animation-delay: 150ms; }
+.typing-dot:nth-child(3) { animation-delay: 300ms; }

@@ -401,17 +401,26 @@ body {
 .message-text h3 { font-size: 1.1rem; }
 
 .message-text p {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.6em;
 }
 
 .message-text p:last-child {
     margin-bottom: 0;
 }
 
+.message-text strong {
+    font-weight: 600;
+    color: #333;
+}
+
+.agent-message .message-text strong {
+    color: white;
+}
+
 .message-text ul, .message-text ol {
-    margin-left: 1.5rem;
-    padding-left: 0;
-    margin-bottom: 0.75rem;
+    margin-left: 0;
+    padding-left: 20px;
+    margin-bottom: 0.6em;
 }
 
 .message-text li {
@@ -422,7 +431,7 @@ body {
     background: rgba(0, 0, 0, 0.08);
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
-    font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+    font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
     font-size: 0.9em;
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -433,22 +442,25 @@ body {
 }
 
 .message-text pre {
-    background: #2d2d2d;
-    padding: 1rem;
-    border-radius: 8px;
+    background: #F6F8FA;
+    padding: 12px;
+    border-radius: 6px;
     overflow-x: auto;
-    margin: 0.75rem 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0.6em 0;
+    border: 1px solid #E1E4E8;
+}
+
+.agent-message .message-text pre {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .message-text pre code {
     background: transparent;
     padding: 0;
     border: none;
-    color: #ccc;
-    font-size: 0.875rem;
-    line-height: 1.6;
+    font-size: 0.9em;
+    line-height: 1.5;
 }
 
 .message-text blockquote {
@@ -529,29 +541,31 @@ body {
 .typing-indicator {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     padding: 16px 24px;
 }
 
 .typing-dot {
-    width: 8px;
-    height: 8px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.6);
-    animation: typing 1.4s infinite;
+    background: #37352f;
+    opacity: 0.4;
+    animation: breathingDots 1.4s ease-in-out infinite;
 }
 
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-@keyframes typing {
+/* Breathing Dots Animation - Subtle wave pattern */
+@keyframes breathingDots {
     0%, 60%, 100% {
-        transform: translateY(0);
-        opacity: 0.6;
+        transform: translateY(0) scale(1);
+        opacity: 0.4;
     }
     30% {
-        transform: translateY(-10px);
-        opacity: 1;
+        transform: translateY(-6px) scale(1.2);
+        opacity: 0.8;
     }
 }
 
@@ -712,20 +726,21 @@ body {
 
 /* ==================== Zero Latency Animations ==================== */
 
-/* Slide-up fade animation for messages */
+/* Slide-up fade animation for messages with soft friction physics */
 @keyframes slideUpFade {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(12px) scale(0.99);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
-.animate-entry {
-    animation: slideUpFade 0.3s var(--smooth-timing);
+.animate-entry,
+.message-enter {
+    animation: slideUpFade 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.0);
 }
 
 /* ==================== Error Toast ==================== */

@@ -1,0 +1,70 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * Intellectual Flow - Global Styles
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Philosophy: "Quiet Beauty"
+ * - Tailwind v3 with strict monochrome palette
+ * - All design tokens defined in tailwind.config.ts
+ * - Paper-like digital experience
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1, "kern" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography Hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground font-semibold;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  p {
+    line-height: 1.65; /* Notion-standard reading rhythm */
+    letter-spacing: -0.01em;
+  }
+
+  /* Japanese text uses Noto Serif JP */
+  :lang(ja) {
+    @apply font-serif;
+  }
+}
+
+@layer utilities {
+  /* Focus ring with spring physics */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Paper-like card */
+  .paper-card {
+    @apply bg-card text-card-foreground rounded-lg shadow-soft border border-border;
+  }
+
+  /* Smooth spring transition */
+  .spring-transition {
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.0);
+  }
+}
